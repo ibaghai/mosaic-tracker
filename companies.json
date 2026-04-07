@@ -1,0 +1,2584 @@
+[
+  {
+    "name": "Abnormal Security",
+    "website": "https://abnormalsecurity.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "abnormalsecurity",
+    "funding_round": "Series D",
+    "funding_amount_m": 250,
+    "funding_date": "2024-04-01",
+    "sector": "Security"
+  },
+  {
+    "name": "Agility Robotics",
+    "website": "https://agilityrobotics.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "agilityrobotics",
+    "funding_round": "Series B",
+    "funding_amount_m": 150,
+    "funding_date": "2022-03-01",
+    "sector": "Robotics & Hardware"
+  },
+  {
+    "name": "AirOps",
+    "website": "https://www.airops.com",
+    "ats_type": "ashby",
+    "ats_identifier": "airops",
+    "funding_round": "Series A",
+    "funding_amount_m": 7,
+    "funding_date": "2023-08-01",
+    "sector": "AI & Machine Learning"
+  },
+  {
+    "name": "Airtable",
+    "website": "https://www.airtable.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "airtable",
+    "funding_round": "Series F",
+    "funding_amount_m": 270,
+    "funding_date": "2021-12-16",
+    "sector": "Enterprise Software"
+  },
+  {
+    "name": "Alchemy",
+    "ats_type": "greenhouse",
+    "ats_identifier": "alchemy",
+    "sector": "Fintech & Payments"
+  },
+  {
+    "name": "Algolia",
+    "website": "https://www.algolia.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "algolia",
+    "funding_round": "Series D",
+    "funding_amount_m": 150,
+    "funding_date": "2021-07-14",
+    "sector": "Enterprise Software"
+  },
+  {
+    "name": "Alloy",
+    "ats_type": "greenhouse",
+    "ats_identifier": "alloy",
+    "sector": "Fintech & Payments"
+  },
+  {
+    "name": "Alma",
+    "ats_type": "greenhouse",
+    "ats_identifier": "alma",
+    "sector": "Health & Wellness"
+  },
+  {
+    "name": "Anthropic",
+    "website": "https://www.anthropic.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "anthropic",
+    "funding_round": "Series E",
+    "funding_amount_m": 7300,
+    "funding_date": "2024-11-22",
+    "sector": "AI & Machine Learning"
+  },
+  {
+    "name": "Anysphere (Cursor)",
+    "website": "https://www.cursor.com",
+    "ats_type": "ashby",
+    "ats_identifier": "cursor",
+    "funding_round": "Series C",
+    "funding_amount_m": 900,
+    "funding_date": "2025-08-01",
+    "sector": "AI & Machine Learning"
+  },
+  {
+    "name": "Applied Intuition",
+    "ats_type": "greenhouse",
+    "ats_identifier": "appliedintuition",
+    "sector": "Robotics & Hardware"
+  },
+  {
+    "name": "AppOmni",
+    "ats_type": "greenhouse",
+    "ats_identifier": "appomni",
+    "sector": "Security"
+  },
+  {
+    "name": "Apptronik",
+    "website": "https://apptronik.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "apptronik",
+    "funding_round": "Series A",
+    "funding_amount_m": 14,
+    "funding_date": "2024-03-01",
+    "sector": "Robotics & Hardware"
+  },
+  {
+    "name": "Arcadia",
+    "website": "https://www.arcadia.com",
+    "ats_type": "lever",
+    "ats_identifier": "arcadia",
+    "funding_round": "Series D",
+    "funding_amount_m": 200,
+    "funding_date": "2023-11-01",
+    "sector": "Climate & Energy"
+  },
+  {
+    "name": "Arize AI",
+    "website": "https://arize.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "arizeai",
+    "funding_round": "Series B",
+    "funding_amount_m": 38,
+    "funding_date": "2023-03-01",
+    "sector": "AI & Machine Learning"
+  },
+  {
+    "name": "Armada",
+    "ats_type": "greenhouse",
+    "ats_identifier": "armada",
+    "sector": "Robotics & Hardware"
+  },
+  {
+    "name": "Array",
+    "ats_type": "greenhouse",
+    "ats_identifier": "array",
+    "sector": "Fintech & Payments"
+  },
+  {
+    "name": "AssemblyAI",
+    "website": "https://www.assemblyai.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "assemblyai",
+    "funding_round": "Series C",
+    "funding_amount_m": 50,
+    "funding_date": "2023-05-01",
+    "sector": "AI & Machine Learning"
+  },
+  {
+    "name": "Attentive",
+    "ats_type": "greenhouse",
+    "ats_identifier": "attentive",
+    "sector": "Enterprise Software"
+  },
+  {
+    "name": "Aura",
+    "ats_type": "greenhouse",
+    "ats_identifier": "aura",
+    "sector": "Security"
+  },
+  {
+    "name": "Automox",
+    "ats_type": "greenhouse",
+    "ats_identifier": "automox",
+    "sector": "Dev Tools & Infrastructure"
+  },
+  {
+    "name": "Beam",
+    "ats_type": "greenhouse",
+    "ats_identifier": "beam",
+    "sector": "Fintech & Payments"
+  },
+  {
+    "name": "Bitwarden",
+    "website": "https://bitwarden.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "bitwarden",
+    "funding_round": "Series B",
+    "funding_amount_m": 100,
+    "funding_date": "2023-09-01",
+    "sector": "Security"
+  },
+  {
+    "name": "Block (Square)",
+    "ats_type": "greenhouse",
+    "ats_identifier": "block",
+    "sector": "Fintech & Payments",
+    "company_type": "bigco"
+  },
+  {
+    "name": "Brex",
+    "website": "https://www.brex.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "brex",
+    "funding_round": "Series D",
+    "funding_amount_m": 300,
+    "funding_date": "2022-01-11",
+    "sector": "Fintech & Payments"
+  },
+  {
+    "name": "Brilliant",
+    "ats_type": "lever",
+    "ats_identifier": "brilliant",
+    "sector": "Consumer & Marketplace"
+  },
+  {
+    "name": "Buildkite",
+    "website": "https://www.buildkite.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "buildkite",
+    "funding_round": "Series B",
+    "funding_amount_m": 100,
+    "funding_date": "2023-11-07",
+    "sector": "Dev Tools & Infrastructure"
+  },
+  {
+    "name": "CAIS",
+    "ats_type": "greenhouse",
+    "ats_identifier": "cais",
+    "sector": "Fintech & Payments"
+  },
+  {
+    "name": "Calendly",
+    "website": "https://www.calendly.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "calendly",
+    "funding_round": "Series B",
+    "funding_amount_m": 350,
+    "funding_date": "2021-01-26",
+    "sector": "Enterprise Software"
+  },
+  {
+    "name": "Calm",
+    "ats_type": "greenhouse",
+    "ats_identifier": "calm",
+    "sector": "Consumer & Marketplace"
+  },
+  {
+    "name": "Canva",
+    "ats_type": "smartrecruiters",
+    "ats_identifier": "Canva",
+    "sector": "Enterprise Software",
+    "company_type": "bigco"
+  },
+  {
+    "name": "Carbon",
+    "ats_type": "greenhouse",
+    "ats_identifier": "carbon",
+    "sector": "Robotics & Hardware"
+  },
+  {
+    "name": "Carta",
+    "ats_type": "greenhouse",
+    "ats_identifier": "carta",
+    "sector": "Fintech & Payments"
+  },
+  {
+    "name": "Cartesia",
+    "website": "https://www.cartesia.ai",
+    "ats_type": "ashby",
+    "ats_identifier": "cartesia",
+    "funding_round": "Series A",
+    "funding_amount_m": 27,
+    "funding_date": "2024-06-01",
+    "sector": "AI & Machine Learning"
+  },
+  {
+    "name": "Chainguard",
+    "website": "https://www.chainguard.dev",
+    "ats_type": "greenhouse",
+    "ats_identifier": "chainguard",
+    "funding_round": "Series C",
+    "funding_amount_m": 140,
+    "funding_date": "2024-07-01",
+    "sector": "Security"
+  },
+  {
+    "name": "Chalk",
+    "ats_type": "greenhouse",
+    "ats_identifier": "chalkinc",
+    "sector": "Enterprise Software"
+  },
+  {
+    "name": "Character.AI",
+    "website": "https://www.character.ai",
+    "ats_type": "ashby",
+    "ats_identifier": "character",
+    "funding_round": "Series A",
+    "funding_amount_m": 150,
+    "funding_date": "2023-03-23",
+    "sector": "AI & Machine Learning"
+  },
+  {
+    "name": "Check",
+    "ats_type": "greenhouse",
+    "ats_identifier": "check",
+    "sector": "Fintech & Payments"
+  },
+  {
+    "name": "Checkr",
+    "ats_type": "greenhouse",
+    "ats_identifier": "checkr",
+    "sector": "Fintech & Payments"
+  },
+  {
+    "name": "Chime",
+    "website": "https://www.chime.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "chime",
+    "funding_round": "Series G",
+    "funding_amount_m": 750,
+    "funding_date": "2021-08-13",
+    "sector": "Fintech & Payments"
+  },
+  {
+    "name": "Clara",
+    "ats_type": "greenhouse",
+    "ats_identifier": "clara",
+    "sector": "AI & Machine Learning"
+  },
+  {
+    "name": "Cleo",
+    "website": "https://www.cleo.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "cleo",
+    "funding_round": "Series C",
+    "funding_amount_m": 80,
+    "funding_date": "2023-06-22",
+    "sector": "AI & Machine Learning"
+  },
+  {
+    "name": "Click Therapeutics",
+    "ats_type": "greenhouse",
+    "ats_identifier": "clicktherapeutics",
+    "sector": "Health & Wellness"
+  },
+  {
+    "name": "ClickHouse",
+    "website": "https://clickhouse.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "clickhouse",
+    "funding_round": "Series B",
+    "funding_amount_m": 250,
+    "funding_date": "2022-10-01",
+    "sector": "Dev Tools & Infrastructure"
+  },
+  {
+    "name": "Cloudflare",
+    "ats_type": "greenhouse",
+    "ats_identifier": "cloudflare",
+    "sector": "Dev Tools & Infrastructure",
+    "company_type": "bigco"
+  },
+  {
+    "name": "Cloudinary",
+    "website": "https://cloudinary.com",
+    "ats_type": "lever",
+    "ats_identifier": "cloudinary",
+    "funding_round": "Series D",
+    "funding_amount_m": 100,
+    "funding_date": "2020-09-01",
+    "sector": "Dev Tools & Infrastructure"
+  },
+  {
+    "name": "Coalition",
+    "ats_type": "greenhouse",
+    "ats_identifier": "coalition",
+    "sector": "Security"
+  },
+  {
+    "name": "Cockroach Labs",
+    "ats_type": "greenhouse",
+    "ats_identifier": "cockroachlabs",
+    "sector": "Dev Tools & Infrastructure"
+  },
+  {
+    "name": "Cognition (Devin)",
+    "website": "https://www.cognition.ai",
+    "ats_type": "ashby",
+    "ats_identifier": "cognition",
+    "funding_round": "Series B",
+    "funding_amount_m": 175,
+    "funding_date": "2024-08-01",
+    "sector": "AI & Machine Learning"
+  },
+  {
+    "name": "Cohere",
+    "website": "https://www.cohere.com",
+    "ats_type": "ashby",
+    "ats_identifier": "cohere",
+    "funding_round": "Series D",
+    "funding_amount_m": 500,
+    "funding_date": "2024-07-22",
+    "sector": "AI & Machine Learning"
+  },
+  {
+    "name": "Contentful",
+    "website": "https://www.contentful.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "contentful",
+    "funding_round": "Series F",
+    "funding_amount_m": 175,
+    "funding_date": "2021-09-23",
+    "sector": "Enterprise Software"
+  },
+  {
+    "name": "Contentsquare",
+    "ats_type": "lever",
+    "ats_identifier": "contentsquare",
+    "sector": "Enterprise Software"
+  },
+  {
+    "name": "Contentstack",
+    "website": "https://www.contentstack.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "contentstack",
+    "funding_round": "Series C",
+    "funding_amount_m": 57.5,
+    "funding_date": "2022-03-29",
+    "sector": "Enterprise Software"
+  },
+  {
+    "name": "Coram AI",
+    "website": "https://www.coram.ai",
+    "ats_type": "ashby",
+    "ats_identifier": "coram-ai",
+    "funding_round": "Series A",
+    "funding_amount_m": 11,
+    "funding_date": "2024-03-01",
+    "sector": "Data & Analytics"
+  },
+  {
+    "name": "Corelight",
+    "ats_type": "greenhouse",
+    "ats_identifier": "corelight",
+    "sector": "Security"
+  },
+  {
+    "name": "CoreWeave",
+    "website": "https://www.coreweave.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "coreweave",
+    "funding_round": "Series C",
+    "funding_amount_m": 1100,
+    "funding_date": "2024-05-01",
+    "sector": "Dev Tools & Infrastructure"
+  },
+  {
+    "name": "Cortex",
+    "website": "https://www.cortex.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "cortex",
+    "funding_round": "Series C",
+    "funding_amount_m": 35,
+    "funding_date": "2023-06-22",
+    "sector": "Dev Tools & Infrastructure"
+  },
+  {
+    "name": "Crossbeam",
+    "ats_type": "greenhouse",
+    "ats_identifier": "crossbeam",
+    "sector": "Enterprise Software"
+  },
+  {
+    "name": "Culture Amp",
+    "ats_type": "greenhouse",
+    "ats_identifier": "cultureamp",
+    "sector": "HR & Workforce"
+  },
+  {
+    "name": "Curative",
+    "ats_type": "greenhouse",
+    "ats_identifier": "curative",
+    "sector": "Health & Wellness"
+  },
+  {
+    "name": "Customer.io",
+    "website": "https://www.customerio.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "customerio",
+    "funding_round": "Series A",
+    "funding_amount_m": 37,
+    "funding_date": "2021-06-15",
+    "sector": "Enterprise Software"
+  },
+  {
+    "name": "Cybereason",
+    "website": "https://www.cybereason.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "cybereason",
+    "funding_round": "Series F",
+    "funding_amount_m": 275,
+    "funding_date": "2021-07-06",
+    "sector": "Security"
+  },
+  {
+    "name": "Cypress",
+    "ats_type": "greenhouse",
+    "ats_identifier": "cypressio",
+    "sector": "Dev Tools & Infrastructure"
+  },
+  {
+    "name": "Dagster",
+    "ats_type": "greenhouse",
+    "ats_identifier": "dagsterlabs",
+    "sector": "Dev Tools & Infrastructure"
+  },
+  {
+    "name": "Dashlane",
+    "ats_type": "greenhouse",
+    "ats_identifier": "dashlane",
+    "sector": "Security"
+  },
+  {
+    "name": "Databricks",
+    "ats_type": "greenhouse",
+    "ats_identifier": "databricks",
+    "sector": "Data & Analytics",
+    "company_type": "bigco"
+  },
+  {
+    "name": "Datadog",
+    "ats_type": "greenhouse",
+    "ats_identifier": "datadog",
+    "sector": "Dev Tools & Infrastructure",
+    "company_type": "bigco"
+  },
+  {
+    "name": "DataGrail",
+    "ats_type": "greenhouse",
+    "ats_identifier": "datagrail",
+    "sector": "Data & Analytics"
+  },
+  {
+    "name": "Dataiku",
+    "ats_type": "greenhouse",
+    "ats_identifier": "dataiku",
+    "sector": "Dev Tools & Infrastructure"
+  },
+  {
+    "name": "dbt Labs",
+    "website": "https://www.getdbt.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "dbtlabsinc",
+    "funding_round": "Series D",
+    "funding_amount_m": 222,
+    "funding_date": "2023-02-01",
+    "sector": "Data & Analytics"
+  },
+  {
+    "name": "Deep Genomics",
+    "ats_type": "lever",
+    "ats_identifier": "deepgenomics",
+    "sector": "AI & Machine Learning"
+  },
+  {
+    "name": "Deepgram",
+    "website": "https://www.deepgram.com",
+    "ats_type": "ashby",
+    "ats_identifier": "deepgram",
+    "funding_round": "Series B",
+    "funding_amount_m": 72,
+    "funding_date": "2022-03-01",
+    "sector": "AI & Machine Learning"
+  },
+  {
+    "name": "Degreed",
+    "ats_type": "greenhouse",
+    "ats_identifier": "degreed",
+    "sector": "HR & Workforce"
+  },
+  {
+    "name": "Descript",
+    "website": "https://www.descript.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "descript",
+    "funding_round": "Series C",
+    "funding_amount_m": 100,
+    "funding_date": "2022-01-01",
+    "sector": "AI & Machine Learning"
+  },
+  {
+    "name": "DevRev",
+    "ats_type": "greenhouse",
+    "ats_identifier": "devrev",
+    "sector": "AI & Machine Learning"
+  },
+  {
+    "name": "Dialpad",
+    "ats_type": "greenhouse",
+    "ats_identifier": "dialpad",
+    "sector": "Communications & Identity"
+  },
+  {
+    "name": "Discord",
+    "website": "https://www.discord.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "discord",
+    "funding_round": "Series H",
+    "funding_amount_m": 500,
+    "funding_date": "2021-09-17",
+    "sector": "Consumer & Marketplace"
+  },
+  {
+    "name": "Docugami",
+    "website": "https://docugami.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "docugami",
+    "funding_round": "Series A",
+    "funding_amount_m": 10,
+    "funding_date": "2021-04-01",
+    "sector": "AI & Machine Learning"
+  },
+  {
+    "name": "Dotmatics",
+    "website": "https://www.dotmatics.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "dotmatics",
+    "funding_round": null,
+    "funding_amount_m": null,
+    "funding_date": null,
+    "sector": "Health & Wellness"
+  },
+  {
+    "name": "Dragos",
+    "ats_type": "greenhouse",
+    "ats_identifier": "dragos",
+    "sector": "Security"
+  },
+  {
+    "name": "Dream Games",
+    "ats_type": "lever",
+    "ats_identifier": "dreamgames",
+    "sector": "Consumer & Marketplace"
+  },
+  {
+    "name": "Earnest",
+    "ats_type": "greenhouse",
+    "ats_identifier": "earnest",
+    "sector": "Fintech & Payments"
+  },
+  {
+    "name": "Earnin",
+    "website": "https://www.earnin.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "earnin",
+    "funding_round": "Series C",
+    "funding_amount_m": 190,
+    "funding_date": "2019-12-01",
+    "sector": "Fintech & Payments"
+  },
+  {
+    "name": "Elastic",
+    "ats_type": "greenhouse",
+    "ats_identifier": "elastic",
+    "sector": "Data & Analytics",
+    "company_type": "bigco"
+  },
+  {
+    "name": "Elation Health",
+    "ats_type": "greenhouse",
+    "ats_identifier": "elationhealth",
+    "sector": "Health & Wellness"
+  },
+  {
+    "name": "ElevenLabs",
+    "website": "https://www.elevenlabs.io",
+    "ats_type": "ashby",
+    "ats_identifier": "elevenlabs",
+    "funding_round": "Series C",
+    "funding_amount_m": 180,
+    "funding_date": "2025-01-22",
+    "sector": "AI & Machine Learning"
+  },
+  {
+    "name": "Embrace",
+    "ats_type": "greenhouse",
+    "ats_identifier": "embrace",
+    "sector": "Dev Tools & Infrastructure"
+  },
+  {
+    "name": "Endor Labs",
+    "website": "https://www.endorlabs.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "endorlabs",
+    "funding_round": "Series A",
+    "funding_amount_m": 70,
+    "funding_date": "2023-10-01",
+    "sector": "Dev Tools & Infrastructure"
+  },
+  {
+    "name": "Extend",
+    "ats_type": "greenhouse",
+    "ats_identifier": "extend",
+    "sector": "Fintech & Payments"
+  },
+  {
+    "name": "Factory",
+    "website": "https://www.factory.ai",
+    "ats_type": "ashby",
+    "ats_identifier": "factory",
+    "funding_round": "Series A",
+    "funding_amount_m": 15,
+    "funding_date": "2024-01-01",
+    "sector": "AI & Machine Learning"
+  },
+  {
+    "name": "Faire",
+    "website": "https://www.faire.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "faire",
+    "funding_round": "Series G",
+    "funding_amount_m": 416,
+    "funding_date": "2022-01-11",
+    "sector": "Logistics & Operations"
+  },
+  {
+    "name": "Fandom",
+    "ats_type": "greenhouse",
+    "ats_identifier": "fandom",
+    "sector": "Consumer & Marketplace"
+  },
+  {
+    "name": "Fathom",
+    "website": "https://www.fathom.video",
+    "ats_type": "ashby",
+    "ats_identifier": "fathom.video",
+    "funding_round": "Series A",
+    "funding_amount_m": 17,
+    "funding_date": "2023-08-01",
+    "sector": "AI & Machine Learning"
+  },
+  {
+    "name": "Feedzai",
+    "ats_type": "greenhouse",
+    "ats_identifier": "feedzai",
+    "sector": "Security"
+  },
+  {
+    "name": "Figma",
+    "ats_type": "greenhouse",
+    "ats_identifier": "figma",
+    "sector": "Enterprise Software",
+    "company_type": "bigco"
+  },
+  {
+    "name": "Figment",
+    "ats_type": "greenhouse",
+    "ats_identifier": "figment",
+    "sector": "Fintech & Payments"
+  },
+  {
+    "name": "Figure AI",
+    "website": "https://www.figure.ai",
+    "ats_type": "greenhouse",
+    "ats_identifier": "figureai",
+    "funding_round": "Series B",
+    "funding_amount_m": 675,
+    "funding_date": "2024-02-01",
+    "sector": "Robotics & Hardware"
+  },
+  {
+    "name": "FindHelp",
+    "ats_type": "lever",
+    "ats_identifier": "findhelp",
+    "sector": "Consumer & Marketplace"
+  },
+  {
+    "name": "Finix",
+    "ats_type": "lever",
+    "ats_identifier": "finix",
+    "sector": "Fintech & Payments"
+  },
+  {
+    "name": "Fireblocks",
+    "ats_type": "greenhouse",
+    "ats_identifier": "fireblocks",
+    "sector": "Fintech & Payments"
+  },
+  {
+    "name": "Fireworks AI",
+    "website": "https://fireworks.ai",
+    "ats_type": "greenhouse",
+    "ats_identifier": "fireworksai",
+    "funding_round": "Series B",
+    "funding_amount_m": 52,
+    "funding_date": "2024-05-01",
+    "sector": "AI & Machine Learning"
+  },
+  {
+    "name": "Fivetran",
+    "website": "https://fivetran.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "fivetran",
+    "funding_round": "Series D",
+    "funding_amount_m": 565,
+    "funding_date": "2021-08-01",
+    "sector": "Data & Analytics"
+  },
+  {
+    "name": "Flatiron Health",
+    "ats_type": "greenhouse",
+    "ats_identifier": "flatironhealth",
+    "sector": "Health & Wellness"
+  },
+  {
+    "name": "Fleet",
+    "ats_type": "greenhouse",
+    "ats_identifier": "fleetio",
+    "sector": "Logistics & Operations"
+  },
+  {
+    "name": "Flexe",
+    "ats_type": "greenhouse",
+    "ats_identifier": "flexe",
+    "sector": "Logistics & Operations"
+  },
+  {
+    "name": "FloQast",
+    "ats_type": "lever",
+    "ats_identifier": "floqast",
+    "sector": "Fintech & Payments"
+  },
+  {
+    "name": "Formlabs",
+    "ats_type": "greenhouse",
+    "ats_identifier": "formlabs",
+    "sector": "Robotics & Hardware"
+  },
+  {
+    "name": "Forter",
+    "ats_type": "greenhouse",
+    "ats_identifier": "forter",
+    "sector": "Security"
+  },
+  {
+    "name": "Fulfil",
+    "ats_type": "greenhouse",
+    "ats_identifier": "fulfil",
+    "sector": "Logistics & Operations"
+  },
+  {
+    "name": "Galileo",
+    "ats_type": "greenhouse",
+    "ats_identifier": "galileo",
+    "sector": "AI & Machine Learning"
+  },
+  {
+    "name": "Gather",
+    "ats_type": "greenhouse",
+    "ats_identifier": "gatherai",
+    "sector": "Consumer & Marketplace"
+  },
+  {
+    "name": "Ginkgo Bioworks",
+    "ats_type": "greenhouse",
+    "ats_identifier": "ginkgobioworks",
+    "sector": "Health & Wellness"
+  },
+  {
+    "name": "GitBook",
+    "website": "https://www.gitbook.com",
+    "ats_type": "ashby",
+    "ats_identifier": "gitbook",
+    "funding_round": "Series A",
+    "funding_amount_m": 10,
+    "funding_date": "2020-01-01",
+    "sector": "Dev Tools & Infrastructure"
+  },
+  {
+    "name": "GitLab",
+    "ats_type": "greenhouse",
+    "ats_identifier": "gitlab",
+    "sector": "Dev Tools & Infrastructure",
+    "company_type": "bigco"
+  },
+  {
+    "name": "GlossGenius",
+    "ats_type": "greenhouse",
+    "ats_identifier": "glossgenius",
+    "sector": "Consumer & Marketplace"
+  },
+  {
+    "name": "Glowforge",
+    "ats_type": "lever",
+    "ats_identifier": "glowforge",
+    "sector": "Robotics & Hardware"
+  },
+  {
+    "name": "GoCardless",
+    "ats_type": "greenhouse",
+    "ats_identifier": "gocardless",
+    "sector": "Fintech & Payments"
+  },
+  {
+    "name": "GoGuardian",
+    "ats_type": "greenhouse",
+    "ats_identifier": "goguardian",
+    "sector": "Enterprise Software"
+  },
+  {
+    "name": "Grafana Labs",
+    "ats_type": "greenhouse",
+    "ats_identifier": "grafanalabs",
+    "sector": "Dev Tools & Infrastructure"
+  },
+  {
+    "name": "Greenhouse",
+    "website": "https://www.greenhouse.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "greenhouse",
+    "funding_round": "Series E",
+    "funding_amount_m": 50,
+    "funding_date": "2021-06-03",
+    "sector": "HR & Workforce"
+  },
+  {
+    "name": "Grow Therapy",
+    "ats_type": "greenhouse",
+    "ats_identifier": "growtherapy",
+    "sector": "Health & Wellness"
+  },
+  {
+    "name": "Gusto",
+    "website": "https://www.gusto.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "gusto",
+    "funding_round": "Series E",
+    "funding_amount_m": 175,
+    "funding_date": "2021-08-11",
+    "sector": "HR & Workforce"
+  },
+  {
+    "name": "Gynesonics",
+    "ats_type": "lever",
+    "ats_identifier": "gynesonics",
+    "sector": "Health & Wellness"
+  },
+  {
+    "name": "HackerRank",
+    "ats_type": "greenhouse",
+    "ats_identifier": "hackerrank",
+    "sector": "Dev Tools & Infrastructure"
+  },
+  {
+    "name": "Handshake",
+    "website": "https://www.joinhandshake.com",
+    "ats_type": "ashby",
+    "ats_identifier": "handshake",
+    "funding_round": "Series F",
+    "funding_amount_m": 200,
+    "funding_date": "2022-01-10",
+    "sector": "HR & Workforce"
+  },
+  {
+    "name": "HappyRobot",
+    "website": "https://www.happyrobot.ai",
+    "ats_type": "ashby",
+    "ats_identifier": "happyrobot.ai",
+    "funding_round": "Series A",
+    "funding_amount_m": 20,
+    "funding_date": "2024-01-01",
+    "sector": "AI & Machine Learning"
+  },
+  {
+    "name": "Harness",
+    "ats_type": "greenhouse",
+    "ats_identifier": "harnessinc",
+    "sector": "Dev Tools & Infrastructure"
+  },
+  {
+    "name": "Harvey",
+    "website": "https://www.harvey.ai",
+    "ats_type": "ashby",
+    "ats_identifier": "harvey",
+    "funding_round": "Series D",
+    "funding_amount_m": 300,
+    "funding_date": "2026-02-12",
+    "sector": "AI & Machine Learning"
+  },
+  {
+    "name": "Headway",
+    "website": "https://headway.co",
+    "ats_type": "greenhouse",
+    "ats_identifier": "headway",
+    "funding_round": "Series C",
+    "funding_amount_m": 125,
+    "funding_date": "2023-07-01",
+    "sector": "Health & Wellness"
+  },
+  {
+    "name": "HealthJoy",
+    "ats_type": "greenhouse",
+    "ats_identifier": "healthjoy",
+    "sector": "Health & Wellness"
+  },
+  {
+    "name": "HiddenLayer",
+    "website": "https://hiddenlayer.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "hiddenlayer",
+    "funding_round": "Series A",
+    "funding_amount_m": 50,
+    "funding_date": "2024-03-01",
+    "sector": "Security"
+  },
+  {
+    "name": "Highspot",
+    "ats_type": "lever",
+    "ats_identifier": "highspot",
+    "sector": "Enterprise Software"
+  },
+  {
+    "name": "Hightouch",
+    "website": "https://www.hightouch.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "hightouch",
+    "funding_round": "Series C",
+    "funding_amount_m": 80,
+    "funding_date": "2022-10-07",
+    "sector": "Data & Analytics"
+  },
+  {
+    "name": "Hippocratic AI",
+    "website": "https://www.hippocraticai.com",
+    "ats_type": "ashby",
+    "ats_identifier": "Hippocratic AI",
+    "funding_round": "Series B",
+    "funding_amount_m": 141,
+    "funding_date": "2026-01-09",
+    "sector": "AI & Machine Learning"
+  },
+  {
+    "name": "Hologram",
+    "ats_type": "greenhouse",
+    "ats_identifier": "hologram",
+    "sector": "Data & Analytics"
+  },
+  {
+    "name": "Honeycomb",
+    "website": "https://www.honeycomb.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "honeycomb",
+    "funding_round": "Series D",
+    "funding_amount_m": 50,
+    "funding_date": "2022-08-11",
+    "sector": "Dev Tools & Infrastructure"
+  },
+  {
+    "name": "Honor",
+    "ats_type": "greenhouse",
+    "ats_identifier": "honor",
+    "sector": "Health & Wellness"
+  },
+  {
+    "name": "Hume AI",
+    "website": "https://www.hume.ai",
+    "ats_type": "greenhouse",
+    "ats_identifier": "humeai",
+    "funding_round": "Series B",
+    "funding_amount_m": 50,
+    "funding_date": "2024-03-01",
+    "sector": "AI & Machine Learning"
+  },
+  {
+    "name": "ID.me",
+    "ats_type": "greenhouse",
+    "ats_identifier": "idme",
+    "sector": "Communications & Identity"
+  },
+  {
+    "name": "Ideogram",
+    "website": "https://www.ideogram.ai",
+    "ats_type": "ashby",
+    "ats_identifier": "ideogram",
+    "funding_round": "Series B",
+    "funding_amount_m": 80,
+    "funding_date": "2024-08-01",
+    "sector": "AI & Machine Learning"
+  },
+  {
+    "name": "Immuta",
+    "ats_type": "lever",
+    "ats_identifier": "immuta",
+    "sector": "Data & Analytics"
+  },
+  {
+    "name": "Imply",
+    "ats_type": "greenhouse",
+    "ats_identifier": "imply",
+    "sector": "Dev Tools & Infrastructure"
+  },
+  {
+    "name": "Incorta",
+    "ats_type": "lever",
+    "ats_identifier": "incorta",
+    "sector": "Dev Tools & Infrastructure"
+  },
+  {
+    "name": "Inductive Automation",
+    "ats_type": "lever",
+    "ats_identifier": "inductiveautomation",
+    "sector": "Enterprise Software"
+  },
+  {
+    "name": "Inflection AI",
+    "ats_type": "greenhouse",
+    "ats_identifier": "inflectionai",
+    "sector": "AI & Machine Learning"
+  },
+  {
+    "name": "Instabase",
+    "ats_type": "greenhouse",
+    "ats_identifier": "instabase",
+    "sector": "Enterprise Software"
+  },
+  {
+    "name": "Intercom",
+    "website": "https://www.intercom.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "intercom",
+    "funding_round": "Series D",
+    "funding_amount_m": 241,
+    "funding_date": "2018-08-01",
+    "sector": "Enterprise Software"
+  },
+  {
+    "name": "Invoca",
+    "ats_type": "greenhouse",
+    "ats_identifier": "invoca",
+    "sector": "Enterprise Software"
+  },
+  {
+    "name": "Isomorphic Labs",
+    "ats_type": "greenhouse",
+    "ats_identifier": "isomorphiclabs",
+    "sector": "AI & Machine Learning"
+  },
+  {
+    "name": "Iterable",
+    "website": "https://www.iterable.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "iterable",
+    "funding_round": "Series E",
+    "funding_amount_m": 200,
+    "funding_date": "2021-06-17",
+    "sector": "Enterprise Software"
+  },
+  {
+    "name": "Ivalua",
+    "ats_type": "greenhouse",
+    "ats_identifier": "ivalua",
+    "sector": "Enterprise Software"
+  },
+  {
+    "name": "Justworks",
+    "website": "https://www.justworks.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "justworks",
+    "funding_round": "Series E",
+    "funding_amount_m": 50,
+    "funding_date": "2020-08-11",
+    "sector": "HR & Workforce"
+  },
+  {
+    "name": "Karat",
+    "ats_type": "greenhouse",
+    "ats_identifier": "karat",
+    "sector": "HR & Workforce"
+  },
+  {
+    "name": "Keeper Security",
+    "ats_type": "greenhouse",
+    "ats_identifier": "keepersecurity",
+    "sector": "Security"
+  },
+  {
+    "name": "Kinsta",
+    "ats_type": "lever",
+    "ats_identifier": "kinsta",
+    "sector": "Dev Tools & Infrastructure"
+  },
+  {
+    "name": "Knock",
+    "ats_type": "greenhouse",
+    "ats_identifier": "knock",
+    "sector": "Communications & Identity"
+  },
+  {
+    "name": "Koala Health",
+    "ats_type": "lever",
+    "ats_identifier": "koalahealth",
+    "sector": "Health & Wellness"
+  },
+  {
+    "name": "Labelbox",
+    "website": "https://www.labelbox.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "labelbox",
+    "funding_round": "Series D",
+    "funding_amount_m": 79,
+    "funding_date": "2022-01-27",
+    "sector": "Data & Analytics"
+  },
+  {
+    "name": "LangChain",
+    "website": "https://www.langchain.com",
+    "ats_type": "ashby",
+    "ats_identifier": "langchain",
+    "funding_round": "Series A",
+    "funding_amount_m": 25,
+    "funding_date": "2024-02-20",
+    "sector": "AI & Machine Learning"
+  },
+  {
+    "name": "Lattice",
+    "website": "https://www.lattice.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "lattice",
+    "funding_round": "Series F",
+    "funding_amount_m": 175,
+    "funding_date": "2022-08-11",
+    "sector": "HR & Workforce"
+  },
+  {
+    "name": "LaunchDarkly",
+    "website": "https://www.launchdarkly.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "launchdarkly",
+    "funding_round": "Series D",
+    "funding_amount_m": 200,
+    "funding_date": "2022-08-23",
+    "sector": "Dev Tools & Infrastructure"
+  },
+  {
+    "name": "Level AI",
+    "ats_type": "lever",
+    "ats_identifier": "levelai",
+    "sector": "AI & Machine Learning"
+  },
+  {
+    "name": "LevelTen Energy",
+    "ats_type": "greenhouse",
+    "ats_identifier": "leveltenenergy",
+    "sector": "Climate & Energy"
+  },
+  {
+    "name": "Lightning AI",
+    "ats_type": "greenhouse",
+    "ats_identifier": "lightningai",
+    "sector": "AI & Machine Learning"
+  },
+  {
+    "name": "Linear",
+    "website": "https://linear.app",
+    "ats_type": "ashby",
+    "ats_identifier": "linear",
+    "funding_round": "Series B",
+    "funding_amount_m": 35,
+    "funding_date": "2022-03-01",
+    "sector": "Enterprise Software"
+  },
+  {
+    "name": "LinkSquares",
+    "ats_type": "greenhouse",
+    "ats_identifier": "linksquaresinc",
+    "sector": "Enterprise Software"
+  },
+  {
+    "name": "Lithic",
+    "website": "https://www.lithic.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "lithic",
+    "funding_round": "Series C",
+    "funding_amount_m": 100,
+    "funding_date": "2021-07-12",
+    "sector": "Fintech & Payments"
+  },
+  {
+    "name": "Lob",
+    "ats_type": "greenhouse",
+    "ats_identifier": "lob",
+    "sector": "Consumer & Marketplace"
+  },
+  {
+    "name": "LogRocket",
+    "website": "https://www.logrocket.com",
+    "ats_type": "lever",
+    "ats_identifier": "logrocket",
+    "funding_round": "Series C",
+    "funding_amount_m": 35,
+    "funding_date": "2022-01-01",
+    "sector": "Dev Tools & Infrastructure"
+  },
+  {
+    "name": "Lokalise",
+    "ats_type": "greenhouse",
+    "ats_identifier": "lokalise",
+    "sector": "Enterprise Software"
+  },
+  {
+    "name": "Loop Returns",
+    "ats_type": "lever",
+    "ats_identifier": "loopreturns",
+    "sector": "Consumer & Marketplace"
+  },
+  {
+    "name": "Lovable",
+    "website": "https://www.lovable.dev",
+    "ats_type": "ashby",
+    "ats_identifier": "lovable",
+    "funding_round": "Series A",
+    "funding_amount_m": 25,
+    "funding_date": "2024-06-01",
+    "sector": "AI & Machine Learning"
+  },
+  {
+    "name": "Lucidworks",
+    "ats_type": "lever",
+    "ats_identifier": "lucidworks",
+    "sector": "Dev Tools & Infrastructure"
+  },
+  {
+    "name": "Luno",
+    "ats_type": "greenhouse",
+    "ats_identifier": "luno",
+    "sector": "Fintech & Payments"
+  },
+  {
+    "name": "MaintainX",
+    "ats_type": "greenhouse",
+    "ats_identifier": "maintainx",
+    "sector": "Enterprise Software"
+  },
+  {
+    "name": "Make",
+    "website": "https://www.make.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "make",
+    "funding_round": "Series B",
+    "funding_amount_m": 100,
+    "funding_date": "2022-01-18",
+    "sector": "Enterprise Software"
+  },
+  {
+    "name": "MasterControl",
+    "ats_type": "greenhouse",
+    "ats_identifier": "mastercontrol",
+    "sector": "Enterprise Software"
+  },
+  {
+    "name": "Materialize",
+    "ats_type": "greenhouse",
+    "ats_identifier": "materialize",
+    "sector": "Dev Tools & Infrastructure"
+  },
+  {
+    "name": "Matillion",
+    "ats_type": "lever",
+    "ats_identifier": "matillion",
+    "sector": "Dev Tools & Infrastructure"
+  },
+  {
+    "name": "Mattermost",
+    "ats_type": "greenhouse",
+    "ats_identifier": "mattermost",
+    "sector": "Enterprise Software"
+  },
+  {
+    "name": "Maven",
+    "ats_type": "greenhouse",
+    "ats_identifier": "maven",
+    "sector": "Health & Wellness"
+  },
+  {
+    "name": "Melio",
+    "website": "https://www.melio.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "melio",
+    "funding_round": "Series D",
+    "funding_amount_m": 250,
+    "funding_date": "2021-05-04",
+    "sector": "Fintech & Payments"
+  },
+  {
+    "name": "Mercury",
+    "website": "https://www.mercury.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "mercury",
+    "funding_round": "Series C",
+    "funding_amount_m": 300,
+    "funding_date": "2024-02-01",
+    "sector": "Fintech & Payments"
+  },
+  {
+    "name": "Merge.dev",
+    "website": "https://www.merge.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "merge",
+    "funding_round": "Series B",
+    "funding_amount_m": 55,
+    "funding_date": "2022-10-05",
+    "sector": "Dev Tools & Infrastructure"
+  },
+  {
+    "name": "Metabase",
+    "website": "https://www.metabase.com",
+    "ats_type": "lever",
+    "ats_identifier": "metabase",
+    "funding_round": "Series C",
+    "funding_amount_m": 30,
+    "funding_date": "2022-08-01",
+    "sector": "Enterprise Software"
+  },
+  {
+    "name": "Mindbody",
+    "ats_type": "greenhouse",
+    "ats_identifier": "mindbody",
+    "sector": "Consumer & Marketplace"
+  },
+  {
+    "name": "Mindful",
+    "ats_type": "lever",
+    "ats_identifier": "mindful",
+    "sector": "Communications & Identity"
+  },
+  {
+    "name": "MindTickle",
+    "ats_type": "lever",
+    "ats_identifier": "mindtickle",
+    "sector": "HR & Workforce"
+  },
+  {
+    "name": "Mintlify",
+    "website": "https://www.mintlify.com",
+    "ats_type": "ashby",
+    "ats_identifier": "Mintlify",
+    "funding_round": "Series A",
+    "funding_amount_m": 18,
+    "funding_date": "2024-02-01",
+    "sector": "Dev Tools & Infrastructure"
+  },
+  {
+    "name": "Mixpanel",
+    "website": "https://mixpanel.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "mixpanel",
+    "funding_round": "Series B",
+    "funding_amount_m": 200,
+    "funding_date": "2020-01-01",
+    "sector": "Data & Analytics"
+  },
+  {
+    "name": "Modal",
+    "website": "https://modal.com",
+    "ats_type": "ashby",
+    "ats_identifier": "modal",
+    "funding_round": "Series B",
+    "funding_amount_m": 87,
+    "funding_date": "2024-09-01",
+    "sector": "AI & Machine Learning"
+  },
+  {
+    "name": "Modern Health",
+    "ats_type": "greenhouse",
+    "ats_identifier": "modernhealth",
+    "sector": "Health & Wellness"
+  },
+  {
+    "name": "MongoDB Inc",
+    "ats_type": "greenhouse",
+    "ats_identifier": "mongodb",
+    "sector": "Data & Analytics",
+    "company_type": "bigco"
+  },
+  {
+    "name": "Monzo",
+    "website": "https://www.monzo.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "monzo",
+    "funding_round": "Series I",
+    "funding_amount_m": 430,
+    "funding_date": "2024-03-01",
+    "sector": "Fintech & Payments"
+  },
+  {
+    "name": "Moonpay",
+    "ats_type": "lever",
+    "ats_identifier": "moonpay",
+    "sector": "Fintech & Payments"
+  },
+  {
+    "name": "Moveworks",
+    "ats_type": "greenhouse",
+    "ats_identifier": "moveworks",
+    "sector": "AI & Machine Learning"
+  },
+  {
+    "name": "Muon Space",
+    "ats_type": "greenhouse",
+    "ats_identifier": "muonspace",
+    "sector": "Robotics & Hardware"
+  },
+  {
+    "name": "N26",
+    "website": "https://www.n26.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "n26",
+    "funding_round": "Series E",
+    "funding_amount_m": 900,
+    "funding_date": "2022-01-19",
+    "sector": "Fintech & Payments"
+  },
+  {
+    "name": "Nearform",
+    "ats_type": "greenhouse",
+    "ats_identifier": "nearform",
+    "sector": "Dev Tools & Infrastructure"
+  },
+  {
+    "name": "Neon",
+    "website": "https://neon.tech",
+    "ats_type": "lever",
+    "ats_identifier": "neon",
+    "funding_round": "Series C",
+    "funding_amount_m": 104,
+    "funding_date": "2024-08-01",
+    "sector": "Dev Tools & Infrastructure"
+  },
+  {
+    "name": "Netlify",
+    "ats_type": "greenhouse",
+    "ats_identifier": "netlify",
+    "sector": "Dev Tools & Infrastructure"
+  },
+  {
+    "name": "Notion",
+    "website": "https://www.notion.so",
+    "ats_type": "ashby",
+    "ats_identifier": "notion",
+    "funding_round": "Series C",
+    "funding_amount_m": 275,
+    "funding_date": "2021-10-08",
+    "sector": "Enterprise Software"
+  },
+  {
+    "name": "Nova Credit",
+    "ats_type": "greenhouse",
+    "ats_identifier": "novacredit",
+    "sector": "Fintech & Payments"
+  },
+  {
+    "name": "Nuro",
+    "website": "https://www.nuro.ai",
+    "ats_type": "greenhouse",
+    "ats_identifier": "nuro",
+    "funding_round": "Series D",
+    "funding_amount_m": 600,
+    "funding_date": "2021-11-01",
+    "sector": "Robotics & Hardware"
+  },
+  {
+    "name": "Observe AI",
+    "ats_type": "greenhouse",
+    "ats_identifier": "observeai",
+    "sector": "AI & Machine Learning"
+  },
+  {
+    "name": "Okta",
+    "ats_type": "greenhouse",
+    "ats_identifier": "okta",
+    "sector": "Security",
+    "company_type": "bigco"
+  },
+  {
+    "name": "Olo",
+    "ats_type": "lever",
+    "ats_identifier": "olo",
+    "sector": "Consumer & Marketplace"
+  },
+  {
+    "name": "Omada Health",
+    "ats_type": "greenhouse",
+    "ats_identifier": "omadahealth",
+    "sector": "Health & Wellness"
+  },
+  {
+    "name": "OneSpan",
+    "ats_type": "greenhouse",
+    "ats_identifier": "onespan",
+    "sector": "Security"
+  },
+  {
+    "name": "OpenAI",
+    "website": "https://www.openai.com",
+    "ats_type": "ashby",
+    "ats_identifier": "openai",
+    "funding_round": "Series F",
+    "funding_amount_m": 6600,
+    "funding_date": "2024-10-02",
+    "sector": "AI & Machine Learning"
+  },
+  {
+    "name": "Opendoor",
+    "ats_type": "greenhouse",
+    "ats_identifier": "opendoor",
+    "sector": "Consumer & Marketplace"
+  },
+  {
+    "name": "Orca Security",
+    "website": "https://orca.security",
+    "ats_type": "greenhouse",
+    "ats_identifier": "orcasecurity",
+    "funding_round": "Series C",
+    "funding_amount_m": 550,
+    "funding_date": "2023-12-01",
+    "sector": "Security"
+  },
+  {
+    "name": "Otter.ai",
+    "website": "https://otter.ai",
+    "ats_type": "greenhouse",
+    "ats_identifier": "otterai",
+    "funding_round": "Series B",
+    "funding_amount_m": 50,
+    "funding_date": "2021-02-01",
+    "sector": "AI & Machine Learning"
+  },
+  {
+    "name": "Oura Ring",
+    "website": "https://www.oura.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "oura",
+    "funding_round": "Series D",
+    "funding_amount_m": 200,
+    "funding_date": "2023-02-07",
+    "sector": "Health & Wellness"
+  },
+  {
+    "name": "Outreach",
+    "website": "https://www.outreach.io",
+    "ats_type": "lever",
+    "ats_identifier": "outreach",
+    "funding_round": "Series G",
+    "funding_amount_m": 200,
+    "funding_date": "2022-06-01",
+    "sector": "Enterprise Software"
+  },
+  {
+    "name": "PandaDoc",
+    "website": "https://www.pandadoc.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "pandadoc",
+    "funding_round": "Series C",
+    "funding_amount_m": 100,
+    "funding_date": "2021-06-15",
+    "sector": "Enterprise Software"
+  },
+  {
+    "name": "Panther",
+    "ats_type": "greenhouse",
+    "ats_identifier": "pantherlabs",
+    "sector": "Security"
+  },
+  {
+    "name": "Paperless Post",
+    "ats_type": "greenhouse",
+    "ats_identifier": "paperlesspost",
+    "sector": "Consumer & Marketplace"
+  },
+  {
+    "name": "Paradigm",
+    "ats_type": "greenhouse",
+    "ats_identifier": "paradigm",
+    "sector": "Fintech & Payments"
+  },
+  {
+    "name": "Pendo",
+    "ats_type": "greenhouse",
+    "ats_identifier": "pendo",
+    "sector": "Enterprise Software"
+  },
+  {
+    "name": "PeopleGrove",
+    "ats_type": "lever",
+    "ats_identifier": "peoplegrove",
+    "sector": "HR & Workforce"
+  },
+  {
+    "name": "Perplexity",
+    "website": "https://www.perplexity.ai",
+    "ats_type": "ashby",
+    "ats_identifier": "perplexity",
+    "funding_round": "Series D",
+    "funding_amount_m": 500,
+    "funding_date": "2025-04-01",
+    "sector": "AI & Machine Learning"
+  },
+  {
+    "name": "Phantom",
+    "ats_type": "greenhouse",
+    "ats_identifier": "phantomai",
+    "sector": "Fintech & Payments"
+  },
+  {
+    "name": "Philo",
+    "ats_type": "greenhouse",
+    "ats_identifier": "philo",
+    "sector": "Consumer & Marketplace"
+  },
+  {
+    "name": "Pika",
+    "website": "https://www.pika.art",
+    "ats_type": "ashby",
+    "ats_identifier": "pika",
+    "funding_round": "Series B",
+    "funding_amount_m": 80,
+    "funding_date": "2024-06-01",
+    "sector": "AI & Machine Learning"
+  },
+  {
+    "name": "Pilot",
+    "ats_type": "greenhouse",
+    "ats_identifier": "pilothq",
+    "sector": "Fintech & Payments"
+  },
+  {
+    "name": "Pipedrive",
+    "ats_type": "lever",
+    "ats_identifier": "pipedrive",
+    "sector": "Enterprise Software"
+  },
+  {
+    "name": "Plaid",
+    "website": "https://www.plaid.com",
+    "ats_type": "ashby",
+    "ats_identifier": "plaid",
+    "funding_round": "Series D",
+    "funding_amount_m": 425,
+    "funding_date": "2021-04-07",
+    "sector": "Fintech & Payments"
+  },
+  {
+    "name": "PlanetScale",
+    "website": "https://www.planetscale.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "planetscale",
+    "funding_round": "Series C",
+    "funding_amount_m": 50,
+    "funding_date": "2022-09-09",
+    "sector": "Dev Tools & Infrastructure"
+  },
+  {
+    "name": "Plivo",
+    "ats_type": "lever",
+    "ats_identifier": "plivo",
+    "sector": "Communications & Identity"
+  },
+  {
+    "name": "Plume",
+    "ats_type": "greenhouse",
+    "ats_identifier": "plume",
+    "sector": "Dev Tools & Infrastructure"
+  },
+  {
+    "name": "PolyAI",
+    "ats_type": "greenhouse",
+    "ats_identifier": "polyai",
+    "sector": "AI & Machine Learning"
+  },
+  {
+    "name": "Postman",
+    "website": "https://www.postman.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "postman",
+    "funding_round": "Series D",
+    "funding_amount_m": 225,
+    "funding_date": "2021-08-18",
+    "sector": "Dev Tools & Infrastructure"
+  },
+  {
+    "name": "Prevail",
+    "ats_type": "greenhouse",
+    "ats_identifier": "prevail",
+    "sector": "Enterprise Software"
+  },
+  {
+    "name": "Prismic",
+    "website": "https://www.prismic.io",
+    "ats_type": "lever",
+    "ats_identifier": "prismic",
+    "funding_round": "Series A",
+    "funding_amount_m": 20,
+    "funding_date": "2020-10-01",
+    "sector": "Enterprise Software"
+  },
+  {
+    "name": "Profound",
+    "website": "https://www.profound.co",
+    "ats_type": "ashby",
+    "ats_identifier": "profound",
+    "funding_round": "Series B",
+    "funding_amount_m": 21,
+    "funding_date": "2024-06-01",
+    "sector": "AI & Machine Learning"
+  },
+  {
+    "name": "Proton",
+    "ats_type": "greenhouse",
+    "ats_identifier": "proton",
+    "sector": "Security"
+  },
+  {
+    "name": "Pulley",
+    "website": "https://pulley.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "pulley",
+    "funding_round": "Series B",
+    "funding_amount_m": 40,
+    "funding_date": "2022-09-01",
+    "sector": "Fintech & Payments"
+  },
+  {
+    "name": "Quantum Metric",
+    "ats_type": "lever",
+    "ats_identifier": "quantummetric",
+    "sector": "Enterprise Software"
+  },
+  {
+    "name": "Railway",
+    "website": "https://railway.app",
+    "ats_type": "ashby",
+    "ats_identifier": "railway",
+    "funding_round": "Series B",
+    "funding_amount_m": 20,
+    "funding_date": "2022-10-01",
+    "sector": "Dev Tools & Infrastructure"
+  },
+  {
+    "name": "Rainfocus",
+    "ats_type": "lever",
+    "ats_identifier": "rainfocus",
+    "sector": "Enterprise Software"
+  },
+  {
+    "name": "Ramp",
+    "website": "https://www.ramp.com",
+    "ats_type": "ashby",
+    "ats_identifier": "ramp",
+    "funding_round": "Series D",
+    "funding_amount_m": 300,
+    "funding_date": "2023-08-09",
+    "sector": "Fintech & Payments"
+  },
+  {
+    "name": "Raycast",
+    "website": "https://www.raycast.com",
+    "ats_type": "teamtailor",
+    "ats_identifier": "https://raycast.teamtailor.com",
+    "funding_round": "Series B",
+    "funding_amount_m": 30,
+    "funding_date": "2023-10-01",
+    "sector": "Dev Tools & Infrastructure"
+  },
+  {
+    "name": "Reachdesk",
+    "ats_type": "greenhouse",
+    "ats_identifier": "reachdesk",
+    "sector": "Enterprise Software"
+  },
+  {
+    "name": "Remote",
+    "ats_type": "greenhouse",
+    "ats_identifier": "remote",
+    "sector": "HR & Workforce"
+  },
+  {
+    "name": "Render",
+    "website": "https://render.com",
+    "ats_type": "ashby",
+    "ats_identifier": "render",
+    "funding_round": "Series C",
+    "funding_amount_m": 100,
+    "funding_date": "2023-07-01",
+    "sector": "Dev Tools & Infrastructure"
+  },
+  {
+    "name": "Replit",
+    "website": "https://www.replit.com",
+    "ats_type": "ashby",
+    "ats_identifier": "Replit",
+    "funding_round": "Series B",
+    "funding_amount_m": 97,
+    "funding_date": "2022-05-24",
+    "sector": "AI & Machine Learning"
+  },
+  {
+    "name": "Resend",
+    "website": "https://resend.com",
+    "ats_type": "ashby",
+    "ats_identifier": "resend",
+    "funding_round": "Seed",
+    "funding_amount_m": 3,
+    "funding_date": "2023-07-01",
+    "sector": "Dev Tools & Infrastructure"
+  },
+  {
+    "name": "RevenueCat",
+    "website": "https://www.revenuecat.com",
+    "ats_type": "ashby",
+    "ats_identifier": "revenuecat",
+    "funding_round": "Series C",
+    "funding_amount_m": 40,
+    "funding_date": "2023-08-01",
+    "sector": "Dev Tools & Infrastructure"
+  },
+  {
+    "name": "Ro",
+    "website": "https://ro.co",
+    "ats_type": "lever",
+    "ats_identifier": "ro",
+    "funding_round": "Series D",
+    "funding_amount_m": 500,
+    "funding_date": "2021-03-01",
+    "sector": "Health & Wellness"
+  },
+  {
+    "name": "Roadie",
+    "ats_type": "greenhouse",
+    "ats_identifier": "roadie",
+    "sector": "Logistics & Operations"
+  },
+  {
+    "name": "Roo",
+    "ats_type": "greenhouse",
+    "ats_identifier": "roo",
+    "sector": "Consumer & Marketplace"
+  },
+  {
+    "name": "Rootly",
+    "website": "https://www.rootly.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "rootly",
+    "funding_round": "Series B",
+    "funding_amount_m": 26,
+    "funding_date": "2022-09-21",
+    "sector": "Dev Tools & Infrastructure"
+  },
+  {
+    "name": "Runway",
+    "website": "https://www.runwayml.com",
+    "ats_type": "ashby",
+    "ats_identifier": "runway-ml",
+    "funding_round": "Series D",
+    "funding_amount_m": 141,
+    "funding_date": "2024-06-17",
+    "sector": "AI & Machine Learning"
+  },
+  {
+    "name": "Salesloft",
+    "website": "https://www.salesloft.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "salesloft",
+    "funding_round": "Series E",
+    "funding_amount_m": 100,
+    "funding_date": "2021-01-06",
+    "sector": "Enterprise Software"
+  },
+  {
+    "name": "Sauce Labs",
+    "ats_type": "greenhouse",
+    "ats_identifier": "saucelabs",
+    "sector": "Dev Tools & Infrastructure"
+  },
+  {
+    "name": "Saviynt",
+    "ats_type": "lever",
+    "ats_identifier": "saviynt",
+    "sector": "Security"
+  },
+  {
+    "name": "Scale AI",
+    "website": "https://www.scaleai.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "scaleai",
+    "funding_round": "Series F",
+    "funding_amount_m": 1000,
+    "funding_date": "2024-05-14",
+    "sector": "AI & Machine Learning"
+  },
+  {
+    "name": "Scandit",
+    "ats_type": "greenhouse",
+    "ats_identifier": "scandit",
+    "sector": "Robotics & Hardware"
+  },
+  {
+    "name": "Secureframe",
+    "website": "https://secureframe.com",
+    "ats_type": "lever",
+    "ats_identifier": "secureframe",
+    "funding_round": "Series B",
+    "funding_amount_m": 56,
+    "funding_date": "2022-02-01",
+    "sector": "Security"
+  },
+  {
+    "name": "Shield AI",
+    "ats_type": "lever",
+    "ats_identifier": "shieldai",
+    "sector": "Security"
+  },
+  {
+    "name": "ShipBob",
+    "ats_type": "greenhouse",
+    "ats_identifier": "shipbobinc",
+    "sector": "Consumer & Marketplace"
+  },
+  {
+    "name": "Sierra",
+    "website": "https://www.sierra.ai",
+    "ats_type": "ashby",
+    "ats_identifier": "sierra",
+    "funding_round": "Series B",
+    "funding_amount_m": 175,
+    "funding_date": "2024-09-01",
+    "sector": "AI & Machine Learning"
+  },
+  {
+    "name": "Sigma Computing",
+    "ats_type": "greenhouse",
+    "ats_identifier": "sigmacomputing",
+    "sector": "Dev Tools & Infrastructure"
+  },
+  {
+    "name": "Simpplr",
+    "ats_type": "greenhouse",
+    "ats_identifier": "simpplr",
+    "sector": "Enterprise Software"
+  },
+  {
+    "name": "SingleStore",
+    "ats_type": "greenhouse",
+    "ats_identifier": "singlestore",
+    "sector": "Dev Tools & Infrastructure"
+  },
+  {
+    "name": "Sisense",
+    "ats_type": "greenhouse",
+    "ats_identifier": "sisense",
+    "sector": "Dev Tools & Infrastructure"
+  },
+  {
+    "name": "SnapLogic",
+    "ats_type": "lever",
+    "ats_identifier": "snaplogic",
+    "sector": "Dev Tools & Infrastructure"
+  },
+  {
+    "name": "Snorkel AI",
+    "website": "https://snorkel.ai",
+    "ats_type": "greenhouse",
+    "ats_identifier": "snorkelai",
+    "funding_round": "Series C",
+    "funding_amount_m": 135,
+    "funding_date": "2023-10-01",
+    "sector": "AI & Machine Learning"
+  },
+  {
+    "name": "Sonatype",
+    "ats_type": "lever",
+    "ats_identifier": "sonatype",
+    "sector": "Dev Tools & Infrastructure"
+  },
+  {
+    "name": "Speechmatics",
+    "website": "https://www.speechmatics.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "speechmatics",
+    "funding_round": "Series B",
+    "funding_amount_m": 62,
+    "funding_date": "2023-10-01",
+    "sector": "AI & Machine Learning"
+  },
+  {
+    "name": "Spot AI",
+    "website": "https://www.spot.ai",
+    "ats_type": "teamtailor",
+    "ats_identifier": "https://jobs.spot.ai",
+    "funding_round": "Series C",
+    "funding_amount_m": 44,
+    "funding_date": "2024-03-01",
+    "sector": "AI & Machine Learning"
+  },
+  {
+    "name": "Stability AI",
+    "ats_type": "greenhouse",
+    "ats_identifier": "stabilityai",
+    "sector": "AI & Machine Learning"
+  },
+  {
+    "name": "StackBlitz",
+    "website": "https://stackblitz.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "stackblitz",
+    "funding_round": "Series A",
+    "funding_amount_m": 7,
+    "funding_date": "2021-06-01",
+    "sector": "Dev Tools & Infrastructure"
+  },
+  {
+    "name": "Stardog",
+    "ats_type": "lever",
+    "ats_identifier": "stardog",
+    "sector": "Dev Tools & Infrastructure"
+  },
+  {
+    "name": "Startree",
+    "ats_type": "greenhouse",
+    "ats_identifier": "startree",
+    "sector": "Dev Tools & Infrastructure"
+  },
+  {
+    "name": "Storyblok",
+    "website": "https://www.storyblok.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "storyblok",
+    "funding_round": "Series C",
+    "funding_amount_m": 80,
+    "funding_date": "2022-10-07",
+    "sector": "Enterprise Software"
+  },
+  {
+    "name": "Stripe",
+    "ats_type": "greenhouse",
+    "ats_identifier": "stripe",
+    "sector": "Fintech & Payments",
+    "company_type": "bigco"
+  },
+  {
+    "name": "Suno",
+    "website": "https://www.suno.com",
+    "ats_type": "ashby",
+    "ats_identifier": "suno",
+    "funding_round": "Series B",
+    "funding_amount_m": 125,
+    "funding_date": "2024-05-21",
+    "sector": "AI & Machine Learning"
+  },
+  {
+    "name": "Supabase",
+    "website": "https://supabase.com",
+    "ats_type": "ashby",
+    "ats_identifier": "supabase",
+    "funding_round": "Series C",
+    "funding_amount_m": 116,
+    "funding_date": "2024-04-01",
+    "sector": "Dev Tools & Infrastructure"
+  },
+  {
+    "name": "Super",
+    "ats_type": "greenhouse",
+    "ats_identifier": "superai",
+    "sector": "Consumer & Marketplace"
+  },
+  {
+    "name": "Superblocks",
+    "website": "https://www.superblocks.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "superblocks",
+    "funding_round": "Series A",
+    "funding_amount_m": 37,
+    "funding_date": "2022-03-08",
+    "sector": "Dev Tools & Infrastructure"
+  },
+  {
+    "name": "Synthesia",
+    "website": "https://www.synthesia.io",
+    "ats_type": "ashby",
+    "ats_identifier": "synthesia",
+    "funding_round": "Series D",
+    "funding_amount_m": 180,
+    "funding_date": "2024-06-01",
+    "sector": "AI & Machine Learning"
+  },
+  {
+    "name": "Sysdig",
+    "ats_type": "lever",
+    "ats_identifier": "sysdig",
+    "sector": "Security"
+  },
+  {
+    "name": "TabaPay",
+    "ats_type": "greenhouse",
+    "ats_identifier": "tabapay",
+    "sector": "Fintech & Payments"
+  },
+  {
+    "name": "Tailscale",
+    "website": "https://tailscale.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "tailscale",
+    "funding_round": "Series B",
+    "funding_amount_m": 100,
+    "funding_date": "2022-05-01",
+    "sector": "Dev Tools & Infrastructure"
+  },
+  {
+    "name": "Tango",
+    "ats_type": "greenhouse",
+    "ats_identifier": "tangoio",
+    "sector": "Enterprise Software"
+  },
+  {
+    "name": "Tavus",
+    "website": "https://www.tavus.io",
+    "ats_type": "ashby",
+    "ats_identifier": "tavus",
+    "funding_round": "Series A",
+    "funding_amount_m": 18,
+    "funding_date": "2024-03-01",
+    "sector": "AI & Machine Learning"
+  },
+  {
+    "name": "Telesign",
+    "ats_type": "greenhouse",
+    "ats_identifier": "telesign",
+    "sector": "Security"
+  },
+  {
+    "name": "Tenstorrent",
+    "website": "https://tenstorrent.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "tenstorrent",
+    "funding_round": "Series D",
+    "funding_amount_m": 700,
+    "funding_date": "2024-12-01",
+    "sector": "Robotics & Hardware"
+  },
+  {
+    "name": "Terra",
+    "ats_type": "lever",
+    "ats_identifier": "terrahq",
+    "sector": "Climate & Energy"
+  },
+  {
+    "name": "Thoropass",
+    "website": "https://thoropass.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "thoropass",
+    "funding_round": "Series B",
+    "funding_amount_m": 98,
+    "funding_date": "2023-01-01",
+    "sector": "Security"
+  },
+  {
+    "name": "Thrive",
+    "ats_type": "greenhouse",
+    "ats_identifier": "thrive",
+    "sector": "Enterprise Software"
+  },
+  {
+    "name": "Tigera",
+    "ats_type": "greenhouse",
+    "ats_identifier": "tigera",
+    "sector": "Security"
+  },
+  {
+    "name": "TigerGraph",
+    "ats_type": "greenhouse",
+    "ats_identifier": "tigergraph",
+    "sector": "Dev Tools & Infrastructure"
+  },
+  {
+    "name": "Tines",
+    "website": "https://www.tines.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "tines",
+    "funding_round": "Series B",
+    "funding_amount_m": 55,
+    "funding_date": "2023-06-01",
+    "sector": "Security"
+  },
+  {
+    "name": "Together AI",
+    "website": "https://together.ai",
+    "ats_type": "greenhouse",
+    "ats_identifier": "togetherai",
+    "funding_round": "Series A",
+    "funding_amount_m": 102,
+    "funding_date": "2024-02-01",
+    "sector": "AI & Machine Learning"
+  },
+  {
+    "name": "Torq",
+    "ats_type": "greenhouse",
+    "ats_identifier": "torq",
+    "sector": "Security"
+  },
+  {
+    "name": "TraceLink",
+    "ats_type": "greenhouse",
+    "ats_identifier": "tracelinkinc",
+    "sector": "Logistics & Operations"
+  },
+  {
+    "name": "Transcarent",
+    "ats_type": "greenhouse",
+    "ats_identifier": "transcarent",
+    "sector": "Health & Wellness"
+  },
+  {
+    "name": "Truework",
+    "ats_type": "greenhouse",
+    "ats_identifier": "truework",
+    "sector": "Communications & Identity"
+  },
+  {
+    "name": "Trunk",
+    "ats_type": "lever",
+    "ats_identifier": "trunkio",
+    "sector": "Dev Tools & Infrastructure"
+  },
+  {
+    "name": "Twilio",
+    "ats_type": "greenhouse",
+    "ats_identifier": "twilio",
+    "sector": "Communications & Identity",
+    "company_type": "bigco"
+  },
+  {
+    "name": "Twingate",
+    "ats_type": "lever",
+    "ats_identifier": "twingate",
+    "sector": "Security"
+  },
+  {
+    "name": "TypeForm",
+    "ats_type": "greenhouse",
+    "ats_identifier": "typeform",
+    "sector": "Enterprise Software"
+  },
+  {
+    "name": "Ujet",
+    "ats_type": "greenhouse",
+    "ats_identifier": "ujet",
+    "sector": "Communications & Identity"
+  },
+  {
+    "name": "Upbound",
+    "ats_type": "greenhouse",
+    "ats_identifier": "upbound",
+    "sector": "Dev Tools & Infrastructure"
+  },
+  {
+    "name": "Upguard",
+    "ats_type": "lever",
+    "ats_identifier": "upguard",
+    "sector": "Security"
+  },
+  {
+    "name": "Upkeep",
+    "ats_type": "greenhouse",
+    "ats_identifier": "upkeep",
+    "sector": "Enterprise Software"
+  },
+  {
+    "name": "Vanta",
+    "website": "https://www.vanta.com",
+    "ats_type": "ashby",
+    "ats_identifier": "vanta",
+    "funding_round": "Series C",
+    "funding_amount_m": 150,
+    "funding_date": "2023-10-03",
+    "sector": "Security"
+  },
+  {
+    "name": "Vectara",
+    "website": "https://vectara.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "vectara",
+    "funding_round": "Series A",
+    "funding_amount_m": 25,
+    "funding_date": "2023-01-01",
+    "sector": "AI & Machine Learning"
+  },
+  {
+    "name": "Veracode",
+    "website": "https://www.veracode.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "veracode",
+    "funding_round": null,
+    "funding_amount_m": null,
+    "funding_date": null,
+    "sector": "Security"
+  },
+  {
+    "name": "Vercel",
+    "website": "https://www.vercel.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "vercel",
+    "funding_round": "Series D",
+    "funding_amount_m": 150,
+    "funding_date": "2023-05-23",
+    "sector": "Dev Tools & Infrastructure"
+  },
+  {
+    "name": "Verkada",
+    "website": "https://www.verkada.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "verkada",
+    "funding_round": "Series D",
+    "funding_amount_m": 460,
+    "funding_date": "2024-04-01",
+    "sector": "Security"
+  },
+  {
+    "name": "Veza",
+    "website": "https://www.veza.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "veza",
+    "funding_round": "Series C",
+    "funding_amount_m": 110,
+    "funding_date": "2024-02-01",
+    "sector": "Security"
+  },
+  {
+    "name": "Waabi",
+    "website": "https://waabi.ai",
+    "ats_type": "lever",
+    "ats_identifier": "waabi",
+    "funding_round": "Series B",
+    "funding_amount_m": 200,
+    "funding_date": "2024-01-01",
+    "sector": "Robotics & Hardware"
+  },
+  {
+    "name": "Warp",
+    "website": "https://www.warp.dev",
+    "ats_type": "greenhouse",
+    "ats_identifier": "warp",
+    "funding_round": "Series B",
+    "funding_amount_m": 23,
+    "funding_date": "2023-04-01",
+    "sector": "Dev Tools & Infrastructure"
+  },
+  {
+    "name": "Wasabi",
+    "ats_type": "greenhouse",
+    "ats_identifier": "wasabi",
+    "sector": "Dev Tools & Infrastructure"
+  },
+  {
+    "name": "Watershed",
+    "website": "https://watershed.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "watershed",
+    "funding_round": "Series C",
+    "funding_amount_m": 100,
+    "funding_date": "2024-01-01",
+    "sector": "Climate & Energy"
+  },
+  {
+    "name": "Webflow",
+    "website": "https://www.webflow.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "webflow",
+    "funding_round": "Series C",
+    "funding_amount_m": 140,
+    "funding_date": "2022-03-04",
+    "sector": "Enterprise Software"
+  },
+  {
+    "name": "Wheelhouse",
+    "ats_type": "greenhouse",
+    "ats_identifier": "wheelhouse",
+    "sector": "Consumer & Marketplace"
+  },
+  {
+    "name": "WHOOP",
+    "website": "https://www.whoop.com",
+    "ats_type": "lever",
+    "ats_identifier": "whoop",
+    "funding_round": "Series F",
+    "funding_amount_m": 200,
+    "funding_date": "2022-04-01",
+    "sector": "Health & Wellness"
+  },
+  {
+    "name": "Wing",
+    "ats_type": "greenhouse",
+    "ats_identifier": "wing",
+    "sector": "Robotics & Hardware"
+  },
+  {
+    "name": "Wiz",
+    "website": "https://www.wiz.io",
+    "ats_type": "greenhouse",
+    "ats_identifier": "wizinc",
+    "funding_round": "Series E",
+    "funding_amount_m": 1000,
+    "funding_date": "2024-05-01",
+    "sector": "Security"
+  },
+  {
+    "name": "Wonderschool",
+    "ats_type": "greenhouse",
+    "ats_identifier": "wonderschool",
+    "sector": "Consumer & Marketplace"
+  },
+  {
+    "name": "Workato",
+    "website": "https://www.workato.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "workato",
+    "funding_round": "Series E",
+    "funding_amount_m": 200,
+    "funding_date": "2021-09-22",
+    "sector": "Enterprise Software"
+  },
+  {
+    "name": "Workboard",
+    "ats_type": "greenhouse",
+    "ats_identifier": "workboard",
+    "sector": "Enterprise Software"
+  },
+  {
+    "name": "Writer",
+    "website": "https://www.writer.com",
+    "ats_type": "ashby",
+    "ats_identifier": "writer",
+    "funding_round": "Series C",
+    "funding_amount_m": 200,
+    "funding_date": "2024-09-03",
+    "sector": "AI & Machine Learning"
+  },
+  {
+    "name": "YugabyteDB",
+    "website": "https://www.yugabyte.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "yugabyte",
+    "funding_round": "Series C",
+    "funding_amount_m": 188,
+    "funding_date": "2022-10-01",
+    "sector": "Dev Tools & Infrastructure"
+  },
+  {
+    "name": "Zen Educate",
+    "ats_type": "lever",
+    "ats_identifier": "zeneducate",
+    "sector": "HR & Workforce"
+  },
+  {
+    "name": "ZenBusiness",
+    "ats_type": "greenhouse",
+    "ats_identifier": "zenbusiness",
+    "sector": "Enterprise Software"
+  },
+  {
+    "name": "Zilliz",
+    "website": "https://zilliz.com",
+    "ats_type": "lever",
+    "ats_identifier": "zilliz",
+    "funding_round": "Series B",
+    "funding_amount_m": 60,
+    "funding_date": "2022-08-01",
+    "sector": "AI & Machine Learning"
+  },
+  {
+    "name": "Zipline",
+    "website": "https://www.flyzipline.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "flyzipline",
+    "funding_round": "Series D",
+    "funding_amount_m": 250,
+    "funding_date": "2021-07-01",
+    "sector": "Robotics & Hardware"
+  }
+]

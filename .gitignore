@@ -1,0 +1,16 @@
+__pycache__/
+*.pyc
+.DS_Store
+.env
+.env.*
+.venv/
+venv/
+.claude/
+dashboard/.git.backup/
+
+dashboard/node_modules/
+dashboard/.next/
+
+data/*.db-shm
+data/*.db-wal
+data/tracker.db
