@@ -17,6 +17,11 @@ const TOOLTIP_STYLE = {
   itemStyle: { color: "#e5e7eb" },
 };
 
+type PieLabelProps = {
+  name?: string;
+  percent?: number;
+};
+
 function sortSeniority(data: SeniorityRow[]): SeniorityRow[] {
   return [...data].sort(
     (a, b) => SENIORITY_ORDER.indexOf(a.seniority) - SENIORITY_ORDER.indexOf(b.seniority)
@@ -150,7 +155,7 @@ export default function RolesPage() {
                 outerRadius={100}
                 dataKey="count"
                 nameKey="name"
-                label={({ name, percent }: any) => `${name} ${(percent * 100).toFixed(0)}%`}
+                label={({ name, percent }: PieLabelProps) => `${name ?? ""} ${((percent ?? 0) * 100).toFixed(0)}%`}
                 labelLine={false}
               >
                 {wmStartup.map((_, i) => <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />)}
@@ -174,7 +179,7 @@ export default function RolesPage() {
                 outerRadius={100}
                 dataKey="count"
                 nameKey="name"
-                label={({ name, percent }: any) => `${name} ${(percent * 100).toFixed(0)}%`}
+                label={({ name, percent }: PieLabelProps) => `${name ?? ""} ${((percent ?? 0) * 100).toFixed(0)}%`}
                 labelLine={false}
               >
                 {wmBigco.map((_, i) => <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />)}

@@ -38,23 +38,36 @@ export default function CompanyDetailPage() {
 
   useEffect(() => {
     if (!id) return;
-    setLoading(true);
-    Promise.all([
-      api.companyDetail(id),
-      api.jobs({ company_id: id }),
-      api.companyVelocity(7),
-    ]).then(([det, jobList, vel]) => {
-      setDetail(det);
-      setJobs(jobList);
-      // find this company's velocity
-      const v = vel.find((r) => r.company_id === id);
-      setVelocity(v ? v.net : 0);
-      // fetch events after we have the company name
-      return api.changeEvents({ company_name: det.name, limit: 20 });
-    }).then((evts) => {
-      setEvents(evts);
-      setLoading(false);
-    }).catch(() => setLoading(false));
+    let cancelled = false;
+    void Promise.resolve()
+      .then(() => {
+        if (!cancelled) setLoading(true);
+        return Promise.all([
+          api.companyDetail(id),
+          api.jobs({ company_id: id }),
+          api.companyVelocity(7),
+        ]);
+      })
+      .then(([det, jobList, vel]) => {
+        if (cancelled) return null;
+        setDetail(det);
+        setJobs(jobList);
+        const v = vel.find((r) => r.company_id === id);
+        setVelocity(v ? v.net : 0);
+        return api.changeEvents({ company_name: det.name, limit: 20 });
+      })
+      .then((evts) => {
+        if (!cancelled && evts) {
+          setEvents(evts);
+          setLoading(false);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, [id]);
 
   const filteredJobs = jobSearch

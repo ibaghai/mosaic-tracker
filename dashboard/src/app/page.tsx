@@ -174,7 +174,11 @@ export default function PulsePage() {
                 tick={{ fill: "#9ca3af", fontSize: 12 }}
                 tickFormatter={formatRoleFamily}
               />
-              <Tooltip {...TOOLTIP_STYLE} formatter={(value) => [value, "Jobs"]} labelFormatter={formatRoleFamily} />
+              <Tooltip
+                {...TOOLTIP_STYLE}
+                formatter={(value) => [value, "Jobs"]}
+                labelFormatter={(label) => formatRoleFamily(String(label))}
+              />
               <Bar dataKey="count" fill="#22c55e" radius={[0, 4, 4, 0]} />
             </BarChart>
           </ResponsiveContainer>
