@@ -6,15 +6,25 @@ Run with: uvicorn api.app:app --reload --port 8000
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Optional
+import os
 
 from db.models import init_db
 from db import queries
 
 app = FastAPI(title="Mosaic — Startup Hiring Tracker API", version="2.0")
 
+cors_origins = {
+    "http://localhost:3000",
+    "http://localhost:3001",
+}
+
+frontend_url = os.getenv("FRONTEND_URL")
+if frontend_url:
+    cors_origins.add(frontend_url.rstrip("/"))
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://localhost:3001"],
+    allow_origins=sorted(cors_origins),
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
