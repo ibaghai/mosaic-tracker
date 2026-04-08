@@ -2594,5 +2594,303 @@
     "funding_amount_m": 250,
     "funding_date": "2021-07-01",
     "sector": "Robotics & Hardware"
+  },
+  {
+    "name": "Amplitude",
+    "ats_type": "greenhouse",
+    "ats_identifier": "amplitude",
+    "sector": "Data & Analytics"
+  },
+  {
+    "name": "Axonius",
+    "ats_type": "greenhouse",
+    "ats_identifier": "axonius",
+    "sector": "Security"
+  },
+  {
+    "name": "CaptivateIQ",
+    "ats_type": "lever",
+    "ats_identifier": "captivateiq",
+    "sector": "Enterprise Software"
+  },
+  {
+    "name": "Celonis",
+    "ats_type": "greenhouse",
+    "ats_identifier": "celonis",
+    "sector": "Data & Analytics"
+  },
+  {
+    "name": "Collibra",
+    "ats_type": "greenhouse",
+    "ats_identifier": "collibra",
+    "sector": "Data & Analytics"
+  },
+  {
+    "name": "Cribl",
+    "ats_type": "greenhouse",
+    "ats_identifier": "cribl",
+    "sector": "Dev Tools & Infrastructure"
+  },
+  {
+    "name": "Flexport",
+    "ats_type": "greenhouse",
+    "ats_identifier": "flexport",
+    "sector": "Logistics & Operations"
+  },
+  {
+    "name": "Klaviyo",
+    "ats_type": "greenhouse",
+    "ats_identifier": "klaviyo",
+    "sector": "Enterprise Software"
+  },
+  {
+    "name": "Lyra Health",
+    "ats_type": "lever",
+    "ats_identifier": "lyrahealth",
+    "sector": "Health & Wellness"
+  },
+  {
+    "name": "Motional",
+    "ats_type": "greenhouse",
+    "ats_identifier": "motional",
+    "sector": "Robotics & Hardware"
+  },
+  {
+    "name": "OneTrust",
+    "ats_type": "greenhouse",
+    "ats_identifier": "onetrust",
+    "sector": "Security"
+  },
+  {
+    "name": "Palantir",
+    "ats_type": "lever",
+    "ats_identifier": "palantir",
+    "sector": "AI & Machine Learning"
+  },
+  {
+    "name": "Relativity",
+    "ats_type": "greenhouse",
+    "ats_identifier": "relativity",
+    "sector": "Security"
+  },
+  {
+    "name": "Ripple",
+    "ats_type": "greenhouse",
+    "ats_identifier": "ripple",
+    "sector": "Fintech & Payments"
+  },
+  {
+    "name": "SeatGeek",
+    "ats_type": "greenhouse",
+    "ats_identifier": "seatgeek",
+    "sector": "Consumer & Marketplace"
+  },
+  {
+    "name": "Sila",
+    "ats_type": "lever",
+    "ats_identifier": "sila",
+    "sector": "Fintech & Payments"
+  },
+  {
+    "name": "Speechify",
+    "ats_type": "greenhouse",
+    "ats_identifier": "speechify",
+    "sector": "AI & Machine Learning"
+  },
+  {
+    "name": "TripActions",
+    "ats_type": "greenhouse",
+    "ats_identifier": "tripactions",
+    "sector": "Consumer & Marketplace"
+  },
+  {
+    "name": "Via",
+    "ats_type": "greenhouse",
+    "ats_identifier": "via",
+    "sector": "Logistics & Operations"
+  },
+  {
+    "name": "xAI",
+    "ats_type": "greenhouse",
+    "ats_identifier": "xai",
+    "sector": "AI & Machine Learning"
+  },
+  {
+    "name": "Box",
+    "ats_type": "greenhouse",
+    "ats_identifier": "boxinc",
+    "sector": "Enterprise Software",
+    "company_type": "bigco"
+  },
+  {
+    "name": "Coinbase",
+    "ats_type": "greenhouse",
+    "ats_identifier": "coinbase",
+    "sector": "Fintech & Payments",
+    "company_type": "bigco"
+  },
+  {
+    "name": "Dropbox",
+    "ats_type": "greenhouse",
+    "ats_identifier": "dropbox",
+    "sector": "Enterprise Software",
+    "company_type": "bigco"
+  },
+  {
+    "name": "Duolingo",
+    "ats_type": "greenhouse",
+    "ats_identifier": "duolingo",
+    "sector": "Consumer & Marketplace",
+    "company_type": "bigco"
+  },
+  {
+    "name": "HelloFresh",
+    "ats_type": "greenhouse",
+    "ats_identifier": "hellofresh",
+    "sector": "Consumer & Marketplace",
+    "company_type": "bigco"
+  },
+  {
+    "name": "Instacart",
+    "ats_type": "greenhouse",
+    "ats_identifier": "instacart",
+    "sector": "Consumer & Marketplace",
+    "company_type": "bigco"
+  },
+  {
+    "name": "Reddit",
+    "ats_type": "greenhouse",
+    "ats_identifier": "reddit",
+    "sector": "Consumer & Marketplace",
+    "company_type": "bigco"
+  },
+  {
+    "name": "Samsara",
+    "ats_type": "greenhouse",
+    "ats_identifier": "samsara",
+    "sector": "Dev Tools & Infrastructure",
+    "company_type": "bigco"
+  },
+  {
+    "name": "SpaceX",
+    "ats_type": "greenhouse",
+    "ats_identifier": "spacex",
+    "sector": "Robotics & Hardware",
+    "company_type": "bigco"
+  },
+  {
+    "name": "Toast",
+    "ats_type": "greenhouse",
+    "ats_identifier": "toast",
+    "sector": "Fintech & Payments",
+    "company_type": "bigco"
+  },
+  {
+    "name": "Backblaze",
+    "ats_type": "greenhouse",
+    "ats_identifier": "backblaze",
+    "sector": "Cloud & Infrastructure"
+  },
+  {
+    "name": "Bitpanda",
+    "ats_type": "greenhouse",
+    "ats_identifier": "bitpanda",
+    "sector": "Fintech & Payments"
+  },
+  {
+    "name": "Bitso",
+    "ats_type": "greenhouse",
+    "ats_identifier": "bitso",
+    "sector": "Fintech & Payments"
+  },
+  {
+    "name": "Braze",
+    "ats_type": "greenhouse",
+    "ats_identifier": "braze",
+    "sector": "Enterprise Software"
+  },
+  {
+    "name": "Gong",
+    "ats_type": "greenhouse",
+    "ats_identifier": "gongio",
+    "sector": "Enterprise Software"
+  },
+  {
+    "name": "Graphcore",
+    "ats_type": "greenhouse",
+    "ats_identifier": "graphcore",
+    "sector": "AI & Machine Learning"
+  },
+  {
+    "name": "Liftoff",
+    "ats_type": "greenhouse",
+    "ats_identifier": "liftoff",
+    "sector": "Consumer & Marketplace"
+  },
+  {
+    "name": "LivePerson",
+    "ats_type": "greenhouse",
+    "ats_identifier": "liveperson",
+    "sector": "Enterprise Software"
+  },
+  {
+    "name": "Maven Clinic",
+    "ats_type": "greenhouse",
+    "ats_identifier": "mavenclinic",
+    "sector": "Health & Wellness"
+  },
+  {
+    "name": "Mirakl",
+    "ats_type": "greenhouse",
+    "ats_identifier": "mirakl",
+    "sector": "Enterprise Software"
+  },
+  {
+    "name": "SmartBear",
+    "ats_type": "greenhouse",
+    "ats_identifier": "smartbear",
+    "sector": "Dev Tools & Infrastructure"
+  },
+  {
+    "name": "Sumo Logic",
+    "ats_type": "greenhouse",
+    "ats_identifier": "sumologic",
+    "sector": "Dev Tools & Infrastructure"
+  },
+  {
+    "name": "SurveyMonkey",
+    "ats_type": "greenhouse",
+    "ats_identifier": "surveymonkey",
+    "sector": "Enterprise Software"
+  },
+  {
+    "name": "Toptal",
+    "ats_type": "lever",
+    "ats_identifier": "toptal",
+    "sector": "HR & Workforce"
+  },
+  {
+    "name": "Valimail",
+    "ats_type": "greenhouse",
+    "ats_identifier": "valimail",
+    "sector": "Security"
+  },
+  {
+    "name": "WalkMe",
+    "ats_type": "lever",
+    "ats_identifier": "walkme",
+    "sector": "Enterprise Software"
+  },
+  {
+    "name": "Yotpo",
+    "ats_type": "greenhouse",
+    "ats_identifier": "yotpo",
+    "sector": "Enterprise Software"
+  },
+  {
+    "name": "Zscaler",
+    "ats_type": "greenhouse",
+    "ats_identifier": "zscaler",
+    "sector": "Security"
   }
 ]

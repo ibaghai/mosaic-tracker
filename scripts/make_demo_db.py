@@ -10,6 +10,7 @@ TARGET = ROOT / "data" / "tracker-demo.db"
 
 
 def main() -> None:
+    TARGET.unlink(missing_ok=True)
     source_conn = sqlite3.connect(SOURCE)
     target_conn = sqlite3.connect(TARGET)
     source_conn.backup(target_conn)
