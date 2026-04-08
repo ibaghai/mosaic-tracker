@@ -99,6 +99,7 @@ async def run():
             "funding_amount_m": c.get("funding_amount_m"),
             "funding_date": c.get("funding_date"),
             "sector": c.get("sector"),
+            "company_type": c.get("company_type", "startup"),
         })
         company_ids[c["name"]] = cid
 

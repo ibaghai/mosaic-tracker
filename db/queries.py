@@ -15,10 +15,10 @@ def upsert_company(company: dict) -> int:  # noqa: E501
         conn.execute("""
             INSERT INTO companies
                 (name, website, ats_type, ats_identifier,
-                 funding_round, funding_amount_m, funding_date, sector)
+                 funding_round, funding_amount_m, funding_date, sector, company_type)
             VALUES
                 (:name, :website, :ats_type, :ats_identifier,
-                 :funding_round, :funding_amount_m, :funding_date, :sector)
+                 :funding_round, :funding_amount_m, :funding_date, :sector, :company_type)
             ON CONFLICT(name) DO UPDATE SET
                 website          = excluded.website,
                 ats_type         = excluded.ats_type,
@@ -26,7 +26,8 @@ def upsert_company(company: dict) -> int:  # noqa: E501
                 funding_round    = excluded.funding_round,
                 funding_amount_m = excluded.funding_amount_m,
                 funding_date     = excluded.funding_date,
-                sector           = excluded.sector
+                sector           = excluded.sector,
+                company_type     = excluded.company_type
         """, company)
         row = conn.execute(
             "SELECT id FROM companies WHERE name = ?", (company["name"],)
