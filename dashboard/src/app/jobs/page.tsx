@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { api, JobRow, SkillRow, DepartmentRow, JobFilters, FreshnessRow } from "@/lib/api";
 import { formatRoleFamily, formatSeniority, formatWorkModel, SENIORITY_LABELS } from "@/lib/format";
 import { downloadCSV } from "@/lib/export";
@@ -123,7 +124,7 @@ export default function JobFeedPage() {
             placeholder="Search by job title..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="bg-background border border-card-border rounded-lg px-3 py-2 text-sm text-foreground w-64"
+            className="bg-background border border-card-border rounded-lg px-3 py-2 text-sm text-foreground w-full sm:w-64"
           />
           <select
             value={sector}
@@ -207,8 +208,8 @@ export default function JobFeedPage() {
       </div>
 
       <div className="bg-card border border-card-border rounded-xl overflow-hidden">
-        <div className="max-h-[60vh] overflow-y-auto">
-          <table className="w-full text-sm">
+        <div className="max-h-[60vh] overflow-y-auto overflow-x-auto">
+          <table className="w-full text-sm min-w-[800px]">
             <thead className="sticky top-0 bg-card z-10">
               <tr className="text-muted text-left border-b border-card-border">
                 <th className="px-4 py-3 font-medium">Job Title</th>
@@ -230,7 +231,11 @@ export default function JobFeedPage() {
               ) : jobs.slice(0, 500).map((j) => (
                 <tr key={j.id} className="border-b border-card-border/50 hover:bg-white/5">
                   <td className="px-4 py-2.5 font-medium max-w-xs truncate">{j.title}</td>
-                  <td className="px-4 py-2.5 text-muted">{j.company_name}</td>
+                  <td className="px-4 py-2.5 text-muted">
+                    <Link href={`/companies/${j.company_id}`} className="hover:text-accent-light">
+                      {j.company_name}
+                    </Link>
+                  </td>
                   <td className="px-4 py-2.5 text-muted text-xs">{j.normalized_department || j.department || "—"}</td>
                   <td className="px-4 py-2.5 text-muted text-xs">{formatRoleFamily(j.role_family)}</td>
                   <td className="px-4 py-2.5 text-muted text-xs">{formatSeniority(j.seniority)}</td>

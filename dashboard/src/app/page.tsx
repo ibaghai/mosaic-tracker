@@ -78,7 +78,7 @@ export default function PulsePage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <KpiCard label={scope === "startup" ? "Startups Tracked" : "Companies Tracked"} value={overview.total_companies} />
         <KpiCard
           label="Active Jobs"
@@ -89,7 +89,7 @@ export default function PulsePage() {
         <KpiCard label="Closed This Week" value={overview.net_removed} />
       </div>
 
-      <div className="grid grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="bg-card border border-card-border rounded-xl p-5">
           <h3 className="text-sm font-semibold text-muted mb-4">Active Jobs by Sector</h3>
           <ResponsiveContainer width="100%" height={360}>
@@ -161,7 +161,7 @@ export default function PulsePage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="bg-card border border-card-border rounded-xl p-5">
           <h3 className="text-sm font-semibold text-muted mb-4">Active Jobs by Role Family</h3>
           <ResponsiveContainer width="100%" height={320}>

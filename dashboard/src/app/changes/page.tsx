@@ -91,7 +91,7 @@ export default function ChangesPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Biggest Changes */}
         <div className="bg-card border border-card-border rounded-xl p-5">
           <div className="flex items-center justify-between mb-4">
@@ -172,8 +172,8 @@ export default function ChangesPage() {
             <option value="removed">Closed</option>
           </select>
         </div>
-        <div className="max-h-96 overflow-y-auto">
-          <table className="w-full text-sm">
+        <div className="max-h-96 overflow-y-auto overflow-x-auto">
+          <table className="w-full text-sm min-w-[640px]">
             <thead className="sticky top-0 bg-card">
               <tr className="text-muted text-left border-b border-card-border">
                 <th className="pb-2 font-medium">Status</th>

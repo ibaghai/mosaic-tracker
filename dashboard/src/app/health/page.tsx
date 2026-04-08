@@ -133,7 +133,7 @@ export default function HealthPage() {
           placeholder="Search companies..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="bg-card border border-card-border rounded-lg px-3 py-2 text-sm text-foreground w-64"
+          className="bg-card border border-card-border rounded-lg px-3 py-2 text-sm text-foreground w-full sm:w-64"
         />
         {(search || statusFilter || atsFilter) && (
           <button
@@ -148,8 +148,8 @@ export default function HealthPage() {
 
       {/* Table */}
       <div className="bg-card border border-card-border rounded-xl overflow-hidden">
-        <div className="max-h-[65vh] overflow-y-auto">
-          <table className="w-full text-sm">
+        <div className="max-h-[65vh] overflow-y-auto overflow-x-auto">
+          <table className="w-full text-sm min-w-[640px]">
             <thead className="sticky top-0 bg-card z-10">
               <tr className="text-muted text-left border-b border-card-border">
                 <th className="px-4 py-3 font-medium">Company</th>

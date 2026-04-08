@@ -101,7 +101,7 @@ export default function CoveragePage() {
           placeholder="Search companies..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="bg-card border border-card-border rounded-lg px-3 py-2 text-sm text-foreground w-64"
+          className="bg-card border border-card-border rounded-lg px-3 py-2 text-sm text-foreground w-full sm:w-64"
         />
         <select
           value={sectorFilter}

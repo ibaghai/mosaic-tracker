@@ -290,8 +290,8 @@ export default function CompanyDetailPage() {
             className="bg-background border border-card-border rounded-lg px-3 py-1.5 text-xs text-foreground w-48"
           />
         </div>
-        <div className="max-h-[50vh] overflow-y-auto">
-          <table className="w-full text-sm">
+        <div className="max-h-[50vh] overflow-y-auto overflow-x-auto">
+          <table className="w-full text-sm min-w-[640px]">
             <thead className="sticky top-0 bg-card z-10">
               <tr className="text-muted text-left border-b border-card-border">
                 <th className="px-4 py-3 font-medium">Title</th>

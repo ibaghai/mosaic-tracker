@@ -4,7 +4,7 @@ import { useEffect, useState, useMemo } from "react";
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell,
 } from "recharts";
-import { api, SeniorityRow, WorkModelRow, CrossTabRow } from "@/lib/api";
+import { api, SeniorityRow, WorkModelRow, CrossTabRow, DepartmentRow } from "@/lib/api";
 import { formatSeniority, formatWorkModel, SENIORITY_LABELS } from "@/lib/format";
 
 const PIE_COLORS = ["#6366f1", "#22c55e", "#f59e0b", "#ef4444", "#8b5cf6", "#06b6d4"];
@@ -54,6 +54,8 @@ export default function RolesPage() {
   const [wmStartup, setWmStartup] = useState<Array<{ name: string; count: number }>>([]);
   const [wmBigco, setWmBigco] = useState<Array<{ name: string; count: number }>>([]);
   const [seniorityCross, setSeniorityCross] = useState<CrossTabRow[]>([]);
+  const [deptStartup, setDeptStartup] = useState<DepartmentRow[]>([]);
+  const [deptBigco, setDeptBigco] = useState<DepartmentRow[]>([]);
 
   useEffect(() => {
     api.seniority("startup").then((d) => setSenStartup(sortSeniority(d)));
@@ -61,6 +63,8 @@ export default function RolesPage() {
     api.workModels("startup").then((d) => setWmStartup(mapWorkModelLabels(d)));
     api.workModels("bigco").then((d) => setWmBigco(mapWorkModelLabels(d)));
     api.senioritySectorCross().then(setSeniorityCross);
+    api.departments("startup").then(setDeptStartup);
+    api.departments("bigco").then(setDeptBigco);
   }, []);
 
   // Pivot: [{sector, senior: 400, mid: 200, ...}]
@@ -95,7 +99,7 @@ export default function RolesPage() {
       </div>
 
       {/* Seniority */}
-      <div className="grid grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="bg-card border border-card-border rounded-xl p-5">
           <div className="flex items-center gap-2 mb-4">
             <h3 className="text-sm font-semibold text-muted">Seniority Levels</h3>
@@ -140,7 +144,7 @@ export default function RolesPage() {
       </div>
 
       {/* Work Model */}
-      <div className="grid grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="bg-card border border-card-border rounded-xl p-5">
           <div className="flex items-center gap-2 mb-4">
             <h3 className="text-sm font-semibold text-muted">Work Model</h3>
@@ -189,6 +193,51 @@ export default function RolesPage() {
           </ResponsiveContainer>
         </div>
       </div>
+
+      {/* Department Breakdown */}
+      {(deptStartup.length > 0 || deptBigco.length > 0) && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="bg-card border border-card-border rounded-xl p-5">
+            <div className="flex items-center gap-2 mb-4">
+              <h3 className="text-sm font-semibold text-muted">Department Breakdown</h3>
+              <span className="text-xs px-2 py-0.5 rounded bg-accent/10 text-accent-light border border-accent/20">Startups</span>
+            </div>
+            <ResponsiveContainer width="100%" height={320}>
+              <BarChart data={deptStartup} layout="vertical" margin={{ left: 10 }}>
+                <XAxis type="number" tick={{ fill: "#9ca3af", fontSize: 12 }} />
+                <YAxis
+                  type="category"
+                  dataKey="category"
+                  width={140}
+                  tick={{ fill: "#9ca3af", fontSize: 12 }}
+                />
+                <Tooltip {...TOOLTIP_STYLE} formatter={(val) => [val, "Jobs"]} />
+                <Bar dataKey="job_count" fill="#22c55e" radius={[0, 4, 4, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+
+          <div className="bg-card border border-card-border rounded-xl p-5">
+            <div className="flex items-center gap-2 mb-4">
+              <h3 className="text-sm font-semibold text-muted">Department Breakdown</h3>
+              <span className="text-xs px-2 py-0.5 rounded bg-purple-500/10 text-purple-400 border border-purple-500/20">Big Tech</span>
+            </div>
+            <ResponsiveContainer width="100%" height={320}>
+              <BarChart data={deptBigco} layout="vertical" margin={{ left: 10 }}>
+                <XAxis type="number" tick={{ fill: "#9ca3af", fontSize: 12 }} />
+                <YAxis
+                  type="category"
+                  dataKey="category"
+                  width={140}
+                  tick={{ fill: "#9ca3af", fontSize: 12 }}
+                />
+                <Tooltip {...TOOLTIP_STYLE} formatter={(val) => [val, "Jobs"]} />
+                <Bar dataKey="job_count" fill="#8b5cf6" radius={[0, 4, 4, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      )}
 
       {/* Seniority × Sector Cross-Tab */}
       {seniorityCrossData.data.length > 0 && (

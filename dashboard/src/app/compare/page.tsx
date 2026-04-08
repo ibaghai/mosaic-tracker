@@ -71,9 +71,9 @@ function CompareInner() {
       </div>
 
       {/* Header cards */}
-      <div className={`grid gap-4 grid-cols-${companies.length}`}>
+      <div className="flex gap-4 overflow-x-auto pb-1">
         {companies.map((c, i) => (
-          <div key={c.id} className="bg-card border border-card-border rounded-xl p-5" style={{ borderTopColor: COMPANY_ACCENT[i], borderTopWidth: 3 }}>
+          <div key={c.id} className="bg-card border border-card-border rounded-xl p-5 flex-none min-w-64 flex-1" style={{ borderTopColor: COMPANY_ACCENT[i], borderTopWidth: 3 }}>
             <Link href={`/companies/${c.id}`} className="font-bold text-lg hover:text-accent-light block truncate">{c.name}</Link>
             <p className="text-muted text-xs mt-0.5">{c.sector}</p>
             {c.funding_round && (
@@ -98,9 +98,9 @@ function CompareInner() {
       {/* Department breakdown */}
       <div>
         <h3 className="text-sm font-semibold text-muted mb-4">Department Breakdown</h3>
-        <div className={`grid gap-4 grid-cols-${companies.length}`}>
+        <div className="flex gap-4 overflow-x-auto pb-1">
           {companies.map((c, ci) => (
-            <div key={c.id} className="bg-card border border-card-border rounded-xl p-4">
+            <div key={c.id} className="bg-card border border-card-border rounded-xl p-4 flex-none min-w-64 flex-1">
               <p className="text-xs font-medium mb-3" style={{ color: COMPANY_ACCENT[ci] }}>{c.name}</p>
               {c.departments.length === 0 ? (
                 <p className="text-muted text-xs">No data</p>
@@ -123,38 +123,28 @@ function CompareInner() {
       {/* Seniority distribution */}
       <div>
         <h3 className="text-sm font-semibold text-muted mb-4">Seniority Distribution</h3>
-        <div className={`grid gap-4 grid-cols-${companies.length}`}>
-          {companies.map((c, ci) => {
-            // Build seniority from active jobs via company detail — we need to fetch jobs separately
-            // Use top_skills as proxy; for seniority we build from departments data shape
-            // Actually CompanyDetail doesn't include seniority directly; we render a placeholder bar
-            // with the company's department data as a proxy shape
-            const senData = SENIORITY_ORDER
-              .filter((s) => c.departments.some(() => false)) // placeholder
-              .map((s) => ({ seniority: s, count: 0 }));
-            void senData; // We'll show a note instead
-            return (
-              <div key={c.id} className="bg-card border border-card-border rounded-xl p-4">
-                <p className="text-xs font-medium mb-3" style={{ color: COMPANY_ACCENT[ci] }}>{c.name}</p>
-                <p className="text-xs text-muted">
-                  Visit the{" "}
-                  <Link href={`/companies/${c.id}`} className="text-accent-light hover:underline">
-                    company page
-                  </Link>{" "}
-                  for full seniority breakdown.
-                </p>
-              </div>
-            );
-          })}
+        <div className="flex gap-4 overflow-x-auto pb-1">
+          {companies.map((c, ci) => (
+            <div key={c.id} className="bg-card border border-card-border rounded-xl p-4 flex-none min-w-64 flex-1">
+              <p className="text-xs font-medium mb-3" style={{ color: COMPANY_ACCENT[ci] }}>{c.name}</p>
+              <p className="text-xs text-muted">
+                Visit the{" "}
+                <Link href={`/companies/${c.id}`} className="text-accent-light hover:underline">
+                  company page
+                </Link>{" "}
+                for full seniority breakdown.
+              </p>
+            </div>
+          ))}
         </div>
       </div>
 
       {/* Top Skills */}
       <div>
         <h3 className="text-sm font-semibold text-muted mb-4">Top Skills</h3>
-        <div className={`grid gap-4 grid-cols-${companies.length}`}>
+        <div className="flex gap-4 overflow-x-auto pb-1">
           {companies.map((c, ci) => (
-            <div key={c.id} className="bg-card border border-card-border rounded-xl p-4">
+            <div key={c.id} className="bg-card border border-card-border rounded-xl p-4 flex-none min-w-64 flex-1">
               <p className="text-xs font-medium mb-3" style={{ color: COMPANY_ACCENT[ci] }}>{c.name}</p>
               {c.top_skills.length === 0 ? (
                 <p className="text-muted text-xs">No skill data</p>

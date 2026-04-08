@@ -13,6 +13,8 @@ import {
   Briefcase,
   Wrench,
   Globe2,
+  Menu,
+  X,
 } from "lucide-react";
 import { api } from "@/lib/api";
 
@@ -30,19 +32,19 @@ const NAV = [
 export default function Sidebar() {
   const pathname = usePathname();
   const [companyCount, setCompanyCount] = useState<number | null>(null);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
     api.overview().then((d) => setCompanyCount(d.total_companies));
   }, []);
 
-  return (
-    <aside className="w-56 shrink-0 border-r border-card-border bg-card flex flex-col">
-      <div className="px-5 py-5">
-        <h1 className="text-lg font-bold tracking-tight text-accent-light">
-          Mosaic
-        </h1>
-        <p className="text-xs text-muted mt-0.5">Startup Hiring Tracker</p>
-      </div>
+  // Close drawer on route change
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [pathname]);
+
+  const navLinks = (
+    <>
       <nav className="flex-1 px-3 space-y-0.5">
         {NAV.map(({ href, label, icon: Icon }) => {
           const active = pathname === href;
@@ -78,6 +80,52 @@ export default function Sidebar() {
       <div className="px-5 py-4 text-xs text-muted border-t border-card-border">
         {companyCount !== null ? `${companyCount} startups tracked` : "Loading..."}
       </div>
-    </aside>
+    </>
+  );
+
+  return (
+    <>
+      {/* Mobile hamburger button — visible only on small screens */}
+      <button
+        onClick={() => setMobileOpen(true)}
+        className="md:hidden fixed top-4 left-4 z-40 p-2 bg-card border border-card-border rounded-lg text-muted hover:text-foreground"
+        aria-label="Open navigation"
+      >
+        <Menu size={18} />
+      </button>
+
+      {/* Mobile backdrop */}
+      {mobileOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-30 md:hidden"
+          onClick={() => setMobileOpen(false)}
+        />
+      )}
+
+      {/* Sidebar — hidden on mobile unless open, always visible on md+ */}
+      <aside
+        className={`${
+          mobileOpen ? "flex" : "hidden"
+        } md:flex fixed md:relative inset-y-0 left-0 z-40 w-56 shrink-0 border-r border-card-border bg-card flex-col`}
+      >
+        <div className="px-5 py-5 flex items-center justify-between">
+          <div>
+            <h1 className="text-lg font-bold tracking-tight text-accent-light">
+              Mosaic
+            </h1>
+            <p className="text-xs text-muted mt-0.5">Startup Hiring Tracker</p>
+          </div>
+          {/* Close button — mobile only */}
+          <button
+            onClick={() => setMobileOpen(false)}
+            className="md:hidden text-muted hover:text-foreground p-1"
+            aria-label="Close navigation"
+          >
+            <X size={16} />
+          </button>
+        </div>
+        {navLinks}
+      </aside>
+    </>
   );
 }

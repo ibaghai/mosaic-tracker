@@ -120,7 +120,7 @@ export default function CompaniesPage() {
           placeholder="Search companies..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="bg-card border border-card-border rounded-lg px-3 py-2 text-sm text-foreground w-56"
+          className="bg-card border border-card-border rounded-lg px-3 py-2 text-sm text-foreground w-full sm:w-56"
         />
         <select
           value={sectorFilter}
@@ -176,8 +176,8 @@ export default function CompaniesPage() {
       )}
 
       <div className="bg-card border border-card-border rounded-xl overflow-hidden">
-        <div className="max-h-[70vh] overflow-y-auto">
-          <table className="w-full text-sm">
+        <div className="max-h-[70vh] overflow-y-auto overflow-x-auto">
+          <table className="w-full text-sm min-w-[700px]">
             <thead className="sticky top-0 bg-card z-10">
               <tr className="text-muted text-left border-b border-card-border">
                 <th className="px-3 py-3 w-8" title="Select up to 3 to compare" />
