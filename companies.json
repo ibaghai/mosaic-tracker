@@ -30,6 +30,14 @@
     "funding_date": "2023-03-01"
   },
   {
+    "name": "Affirm",
+    "website": "https://affirm.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "affirm",
+    "sector": "Fintech & Payments",
+    "company_type": "bigco"
+  },
+  {
     "name": "Agility Robotics",
     "website": "https://agilityrobotics.com",
     "ats_type": "greenhouse",
@@ -101,7 +109,8 @@
     "name": "Amplitude",
     "ats_type": "greenhouse",
     "ats_identifier": "amplitude",
-    "sector": "Data & Analytics"
+    "sector": "Data & Analytics",
+    "company_type": "bigco"
   },
   {
     "name": "Anthropic",
@@ -236,6 +245,14 @@
     "sector": "Cloud & Infrastructure"
   },
   {
+    "name": "Bandwidth",
+    "website": "https://bandwidth.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "bandwidth",
+    "sector": "Communications & Identity",
+    "company_type": "bigco"
+  },
+  {
     "name": "Beam",
     "ats_type": "greenhouse",
     "ats_identifier": "beam",
@@ -281,7 +298,8 @@
     "name": "Braze",
     "ats_type": "greenhouse",
     "ats_identifier": "braze",
-    "sector": "Enterprise Software"
+    "sector": "Enterprise Software",
+    "company_type": "bigco"
   },
   {
     "name": "Brex",
@@ -535,6 +553,14 @@
     "sector": "Data & Analytics"
   },
   {
+    "name": "Confluent",
+    "website": "https://confluent.io",
+    "ats_type": "greenhouse",
+    "ats_identifier": "confluent",
+    "sector": "Dev Tools & Infrastructure",
+    "company_type": "bigco"
+  },
+  {
     "name": "Contentful",
     "website": "https://www.contentful.com",
     "ats_type": "greenhouse",
@@ -597,6 +623,14 @@
     "sector": "Dev Tools & Infrastructure"
   },
   {
+    "name": "Coursera",
+    "website": "https://coursera.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "coursera",
+    "sector": "Consumer & Marketplace",
+    "company_type": "bigco"
+  },
+  {
     "name": "Cribl",
     "ats_type": "greenhouse",
     "ats_identifier": "cribl",
@@ -607,6 +641,14 @@
     "ats_type": "greenhouse",
     "ats_identifier": "crossbeam",
     "sector": "Enterprise Software"
+  },
+  {
+    "name": "CrowdStrike",
+    "website": "https://crowdstrike.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "crowdstrike",
+    "sector": "Security",
+    "company_type": "bigco"
   },
   {
     "name": "Culture Amp",
@@ -888,6 +930,14 @@
     "sector": "Dev Tools & Infrastructure"
   },
   {
+    "name": "Etsy",
+    "website": "https://etsy.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "etsy",
+    "sector": "Consumer & Marketplace",
+    "company_type": "bigco"
+  },
+  {
     "name": "Exa",
     "website": "https://exa.ai",
     "ats_type": "ashby",
@@ -992,6 +1042,14 @@
     "funding_amount_m": 52,
     "funding_date": "2024-05-01",
     "sector": "AI & Machine Learning"
+  },
+  {
+    "name": "Five9",
+    "website": "https://five9.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "five9",
+    "sector": "Enterprise Software",
+    "company_type": "bigco"
   },
   {
     "name": "Fivetran",
@@ -1679,6 +1737,14 @@
     "sector": "Enterprise Software"
   },
   {
+    "name": "Marqeta",
+    "website": "https://marqeta.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "marqeta",
+    "sector": "Fintech & Payments",
+    "company_type": "bigco"
+  },
+  {
     "name": "MasterControl",
     "ats_type": "greenhouse",
     "ats_identifier": "mastercontrol",
@@ -1789,6 +1855,14 @@
     "sector": "Enterprise Software"
   },
   {
+    "name": "Miro",
+    "website": "https://miro.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "miro",
+    "sector": "Enterprise Software",
+    "company_type": "bigco"
+  },
+  {
     "name": "Mistral AI",
     "website": "https://mistral.ai",
     "ats_type": "lever",
@@ -1823,6 +1897,14 @@
     "ats_type": "greenhouse",
     "ats_identifier": "modernhealth",
     "sector": "Health & Wellness"
+  },
+  {
+    "name": "Monday.com",
+    "website": "https://monday.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "mondaydotcom",
+    "sector": "Enterprise Software",
+    "company_type": "bigco"
   },
   {
     "name": "MongoDB Inc",
@@ -1906,6 +1988,14 @@
     "ats_type": "greenhouse",
     "ats_identifier": "netlify",
     "sector": "Dev Tools & Infrastructure"
+  },
+  {
+    "name": "New Relic",
+    "website": "https://newrelic.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "newrelic",
+    "sector": "Dev Tools & Infrastructure",
+    "company_type": "bigco"
   },
   {
     "name": "Notion",
@@ -2024,7 +2114,8 @@
     "funding_round": "Series G",
     "funding_amount_m": 200,
     "funding_date": "2022-06-01",
-    "sector": "Enterprise Software"
+    "sector": "Enterprise Software",
+    "company_type": "bigco"
   },
   {
     "name": "PagerDuty",
@@ -2038,7 +2129,8 @@
     "name": "Palantir",
     "ats_type": "lever",
     "ats_identifier": "palantir",
-    "sector": "AI & Machine Learning"
+    "sector": "Data & Analytics",
+    "company_type": "bigco"
   },
   {
     "name": "PandaDoc",
@@ -2074,6 +2166,14 @@
     "ats_type": "ashby",
     "ats_identifier": "parallel",
     "sector": "AI & Machine Learning"
+  },
+  {
+    "name": "Peloton",
+    "website": "https://peloton.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "peloton",
+    "sector": "Consumer & Marketplace",
+    "company_type": "bigco"
   },
   {
     "name": "Pendo",
@@ -2206,6 +2306,14 @@
     "sector": "Enterprise Software"
   },
   {
+    "name": "Procore",
+    "website": "https://procore.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "procore",
+    "sector": "Enterprise Software",
+    "company_type": "bigco"
+  },
+  {
     "name": "Profound",
     "website": "https://www.profound.co",
     "ats_type": "ashby",
@@ -2230,6 +2338,14 @@
     "funding_amount_m": 40,
     "funding_date": "2022-09-01",
     "sector": "Fintech & Payments"
+  },
+  {
+    "name": "Qualtrics",
+    "website": "https://qualtrics.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "qualtrics",
+    "sector": "Enterprise Software",
+    "company_type": "bigco"
   },
   {
     "name": "Quantum Metric",
@@ -2355,6 +2471,14 @@
     "sector": "Fintech & Payments"
   },
   {
+    "name": "Rippling",
+    "website": "https://rippling.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "rippling",
+    "sector": "HR & Workforce",
+    "company_type": "bigco"
+  },
+  {
     "name": "Ro",
     "website": "https://ro.co",
     "ats_type": "lever",
@@ -2412,7 +2536,8 @@
     "funding_round": "Series E",
     "funding_amount_m": 100,
     "funding_date": "2021-01-06",
-    "sector": "Enterprise Software"
+    "sector": "Enterprise Software",
+    "company_type": "bigco"
   },
   {
     "name": "Samsara",
@@ -2464,6 +2589,14 @@
     "funding_amount_m": 56,
     "funding_date": "2022-02-01",
     "sector": "Security"
+  },
+  {
+    "name": "SentinelOne",
+    "website": "https://sentinelone.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "sentinelone",
+    "sector": "Security",
+    "company_type": "bigco"
   },
   {
     "name": "Shield AI",
@@ -2540,6 +2673,14 @@
     "sector": "AI & Machine Learning"
   },
   {
+    "name": "Snowflake",
+    "website": "https://snowflake.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "snowflake",
+    "sector": "Data & Analytics",
+    "company_type": "bigco"
+  },
+  {
     "name": "Sonatype",
     "ats_type": "lever",
     "ats_identifier": "sonatype",
@@ -2577,6 +2718,22 @@
     "funding_amount_m": 44,
     "funding_date": "2024-03-01",
     "sector": "AI & Machine Learning"
+  },
+  {
+    "name": "Sprout Social",
+    "website": "https://sproutsocial.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "sproutsocial",
+    "sector": "Enterprise Software",
+    "company_type": "bigco"
+  },
+  {
+    "name": "Squarespace",
+    "website": "https://squarespace.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "squarespace",
+    "sector": "Enterprise Software",
+    "company_type": "bigco"
   },
   {
     "name": "Stability AI",
@@ -2679,7 +2836,8 @@
     "name": "SurveyMonkey",
     "ats_type": "greenhouse",
     "ats_identifier": "surveymonkey",
-    "sector": "Enterprise Software"
+    "sector": "Enterprise Software",
+    "company_type": "bigco"
   },
   {
     "name": "Synthesia",
@@ -2876,6 +3034,14 @@
     "ats_type": "greenhouse",
     "ats_identifier": "typeform",
     "sector": "Enterprise Software"
+  },
+  {
+    "name": "Udemy",
+    "website": "https://udemy.com",
+    "ats_type": "greenhouse",
+    "ats_identifier": "udemy",
+    "sector": "Consumer & Marketplace",
+    "company_type": "bigco"
   },
   {
     "name": "Ujet",
@@ -3165,6 +3331,7 @@
     "name": "Zscaler",
     "ats_type": "greenhouse",
     "ats_identifier": "zscaler",
-    "sector": "Security"
+    "sector": "Security",
+    "company_type": "bigco"
   }
 ]
