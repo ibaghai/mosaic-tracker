@@ -742,6 +742,13 @@
     "sector": "Security"
   },
   {
+    "name": "Exa",
+    "website": "https://exa.ai",
+    "ats_type": "ashby",
+    "ats_identifier": "exa",
+    "sector": "AI & Machine Learning"
+  },
+  {
     "name": "Figma",
     "ats_type": "greenhouse",
     "ats_identifier": "figma",
@@ -1690,6 +1697,13 @@
     "ats_type": "lever",
     "ats_identifier": "peoplegrove",
     "sector": "HR & Workforce"
+  },
+  {
+    "name": "Parallel AI",
+    "website": "https://parallel.ai",
+    "ats_type": "ashby",
+    "ats_identifier": "parallel",
+    "sector": "AI & Machine Learning"
   },
   {
     "name": "Perplexity",

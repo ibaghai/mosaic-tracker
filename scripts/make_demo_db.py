@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-import shutil
 import sqlite3
 from pathlib import Path
 
@@ -11,12 +10,14 @@ TARGET = ROOT / "data" / "tracker-demo.db"
 
 
 def main() -> None:
-    shutil.copy2(SOURCE, TARGET)
-    conn = sqlite3.connect(TARGET)
-    with conn:
-        conn.execute("UPDATE job_postings SET description = NULL")
-    conn.execute("VACUUM")
-    conn.close()
+    source_conn = sqlite3.connect(SOURCE)
+    target_conn = sqlite3.connect(TARGET)
+    source_conn.backup(target_conn)
+    source_conn.close()
+    with target_conn:
+        target_conn.execute("UPDATE job_postings SET description = NULL")
+    target_conn.execute("VACUUM")
+    target_conn.close()
     size_mb = TARGET.stat().st_size / (1024 * 1024)
     print(f"Created {TARGET} ({size_mb:.1f} MB)")
 
