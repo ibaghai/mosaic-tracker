@@ -461,6 +461,7 @@ def get_jobs_for_fit_pool(
     seniorities: Optional[List[str]] = None,
     title_terms: Optional[List[str]] = None,
     domains: Optional[List[str]] = None,
+    company_type: Optional[str] = None,
     limit: int = 5000,
 ) -> list:
     conn = get_connection()
@@ -493,6 +494,9 @@ def get_jobs_for_fit_pool(
             params.append(f"%{domain.lower()}%")
 
     where = "jp.is_active = 1"
+    if company_type:
+        where += " AND c.company_type = ?"
+        params.insert(0, company_type)
     if candidate_clauses:
         where += " AND (" + " OR ".join(candidate_clauses) + ")"
 

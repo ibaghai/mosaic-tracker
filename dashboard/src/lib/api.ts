@@ -294,10 +294,11 @@ export const api = {
   movers: (days?: number) => fetchApi<Mover[]>("/api/changes/movers", { days }),
   sectorDelta: () => fetchApi<SectorDelta[]>("/api/changes/sector-delta"),
   health: () => fetchApi<HealthRow[]>("/api/health"),
-  fitMatches: (file: File, options?: { label?: string; limit?: number }) => {
+  fitMatches: (file: File, options?: { label?: string; company_type?: string; limit?: number }) => {
     const form = new FormData();
     form.set("resume", file);
     if (options?.label) form.set("label", options.label);
+    if (options?.company_type) form.set("company_type", options.company_type);
     if (options?.limit) form.set("limit", String(options.limit));
     return postFormApi<FitMatchesResponse>("/api/fit/matches", form);
   },

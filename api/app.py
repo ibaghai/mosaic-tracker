@@ -243,6 +243,7 @@ def _fit_error(exc: Exception) -> HTTPException:
 async def fit_matches(
     resume: UploadFile = File(...),
     label: Optional[str] = Form(None),
+    company_type: Optional[str] = Form(None),
     limit: int = Form(20),
 ):
     try:
@@ -251,6 +252,7 @@ async def fit_matches(
         return analyze_resume_matches(
             resume_text,
             label=label,
+            company_type=company_type or None,
             limit=max(1, min(limit, 40)),
         )
     except (RuntimeError, ValueError) as exc:

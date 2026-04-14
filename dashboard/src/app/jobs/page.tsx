@@ -139,9 +139,9 @@ export default function JobFeedPage() {
             onChange={(e) => setCompanyType(e.target.value)}
             className="bg-background border border-card-border rounded-lg px-3 py-2 text-sm text-foreground"
           >
-            <option value="">Startups + Big Tech</option>
-            <option value="startup">Startups Only</option>
-            <option value="bigco">Big Tech Only</option>
+            <option value="">Both</option>
+            <option value="startup">Startups</option>
+            <option value="bigco">Big companies</option>
           </select>
         </div>
         <div className="flex flex-wrap gap-3">

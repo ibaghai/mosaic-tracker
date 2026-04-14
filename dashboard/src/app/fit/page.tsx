@@ -6,6 +6,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { api, FitJobResponse, FitMatchesResponse, JobFitMatch, JobRow } from "@/lib/api";
 import { formatRoleFamily, formatSeniority, formatWorkModel } from "@/lib/format";
 
+type CompanyTypeFilter = "" | "startup" | "bigco";
+
 function scoreColor(score: number) {
   if (score >= 80) return "text-green";
   if (score >= 65) return "text-accent-light";
@@ -27,6 +29,7 @@ function FitInner() {
   const selectedJobId = params.get("jobId") || "";
   const [file, setFile] = useState<File | null>(null);
   const [limit, setLimit] = useState(10);
+  const [companyType, setCompanyType] = useState<CompanyTypeFilter>("");
   const [jobId, setJobId] = useState(selectedJobId);
   const [selectedJob, setSelectedJob] = useState<JobRow | null>(null);
   const [jobLoading, setJobLoading] = useState(false);
@@ -107,7 +110,10 @@ function FitInner() {
         const data = await api.fitJob(numericJobId, file);
         setResult(data);
       } else {
-        const data = await api.fitMatches(file, { limit });
+        const data = await api.fitMatches(file, {
+          company_type: companyType || undefined,
+          limit,
+        });
         setResult(data);
       }
     } catch (exc) {
@@ -136,7 +142,7 @@ function FitInner() {
           />
         )}
 
-        <div className={jobId.trim() ? "grid gap-3 md:grid-cols-[1fr_auto] md:items-end" : "grid gap-3 md:grid-cols-[1fr_140px_auto] md:items-end"}>
+        <div className={jobId.trim() ? "grid gap-3 md:grid-cols-[1fr_auto] md:items-end" : "grid gap-3 md:grid-cols-[1fr_150px_170px_auto] md:items-end"}>
           <label className="block">
             <span className="text-xs text-muted">Resume</span>
             <input
@@ -147,17 +153,31 @@ function FitInner() {
             />
           </label>
           {!jobId.trim() && (
-            <label className="block">
-              <span className="text-xs text-muted">Matches</span>
-              <input
-                type="number"
-                min={1}
-                max={40}
-                value={limit}
-                onChange={(event) => setLimit(Number(event.target.value))}
-                className="mt-1 w-full bg-background border border-card-border rounded-lg px-3 py-2 text-sm text-foreground"
-              />
-            </label>
+            <>
+              <label className="block">
+                <span className="text-xs text-muted">Matches</span>
+                <input
+                  type="number"
+                  min={1}
+                  max={40}
+                  value={limit}
+                  onChange={(event) => setLimit(Number(event.target.value))}
+                  className="mt-1 w-full bg-background border border-card-border rounded-lg px-3 py-2 text-sm text-foreground"
+                />
+              </label>
+              <label className="block">
+                <span className="text-xs text-muted">Company set</span>
+                <select
+                  value={companyType}
+                  onChange={(event) => setCompanyType(event.target.value as CompanyTypeFilter)}
+                  className="mt-1 w-full bg-background border border-card-border rounded-lg px-3 py-2 text-sm text-foreground"
+                >
+                  <option value="">Both</option>
+                  <option value="startup">Startups</option>
+                  <option value="bigco">Big companies</option>
+                </select>
+              </label>
+            </>
           )}
           <button
             onClick={handleSubmit}

@@ -56,9 +56,12 @@ def analyze_resume_matches(
     resume_text: str,
     *,
     label: Optional[str] = None,
+    company_type: Optional[str] = None,
     limit: int = 20,
     shortlist_limit: int = 120,
 ) -> dict:
+    if company_type not in {None, "startup", "bigco"}:
+        raise ValueError("Choose startups, big companies, or both.")
     resume_hash = hashlib.sha256(resume_text.encode("utf-8")).hexdigest()
     model = _model()
     profile = parse_resume_profile(resume_text)
@@ -71,7 +74,10 @@ def analyze_resume_matches(
         PROMPT_VERSION,
     )
 
-    pool = queries.get_jobs_for_fit_pool(**_candidate_filters(profile))
+    pool = queries.get_jobs_for_fit_pool(
+        **_candidate_filters(profile),
+        company_type=company_type,
+    )
     shortlisted = shortlist_jobs(profile, pool, limit=max(shortlist_limit, limit))
     matches = _evaluate_jobs(resume_id, profile, _hydrate_job_details(shortlisted[:limit]))
     matches.sort(key=lambda row: (row["fit_score"], row["deterministic_score"]), reverse=True)
