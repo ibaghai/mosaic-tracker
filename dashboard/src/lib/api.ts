@@ -189,7 +189,6 @@ export interface HealthRow {
 }
 
 export interface ResumeProfile {
-  name?: string | null;
   headline?: string | null;
   target_roles: string[];
   role_families: string[];
@@ -197,7 +196,6 @@ export interface ResumeProfile {
   skills: string[];
   domains: string[];
   strengths: string[];
-  location_preferences: string[];
   remote_preference: string;
 }
 
@@ -294,18 +292,16 @@ export const api = {
   movers: (days?: number) => fetchApi<Mover[]>("/api/changes/movers", { days }),
   sectorDelta: () => fetchApi<SectorDelta[]>("/api/changes/sector-delta"),
   health: () => fetchApi<HealthRow[]>("/api/health"),
-  fitMatches: (file: File, options?: { label?: string; company_type?: string; limit?: number }) => {
+  fitMatches: (file: File, options?: { company_type?: string; limit?: number }) => {
     const form = new FormData();
     form.set("resume", file);
-    if (options?.label) form.set("label", options.label);
     if (options?.company_type) form.set("company_type", options.company_type);
     if (options?.limit) form.set("limit", String(options.limit));
     return postFormApi<FitMatchesResponse>("/api/fit/matches", form);
   },
-  fitJob: (jobId: number, file: File, options?: { label?: string }) => {
+  fitJob: (jobId: number, file: File) => {
     const form = new FormData();
     form.set("resume", file);
-    if (options?.label) form.set("label", options.label);
     return postFormApi<FitJobResponse>(`/api/fit/jobs/${jobId}`, form);
   },
   deptSectorCross: () => fetchApi<CrossTabRow[]>("/api/cross/dept-sector"),

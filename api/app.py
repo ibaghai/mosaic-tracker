@@ -36,6 +36,8 @@ app.add_middleware(
 )
 
 init_db()
+queries.scrub_resume_profile_pii()
+queries.scrub_resume_fit_pii()
 
 
 # ── Overview ─────────────────────────────────────────────────────────────────
@@ -242,7 +244,6 @@ def _fit_error(exc: Exception) -> HTTPException:
 @app.post("/api/fit/matches")
 async def fit_matches(
     resume: UploadFile = File(...),
-    label: Optional[str] = Form(None),
     company_type: Optional[str] = Form(None),
     limit: int = Form(20),
 ):
@@ -251,7 +252,6 @@ async def fit_matches(
         resume_text = extract_resume_text(resume.filename or "resume.txt", content)
         return analyze_resume_matches(
             resume_text,
-            label=label,
             company_type=company_type or None,
             limit=max(1, min(limit, 40)),
         )
@@ -263,11 +263,10 @@ async def fit_matches(
 async def fit_job(
     job_id: int,
     resume: UploadFile = File(...),
-    label: Optional[str] = Form(None),
 ):
     try:
         content = await resume.read()
         resume_text = extract_resume_text(resume.filename or "resume.txt", content)
-        return analyze_single_job(resume_text, job_id, label=label)
+        return analyze_single_job(resume_text, job_id)
     except (RuntimeError, ValueError) as exc:
         raise _fit_error(exc)

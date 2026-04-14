@@ -14,6 +14,21 @@ from db import queries
 PROVIDER = "groq"
 PROMPT_VERSION = "resume-fit-v1"
 DEFAULT_MODEL = "llama-3.3-70b-versatile"
+PROFILE_ALLOWED_KEYS = {
+    "headline",
+    "target_roles",
+    "role_families",
+    "seniority",
+    "skills",
+    "domains",
+    "strengths",
+    "remote_preference",
+}
+EMAIL_RE = re.compile(r"\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b", re.I)
+PHONE_RE = re.compile(r"(?:\+?\d[\s().-]*){8,}\d")
+URL_RE = re.compile(r"\b(?:https?://|www\.)\S+|\b(?:linkedin|github)\.com/\S+", re.I)
+LEADING_NAME_RE = re.compile(r"^[A-Z][a-z]+(?:\s+[A-Z][a-z]+){1,2}\s+(?=(?:is|has|with)\b)")
+LEADING_NAME_COMMA_RE = re.compile(r"^[A-Z][a-z]+(?:\s+[A-Z][a-z]+){1,2},\s+")
 
 SENIORITY_ORDER = {
     "intern": 0,
@@ -55,7 +70,6 @@ def extract_resume_text(filename: str, content: bytes) -> str:
 def analyze_resume_matches(
     resume_text: str,
     *,
-    label: Optional[str] = None,
     company_type: Optional[str] = None,
     limit: int = 20,
     shortlist_limit: int = 120,
@@ -67,7 +81,6 @@ def analyze_resume_matches(
     profile = parse_resume_profile(resume_text)
     resume_id = queries.upsert_resume_profile(
         resume_hash,
-        label,
         profile,
         PROVIDER,
         model,
@@ -93,13 +106,12 @@ def analyze_resume_matches(
     }
 
 
-def analyze_single_job(resume_text: str, job_id: int, *, label: Optional[str] = None) -> dict:
+def analyze_single_job(resume_text: str, job_id: int) -> dict:
     resume_hash = hashlib.sha256(resume_text.encode("utf-8")).hexdigest()
     model = _model()
     profile = parse_resume_profile(resume_text)
     resume_id = queries.upsert_resume_profile(
         resume_hash,
-        label,
         profile,
         PROVIDER,
         model,
@@ -131,18 +143,19 @@ def parse_resume_profile(resume_text: str) -> dict:
             "Return only valid JSON.",
             "Do not infer skills that are not supported by the resume.",
             "Use concise arrays. Prefer canonical skill names.",
+            "Do not extract or return the candidate's name, email, phone number, address, URLs, school IDs, or social profile handles.",
+            "Do not include specific location preferences; only summarize remote preference using the schema enum.",
+            "Write headline and strengths without direct personal identifiers.",
             "Location and remote preferences are context only, not scoring factors.",
         ],
         "schema": {
-            "name": "string or null",
-            "headline": "one sentence",
+            "headline": "one sentence without name, email, phone, address, URL, or social handle",
             "target_roles": ["string"],
             "role_families": ["software_engineering", "ml_ai", "data", "product", "design", "sales", "marketing", "customer_success", "people", "finance", "legal", "security", "operations", "other"],
             "seniority": "intern|junior|mid|senior|lead|staff|principal|manager|director|head|vp|c-level|null",
             "skills": ["string"],
             "domains": ["string"],
-            "strengths": ["string"],
-            "location_preferences": ["string"],
+            "strengths": ["short career strengths without personal identifiers"],
             "remote_preference": "remote_only|remote_preferred|hybrid_ok|onsite_ok|unknown",
         },
         "resume_text": resume_text[:24000],
@@ -156,9 +169,8 @@ def parse_resume_profile(resume_text: str) -> dict:
     profile.setdefault("skills", [])
     profile.setdefault("domains", [])
     profile.setdefault("strengths", [])
-    profile.setdefault("location_preferences", [])
     profile.setdefault("remote_preference", "unknown")
-    return profile
+    return sanitize_resume_profile(profile)
 
 
 def shortlist_jobs(profile: dict, jobs: list[dict], *, limit: int = 120) -> list[dict]:
@@ -363,6 +375,54 @@ def _loads_json(content: str) -> dict:
 
 def _model() -> str:
     return os.getenv("LLM_MODEL") or os.getenv("GROQ_MODEL") or DEFAULT_MODEL
+
+
+def sanitize_resume_profile(profile: dict) -> dict:
+    """Keep only matching-useful profile fields and strip obvious direct PII."""
+    clean = {key: profile.get(key) for key in PROFILE_ALLOWED_KEYS if key in profile}
+    clean["headline"] = _redact_pii_text(clean.get("headline") or "")
+    clean["target_roles"] = _clean_string_list(clean.get("target_roles"), limit=12)
+    clean["role_families"] = _clean_string_list(clean.get("role_families"), limit=8)
+    clean["skills"] = _clean_string_list(clean.get("skills"), limit=80)
+    clean["domains"] = _clean_string_list(clean.get("domains"), limit=20)
+    clean["strengths"] = _clean_string_list(clean.get("strengths"), limit=12)
+
+    seniority = clean.get("seniority")
+    clean["seniority"] = seniority if seniority in SENIORITY_ORDER else None
+
+    remote_preference = clean.get("remote_preference")
+    if remote_preference not in {"remote_only", "remote_preferred", "hybrid_ok", "onsite_ok", "unknown"}:
+        remote_preference = "unknown"
+    clean["remote_preference"] = remote_preference
+    return clean
+
+
+def _clean_string_list(value, *, limit: int) -> list[str]:
+    if not isinstance(value, list):
+        return []
+    rows = []
+    for item in value:
+        text = _redact_pii_text(str(item)).strip()
+        if text and text != "[redacted]":
+            rows.append(text[:120])
+    return list(dict.fromkeys(rows))[:limit]
+
+
+def _redact_pii_text(value: str) -> str:
+    text = str(value or "")
+    text = EMAIL_RE.sub("[redacted]", text)
+    text = URL_RE.sub("[redacted]", text)
+    text = PHONE_RE.sub("[redacted]", text)
+    text = LEADING_NAME_RE.sub("Candidate ", text)
+    text = LEADING_NAME_COMMA_RE.sub("", text)
+    text = re.sub(
+        r"\b(?:my name is|name is|candidate name is)\s+[^,.]+",
+        "candidate",
+        text,
+        flags=re.I,
+    )
+    text = re.sub(r"\s+", " ", text).strip()
+    return text
 
 
 def _split_skills(value) -> list[str]:

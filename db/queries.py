@@ -6,6 +6,22 @@ import re
 from urllib.parse import urlsplit, urlunsplit
 from db.models import get_connection
 
+RESUME_PROFILE_ALLOWED_KEYS = {
+    "headline",
+    "target_roles",
+    "role_families",
+    "seniority",
+    "skills",
+    "domains",
+    "strengths",
+    "remote_preference",
+}
+EMAIL_RE = re.compile(r"\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b", re.I)
+PHONE_RE = re.compile(r"(?:\+?\d[\s().-]*){8,}\d")
+URL_RE = re.compile(r"\b(?:https?://|www\.)\S+|\b(?:linkedin|github)\.com/\S+", re.I)
+LEADING_NAME_RE = re.compile(r"^[A-Z][a-z]+(?:\s+[A-Z][a-z]+){1,2}\s+(?=(?:is|has|with)\b)")
+LEADING_NAME_COMMA_RE = re.compile(r"^[A-Z][a-z]+(?:\s+[A-Z][a-z]+){1,2},\s+")
+
 
 # ── Companies ─────────────────────────────────────────────────────────────────
 
@@ -426,7 +442,6 @@ def get_active_job(job_id: int) -> Optional[dict]:
 
 def upsert_resume_profile(
     resume_hash: str,
-    label: Optional[str],
     profile: dict,
     provider: str,
     model: str,
@@ -440,19 +455,132 @@ def upsert_resume_profile(
                 (resume_hash, label, profile_json, provider, model, prompt_version)
             VALUES (?, ?, ?, ?, ?, ?)
             ON CONFLICT(resume_hash) DO UPDATE SET
-                label = COALESCE(excluded.label, resume_profiles.label),
                 profile_json = excluded.profile_json,
                 provider = excluded.provider,
                 model = excluded.model,
                 prompt_version = excluded.prompt_version,
+                label = NULL,
                 last_seen_at = datetime('now')
-        """, (resume_hash, label, profile_json, provider, model, prompt_version))
+        """, (resume_hash, None, profile_json, provider, model, prompt_version))
         row = conn.execute(
             "SELECT id FROM resume_profiles WHERE resume_hash = ?",
             (resume_hash,),
         ).fetchone()
     conn.close()
     return row["id"]
+
+
+def scrub_resume_profile_pii() -> int:
+    """Remove direct-PII profile keys from existing cached resume profiles."""
+    conn = get_connection()
+    rows = conn.execute("SELECT id, label, profile_json FROM resume_profiles").fetchall()
+    changed = 0
+    with conn:
+        for row in rows:
+            try:
+                profile = json.loads(row["profile_json"] or "{}")
+            except json.JSONDecodeError:
+                continue
+            scrubbed = _scrub_profile_payload(profile)
+            if scrubbed != profile or row["label"] is not None or row["profile_json"] != json.dumps(scrubbed, sort_keys=True):
+                conn.execute(
+                    "UPDATE resume_profiles SET label = NULL, profile_json = ?, last_seen_at = datetime('now') WHERE id = ?",
+                    (json.dumps(scrubbed, sort_keys=True), row["id"]),
+                )
+                changed += 1
+    conn.close()
+    return changed
+
+
+def scrub_resume_fit_pii() -> int:
+    """Redact direct contact details from existing cached fit explanation text."""
+    conn = get_connection()
+    rows = conn.execute("""
+        SELECT id, rationale_json, gaps_json, suggestions_json, location_note
+        FROM resume_job_fits
+    """).fetchall()
+    changed = 0
+    with conn:
+        for row in rows:
+            rationale = _scrub_profile_list(_loads_json_list(row["rationale_json"]), limit=6)
+            gaps = _scrub_profile_list(_loads_json_list(row["gaps_json"]), limit=6)
+            suggestions = _scrub_profile_list(_loads_json_list(row["suggestions_json"]), limit=6)
+            location_note = _redact_profile_pii(row["location_note"] or "") or None
+            next_values = (
+                json.dumps(rationale),
+                json.dumps(gaps),
+                json.dumps(suggestions),
+                location_note,
+            )
+            current_values = (
+                row["rationale_json"],
+                row["gaps_json"],
+                row["suggestions_json"],
+                row["location_note"],
+            )
+            if next_values != current_values:
+                conn.execute("""
+                    UPDATE resume_job_fits
+                    SET rationale_json = ?,
+                        gaps_json = ?,
+                        suggestions_json = ?,
+                        location_note = ?,
+                        updated_at = datetime('now')
+                    WHERE id = ?
+                """, (*next_values, row["id"]))
+                changed += 1
+    conn.close()
+    return changed
+
+
+def _loads_json_list(value) -> list:
+    try:
+        data = json.loads(value or "[]")
+    except json.JSONDecodeError:
+        return []
+    return data if isinstance(data, list) else []
+
+
+def _scrub_profile_payload(profile: dict) -> dict:
+    clean = {key: profile.get(key) for key in RESUME_PROFILE_ALLOWED_KEYS if key in profile}
+    clean["headline"] = _redact_profile_pii(clean.get("headline") or "")
+    for key, limit in {
+        "target_roles": 12,
+        "role_families": 8,
+        "skills": 80,
+        "domains": 20,
+        "strengths": 12,
+    }.items():
+        clean[key] = _scrub_profile_list(clean.get(key), limit=limit)
+    clean["remote_preference"] = clean.get("remote_preference") or "unknown"
+    return clean
+
+
+def _scrub_profile_list(value, *, limit: int) -> list[str]:
+    if not isinstance(value, list):
+        return []
+    rows = []
+    for item in value:
+        text = _redact_profile_pii(str(item)).strip()
+        if text and text != "[redacted]":
+            rows.append(text[:120])
+    return list(dict.fromkeys(rows))[:limit]
+
+
+def _redact_profile_pii(value: str) -> str:
+    text = str(value or "")
+    text = EMAIL_RE.sub("[redacted]", text)
+    text = URL_RE.sub("[redacted]", text)
+    text = PHONE_RE.sub("[redacted]", text)
+    text = LEADING_NAME_RE.sub("Candidate ", text)
+    text = LEADING_NAME_COMMA_RE.sub("", text)
+    text = re.sub(
+        r"\b(?:my name is|name is|candidate name is)\s+[^,.]+",
+        "candidate",
+        text,
+        flags=re.I,
+    )
+    return re.sub(r"\s+", " ", text).strip()
 
 
 def get_jobs_for_fit_pool(

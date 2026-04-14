@@ -208,7 +208,7 @@ function FitInner() {
         </details>
 
         <p className="text-xs text-muted">
-          Raw resume text is parsed into a compact profile for matching and is not stored.
+          Raw resume text is parsed into a de-identified compact profile for matching and is not stored.
         </p>
         {error && (
           <div className="border border-red/40 bg-red/10 rounded-lg p-3 text-sm text-red">
@@ -221,7 +221,7 @@ function FitInner() {
         <div className="grid gap-4 lg:grid-cols-[320px_1fr]">
           <aside className="bg-card border border-card-border rounded-xl p-4 h-fit">
             <p className="text-xs text-muted">Parsed profile</p>
-            <h3 className="font-semibold mt-1">{result.profile.headline || result.profile.name || "Resume profile"}</h3>
+            <h3 className="font-semibold mt-1">{result.profile.headline || "Resume profile"}</h3>
             <div className="mt-4 space-y-3 text-sm">
               <ProfileRow label="Roles" value={result.profile.target_roles.join(", ") || "Unknown"} />
               <ProfileRow label="Seniority" value={formatSeniority(result.profile.seniority)} />
