@@ -14,6 +14,21 @@ async function fetchApi<T>(path: string, params?: Record<string, string | number
   return res.json();
 }
 
+async function postFormApi<T>(path: string, formData: FormData): Promise<T> {
+  const res = await fetch(`${API_BASE}${path}`, { method: "POST", body: formData });
+  if (!res.ok) {
+    let message = `API error: ${res.status}`;
+    try {
+      const body = await res.json();
+      if (body.detail) message = body.detail;
+    } catch {
+      // Keep default message.
+    }
+    throw new Error(message);
+  }
+  return res.json();
+}
+
 export interface OverviewStats {
   total_companies: number;
   total_active_jobs: number;
@@ -173,6 +188,70 @@ export interface HealthRow {
   active_jobs: number;
 }
 
+export interface ResumeProfile {
+  name?: string | null;
+  headline?: string | null;
+  target_roles: string[];
+  role_families: string[];
+  seniority?: string | null;
+  skills: string[];
+  domains: string[];
+  strengths: string[];
+  location_preferences: string[];
+  remote_preference: string;
+}
+
+export interface FitJob {
+  id: number;
+  company_id: number;
+  company_name: string;
+  title: string;
+  sector: string | null;
+  company_type: string | null;
+  department: string | null;
+  role_family: string | null;
+  seniority: string | null;
+  work_model: string | null;
+  location: string | null;
+  url: string | null;
+  first_seen_at: string | null;
+}
+
+export interface JobFitMatch {
+  job: FitJob;
+  deterministic_score: number;
+  matched_skills: string[];
+  fit_score: number;
+  verdict: string;
+  why: string[];
+  gaps: string[];
+  resume_pointers: string[];
+  location_note: string | null;
+  location_blocker: boolean;
+  cached: boolean;
+}
+
+export interface FitMatchesResponse {
+  resume_id: number;
+  resume_hash: string;
+  provider: string;
+  model: string;
+  prompt_version: string;
+  profile: ResumeProfile;
+  shortlist_count: number;
+  matches: JobFitMatch[];
+}
+
+export interface FitJobResponse {
+  resume_id: number;
+  resume_hash: string;
+  provider: string;
+  model: string;
+  prompt_version: string;
+  profile: ResumeProfile;
+  match: JobFitMatch;
+}
+
 export interface JobFilters {
   search?: string;
   sector?: string;
@@ -214,6 +293,19 @@ export const api = {
   movers: (days?: number) => fetchApi<Mover[]>("/api/changes/movers", { days }),
   sectorDelta: () => fetchApi<SectorDelta[]>("/api/changes/sector-delta"),
   health: () => fetchApi<HealthRow[]>("/api/health"),
+  fitMatches: (file: File, options?: { label?: string; limit?: number }) => {
+    const form = new FormData();
+    form.set("resume", file);
+    if (options?.label) form.set("label", options.label);
+    if (options?.limit) form.set("limit", String(options.limit));
+    return postFormApi<FitMatchesResponse>("/api/fit/matches", form);
+  },
+  fitJob: (jobId: number, file: File, options?: { label?: string }) => {
+    const form = new FormData();
+    form.set("resume", file);
+    if (options?.label) form.set("label", options.label);
+    return postFormApi<FitJobResponse>(`/api/fit/jobs/${jobId}`, form);
+  },
   deptSectorCross: () => fetchApi<CrossTabRow[]>("/api/cross/dept-sector"),
   senioritySectorCross: () => fetchApi<CrossTabRow[]>("/api/cross/seniority-sector"),
   remoteSectorCross: (companyType?: string) =>

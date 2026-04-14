@@ -13,6 +13,7 @@ import {
   Briefcase,
   Wrench,
   Globe2,
+  Sparkles,
   Menu,
   X,
 } from "lucide-react";
@@ -24,6 +25,7 @@ const NAV = [
   { href: "/trends", label: "Trends", icon: TrendingUp },
   { href: "/companies", label: "Companies", icon: Building2 },
   { href: "/coverage", label: "Coverage", icon: Globe2 },
+  { href: "/fit", label: "Resume Fit", icon: Sparkles },
   { href: "/skills", label: "Skills", icon: Code2 },
   { href: "/roles", label: "Roles", icon: Users },
   { href: "/jobs", label: "Job Feed", icon: Briefcase },
@@ -38,11 +40,6 @@ export default function Sidebar() {
     api.overview().then((d) => setCompanyCount(d.total_companies));
   }, []);
 
-  // Close drawer on route change
-  useEffect(() => {
-    setMobileOpen(false);
-  }, [pathname]);
-
   const navLinks = (
     <>
       <nav className="flex-1 px-3 space-y-0.5">
@@ -52,6 +49,7 @@ export default function Sidebar() {
             <Link
               key={href}
               href={href}
+              onClick={() => setMobileOpen(false)}
               className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
                 active
                   ? "bg-accent/15 text-accent-light font-medium"
@@ -67,6 +65,7 @@ export default function Sidebar() {
       <div className="px-3 pb-2">
         <Link
           href="/health"
+          onClick={() => setMobileOpen(false)}
           className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
             pathname === "/health"
               ? "bg-accent/15 text-accent-light font-medium"

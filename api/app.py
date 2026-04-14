@@ -3,13 +3,18 @@ FastAPI REST API — thin wrapper over db/queries.py
 Run with: uvicorn api.app:app --reload --port 8000
 """
 
-from fastapi import FastAPI
+from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Optional
 import os
 
 from db.models import init_db
 from db import queries
+from analysis.resume_fit import (
+    analyze_resume_matches,
+    analyze_single_job,
+    extract_resume_text,
+)
 
 app = FastAPI(title="Mosaic — Startup Hiring Tracker API", version="2.0")
 
@@ -202,3 +207,44 @@ def remote_sector_cross(company_type: Optional[str] = "startup"):
 @app.get("/api/health")
 def scraper_health():
     return queries.get_scraper_health()
+
+
+# ── Resume Fit ────────────────────────────────────────────────────────────────
+
+def _fit_error(exc: Exception) -> HTTPException:
+    message = str(exc)
+    if "GROQ_API_KEY" in message or "Groq API" in message:
+        return HTTPException(status_code=503, detail=message)
+    return HTTPException(status_code=400, detail=message)
+
+
+@app.post("/api/fit/matches")
+async def fit_matches(
+    resume: UploadFile = File(...),
+    label: Optional[str] = Form(None),
+    limit: int = Form(20),
+):
+    try:
+        content = await resume.read()
+        resume_text = extract_resume_text(resume.filename or "resume.txt", content)
+        return analyze_resume_matches(
+            resume_text,
+            label=label,
+            limit=max(1, min(limit, 40)),
+        )
+    except (RuntimeError, ValueError) as exc:
+        raise _fit_error(exc)
+
+
+@app.post("/api/fit/jobs/{job_id}")
+async def fit_job(
+    job_id: int,
+    resume: UploadFile = File(...),
+    label: Optional[str] = Form(None),
+):
+    try:
+        content = await resume.read()
+        resume_text = extract_resume_text(resume.filename or "resume.txt", content)
+        return analyze_single_job(resume_text, job_id, label=label)
+    except (RuntimeError, ValueError) as exc:
+        raise _fit_error(exc)

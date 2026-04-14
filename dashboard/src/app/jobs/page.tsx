@@ -220,13 +220,14 @@ export default function JobFeedPage() {
                 <th className="px-4 py-3 font-medium">Work Model</th>
                 <th className="px-4 py-3 font-medium">Location</th>
                 <th className="px-4 py-3 font-medium">Posted</th>
+                <th className="px-4 py-3 font-medium">Fit</th>
                 <th className="px-4 py-3 font-medium">Apply</th>
               </tr>
             </thead>
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={9} className="px-4 py-8 text-center text-muted">Loading...</td>
+                  <td colSpan={10} className="px-4 py-8 text-center text-muted">Loading...</td>
                 </tr>
               ) : jobs.slice(0, 500).map((j) => (
                 <tr key={j.id} className="border-b border-card-border/50 hover:bg-white/5">
@@ -244,6 +245,11 @@ export default function JobFeedPage() {
                   <td className="px-4 py-2.5 text-muted text-xs">
                     {new Date(j.first_seen_at).toLocaleDateString()}
                     <span className="block text-[10px] text-accent-light">{j.posting_status || "active"}</span>
+                  </td>
+                  <td className="px-4 py-2.5">
+                    <Link href={`/fit?jobId=${j.id}`} className="text-accent-light hover:underline text-xs">
+                      Compare
+                    </Link>
                   </td>
                   <td className="px-4 py-2.5">
                     {j.url ? (

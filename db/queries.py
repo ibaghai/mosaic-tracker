@@ -1,6 +1,7 @@
 from datetime import datetime
 from typing import Optional, List, Tuple
 import hashlib
+import json
 import re
 from urllib.parse import urlsplit, urlunsplit
 from db.models import get_connection
@@ -10,15 +11,33 @@ from db.models import get_connection
 
 def upsert_company(company: dict) -> int:  # noqa: E501
     """Insert or update a company. Returns its row id."""
+    payload = {
+        "name": company["name"],
+        "website": company.get("website"),
+        "ats_type": company["ats_type"],
+        "ats_identifier": company.get("ats_identifier"),
+        "funding_round": company.get("funding_round"),
+        "funding_amount_m": company.get("funding_amount_m"),
+        "funding_date": company.get("funding_date"),
+        "sector": company.get("sector"),
+        "company_type": company.get("company_type", "startup"),
+        "careers_url": company.get("careers_url"),
+        "source_type": company.get("source_type"),
+        "source_confidence": company.get("source_confidence"),
+        "verification_status": company.get("verification_status"),
+        "last_verified_at": company.get("last_verified_at"),
+    }
     conn = get_connection()
     with conn:
         conn.execute("""
             INSERT INTO companies
                 (name, website, ats_type, ats_identifier,
-                 funding_round, funding_amount_m, funding_date, sector, company_type)
+                 funding_round, funding_amount_m, funding_date, sector, company_type,
+                 careers_url, source_type, source_confidence, verification_status, last_verified_at)
             VALUES
                 (:name, :website, :ats_type, :ats_identifier,
-                 :funding_round, :funding_amount_m, :funding_date, :sector, :company_type)
+                 :funding_round, :funding_amount_m, :funding_date, :sector, :company_type,
+                 :careers_url, :source_type, :source_confidence, :verification_status, :last_verified_at)
             ON CONFLICT(name) DO UPDATE SET
                 website          = excluded.website,
                 ats_type         = excluded.ats_type,
@@ -27,10 +46,15 @@ def upsert_company(company: dict) -> int:  # noqa: E501
                 funding_amount_m = excluded.funding_amount_m,
                 funding_date     = excluded.funding_date,
                 sector           = excluded.sector,
-                company_type     = excluded.company_type
-        """, company)
+                company_type     = excluded.company_type,
+                careers_url      = COALESCE(excluded.careers_url, companies.careers_url),
+                source_type      = COALESCE(excluded.source_type, companies.source_type),
+                source_confidence = COALESCE(excluded.source_confidence, companies.source_confidence),
+                verification_status = COALESCE(excluded.verification_status, companies.verification_status),
+                last_verified_at = COALESCE(excluded.last_verified_at, companies.last_verified_at)
+        """, payload)
         row = conn.execute(
-            "SELECT id FROM companies WHERE name = ?", (company["name"],)
+            "SELECT id FROM companies WHERE name = ?", (payload["name"],)
         ).fetchone()
     conn.close()
     return row["id"]
@@ -74,6 +98,11 @@ def _build_job_fingerprint(company_id: int, job: dict) -> str:
     raw = f"{company_id}|{title}|{location}|{canonical_url}"
     return hashlib.sha1(raw.encode("utf-8")).hexdigest()
 
+
+def _normalize_title_key(value: Optional[str]) -> str:
+    return re.sub(r"[^a-z0-9]+", " ", _normalize_text(value)).strip()
+
+
 def log_run(company_id: int, jobs_found: int, jobs_added: int,
             jobs_removed: int, status: str = "success",
             error_msg: Optional[str] = None,
@@ -99,19 +128,32 @@ def sync_jobs(company_id: int, run_id: int, scraped_jobs: List[dict]) -> Tuple[i
     conn = get_connection()
     now = datetime.utcnow().isoformat()
 
-    # Current active jobs for this company — prefer external_id matching
+    # Current active jobs for this company. Match on stable identifiers first.
     existing = conn.execute(
-        "SELECT id, title, external_id FROM job_postings WHERE company_id = ? AND is_active = 1",
+        """
+        SELECT id, title, external_id, canonical_url, job_fingerprint, location,
+               posting_status, consecutive_misses
+        FROM job_postings
+        WHERE company_id = ? AND is_active = 1
+        """,
         (company_id,)
     ).fetchall()
 
-    # Build lookup: external_id → row_id, and title → row_id (fallback)
+    # Build lookups in descending order of trust.
     by_ext_id = {}  # type: dict
-    by_title = {}   # type: dict
+    by_canonical_url = {}  # type: dict
+    by_fingerprint = {}  # type: dict
+    by_title_location = {}   # type: dict
     for r in existing:
         if r["external_id"]:
             by_ext_id[r["external_id"]] = r["id"]
-        by_title[r["title"]] = r["id"]
+        if r["canonical_url"]:
+            by_canonical_url[r["canonical_url"]] = r["id"]
+        if r["job_fingerprint"]:
+            by_fingerprint[r["job_fingerprint"]] = r["id"]
+        title_key = _normalize_title_key(r["title"])
+        location_key = _normalize_text(r["location"])
+        by_title_location[(title_key, location_key)] = r["id"]
 
     matched_ids = set()  # track which existing jobs were seen this run
     added = 0
@@ -123,29 +165,41 @@ def sync_jobs(company_id: int, run_id: int, scraped_jobs: List[dict]) -> Tuple[i
             canonical_url = _canonicalize_url(job.get("url"))
             fingerprint = _build_job_fingerprint(company_id, job)
 
-            # Match by external_id first, then fall back to title
+            title_key = _normalize_title_key(title)
+            location_key = _normalize_text(job.get("location"))
+
+            # Match by external_id first, then canonical URL, fingerprint, and normalized title/location.
             existing_id = None
             if ext_id and ext_id in by_ext_id:
                 existing_id = by_ext_id[ext_id]
-            elif title in by_title:
-                existing_id = by_title[title]
+            elif canonical_url and canonical_url in by_canonical_url:
+                existing_id = by_canonical_url[canonical_url]
+            elif fingerprint in by_fingerprint:
+                existing_id = by_fingerprint[fingerprint]
+            elif (title_key, location_key) in by_title_location:
+                existing_id = by_title_location[(title_key, location_key)]
 
             if existing_id:
-                # Existing job — update last_seen, backfill external_id + description
+                # Existing job — update last_seen, clear any pending closure state, and backfill identifiers.
                 matched_ids.add(existing_id)
                 conn.execute("""
                     UPDATE job_postings
                     SET last_seen_at = ?,
                         last_status_change_at = CASE
-                            WHEN posting_status IS NOT 'active' THEN ?
+                            WHEN posting_status <> 'active' THEN ?
                             ELSE last_status_change_at
                         END,
                         posting_status = 'active',
+                        is_active = 1,
+                        consecutive_misses = 0,
+                        closure_reason = NULL,
                         external_id = COALESCE(external_id, ?),
                         description = COALESCE(description, ?),
                         canonical_url = COALESCE(canonical_url, ?),
                         job_fingerprint = COALESCE(job_fingerprint, ?),
-                        location_raw = COALESCE(location_raw, location, ?)
+                        location_raw = COALESCE(location_raw, location, ?),
+                        verification_status = COALESCE(verification_status, 'verified'),
+                        last_verified_at = COALESCE(last_verified_at, ?)
                     WHERE id = ?
                 """, (
                     now,
@@ -155,6 +209,7 @@ def sync_jobs(company_id: int, run_id: int, scraped_jobs: List[dict]) -> Tuple[i
                     canonical_url,
                     fingerprint,
                     job.get("location"),
+                    now,
                     existing_id,
                 ))
                 conn.execute(
@@ -167,14 +222,18 @@ def sync_jobs(company_id: int, run_id: int, scraped_jobs: List[dict]) -> Tuple[i
                     INSERT INTO job_postings
                         (company_id, title, external_id, description, department,
                          location, location_raw, employment_type, url, canonical_url,
-                         job_fingerprint, first_seen_at, last_seen_at, last_status_change_at,
-                         posting_status, is_active)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'active', 1)
+                         job_fingerprint, source_type, source_confidence, verification_status,
+                         last_verified_at, consecutive_misses, first_seen_at, last_seen_at,
+                         last_status_change_at, posting_status, is_active)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'verified', ?, 0, ?, ?, ?, 'active', 1)
                 """, (
                     company_id, title, ext_id,
                     job.get("description"), job.get("department"),
                     job.get("location"), job.get("location"), job.get("employment_type"),
-                    job.get("url"), canonical_url, fingerprint, now, now, now,
+                    job.get("url"), canonical_url, fingerprint,
+                    job.get("source_type"),
+                    job.get("source_confidence"),
+                    now, now, now, now,
                 ))
                 new_id = cur.lastrowid
                 conn.execute(
@@ -187,24 +246,45 @@ def sync_jobs(company_id: int, run_id: int, scraped_jobs: List[dict]) -> Tuple[i
                 )
                 added += 1
 
-        # Mark disappeared jobs inactive
+        # Only close jobs after repeated misses. First miss becomes suspected_closed.
         all_existing_ids = {r["id"] for r in existing}
         removed_ids = all_existing_ids - matched_ids
-        removed = len(removed_ids)
+        removed = 0
+        existing_by_id = {r["id"]: r for r in existing}
         for job_id in removed_ids:
+            row = existing_by_id[job_id]
+            misses = (row["consecutive_misses"] or 0) + 1
+            should_close = row["posting_status"] == "suspected_closed" or misses >= 2
+            if should_close:
+                conn.execute(
+                    """
+                    UPDATE job_postings
+                    SET is_active = 0,
+                        posting_status = 'closed',
+                        consecutive_misses = ?,
+                        closure_reason = COALESCE(closure_reason, 'missing_from_consecutive_scrapes'),
+                        last_status_change_at = ?
+                    WHERE id = ?
+                    """,
+                    (misses, now, job_id)
+                )
+                conn.execute(
+                    "INSERT INTO job_events (job_id, run_id, event_type) VALUES (?, ?, 'removed')",
+                    (job_id, run_id)
+                )
+                removed += 1
+                continue
+
             conn.execute(
                 """
                 UPDATE job_postings
-                SET is_active = 0,
-                    posting_status = 'closed',
+                SET posting_status = 'suspected_closed',
+                    consecutive_misses = ?,
+                    closure_reason = 'missing_from_scrape',
                     last_status_change_at = ?
                 WHERE id = ?
                 """,
-                (now, job_id)
-            )
-            conn.execute(
-                "INSERT INTO job_events (job_id, run_id, event_type) VALUES (?, ?, 'removed')",
-                (job_id, run_id)
+                (misses, now, job_id)
             )
 
     conn.close()
@@ -327,6 +407,215 @@ def get_active_jobs(
     rows = conn.execute(sql, params).fetchall()
     conn.close()
     return [dict(r) for r in rows]
+
+
+# ── Resume Fit Matching ───────────────────────────────────────────────────────
+
+def upsert_resume_profile(
+    resume_hash: str,
+    label: Optional[str],
+    profile: dict,
+    provider: str,
+    model: str,
+    prompt_version: str,
+) -> int:
+    conn = get_connection()
+    profile_json = json.dumps(profile, sort_keys=True)
+    with conn:
+        conn.execute("""
+            INSERT INTO resume_profiles
+                (resume_hash, label, profile_json, provider, model, prompt_version)
+            VALUES (?, ?, ?, ?, ?, ?)
+            ON CONFLICT(resume_hash) DO UPDATE SET
+                label = COALESCE(excluded.label, resume_profiles.label),
+                profile_json = excluded.profile_json,
+                provider = excluded.provider,
+                model = excluded.model,
+                prompt_version = excluded.prompt_version,
+                last_seen_at = datetime('now')
+        """, (resume_hash, label, profile_json, provider, model, prompt_version))
+        row = conn.execute(
+            "SELECT id FROM resume_profiles WHERE resume_hash = ?",
+            (resume_hash,),
+        ).fetchone()
+    conn.close()
+    return row["id"]
+
+
+def get_jobs_for_fit_pool(
+    skills: Optional[List[str]] = None,
+    role_families: Optional[List[str]] = None,
+    seniorities: Optional[List[str]] = None,
+    title_terms: Optional[List[str]] = None,
+    domains: Optional[List[str]] = None,
+    limit: int = 5000,
+) -> list:
+    conn = get_connection()
+    params = []
+    candidate_clauses = []
+    if skills:
+        placeholders = ",".join("?" for _ in skills)
+        candidate_clauses.append(f"""
+            EXISTS (
+                SELECT 1 FROM job_skills jsm
+                WHERE jsm.job_id = jp.id AND jsm.skill IN ({placeholders})
+            )
+        """)
+        params.extend(skills)
+    if role_families:
+        placeholders = ",".join("?" for _ in role_families)
+        candidate_clauses.append(f"jp.role_family IN ({placeholders})")
+        params.extend(role_families)
+    if seniorities:
+        placeholders = ",".join("?" for _ in seniorities)
+        candidate_clauses.append(f"jp.seniority IN ({placeholders})")
+        params.extend(seniorities)
+    if title_terms:
+        for term in title_terms:
+            candidate_clauses.append("LOWER(jp.title) LIKE ?")
+            params.append(f"%{term.lower()}%")
+    if domains:
+        for domain in domains:
+            candidate_clauses.append("LOWER(c.sector) LIKE ?")
+            params.append(f"%{domain.lower()}%")
+
+    where = "jp.is_active = 1"
+    if candidate_clauses:
+        where += " AND (" + " OR ".join(candidate_clauses) + ")"
+
+    params.append(limit)
+    rows = conn.execute(f"""
+        SELECT
+            jp.id,
+            jp.company_id,
+            jp.title,
+            jp.department,
+            jp.normalized_department,
+            jp.location,
+            jp.employment_type,
+            jp.url,
+            jp.first_seen_at,
+            jp.last_seen_at,
+            jp.seniority,
+            jp.work_model,
+            jp.role_family,
+            c.name AS company_name,
+            c.sector,
+            c.company_type,
+            GROUP_CONCAT(DISTINCT js.skill) AS skills
+        FROM job_postings jp
+        JOIN companies c ON c.id = jp.company_id
+        LEFT JOIN job_skills js ON js.job_id = jp.id
+        WHERE {where}
+        GROUP BY jp.id
+        LIMIT ?
+    """, params).fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+
+def get_job_for_fit(job_id: int) -> Optional[dict]:
+    conn = get_connection()
+    row = conn.execute("""
+        SELECT
+            jp.id,
+            jp.company_id,
+            jp.title,
+            jp.department,
+            jp.normalized_department,
+            jp.location,
+            jp.employment_type,
+            jp.url,
+            jp.first_seen_at,
+            jp.last_seen_at,
+            jp.seniority,
+            jp.work_model,
+            jp.role_family,
+            jp.description,
+            c.name AS company_name,
+            c.sector,
+            c.company_type,
+            GROUP_CONCAT(DISTINCT js.skill) AS skills
+        FROM job_postings jp
+        JOIN companies c ON c.id = jp.company_id
+        LEFT JOIN job_skills js ON js.job_id = jp.id
+        WHERE jp.id = ? AND jp.is_active = 1
+        GROUP BY jp.id
+    """, (job_id,)).fetchone()
+    conn.close()
+    return dict(row) if row else None
+
+
+def get_cached_resume_fit(resume_id: int, job_id: int, prompt_version: str) -> Optional[dict]:
+    conn = get_connection()
+    row = conn.execute("""
+        SELECT * FROM resume_job_fits
+        WHERE resume_id = ? AND job_id = ? AND prompt_version = ?
+    """, (resume_id, job_id, prompt_version)).fetchone()
+    conn.close()
+    if not row:
+        return None
+    payload = dict(row)
+    payload["why"] = json.loads(payload.pop("rationale_json") or "[]")
+    payload["gaps"] = json.loads(payload.pop("gaps_json") or "[]")
+    payload["resume_pointers"] = json.loads(payload.pop("suggestions_json") or "[]")
+    payload["location_blocker"] = bool(payload.get("location_blocker"))
+    payload["cached"] = True
+    return payload
+
+
+def save_resume_fit(
+    resume_id: int,
+    job_id: int,
+    *,
+    deterministic_score: float,
+    fit_score: int,
+    verdict: str,
+    why: list,
+    gaps: list,
+    resume_pointers: list,
+    location_note: Optional[str],
+    location_blocker: bool,
+    provider: str,
+    model: str,
+    prompt_version: str,
+) -> None:
+    conn = get_connection()
+    with conn:
+        conn.execute("""
+            INSERT INTO resume_job_fits
+                (resume_id, job_id, deterministic_score, fit_score, verdict,
+                 rationale_json, gaps_json, suggestions_json, location_note,
+                 location_blocker, provider, model, prompt_version)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT(resume_id, job_id, prompt_version) DO UPDATE SET
+                deterministic_score = excluded.deterministic_score,
+                fit_score = excluded.fit_score,
+                verdict = excluded.verdict,
+                rationale_json = excluded.rationale_json,
+                gaps_json = excluded.gaps_json,
+                suggestions_json = excluded.suggestions_json,
+                location_note = excluded.location_note,
+                location_blocker = excluded.location_blocker,
+                provider = excluded.provider,
+                model = excluded.model,
+                updated_at = datetime('now')
+        """, (
+            resume_id,
+            job_id,
+            deterministic_score,
+            int(fit_score),
+            verdict,
+            json.dumps(why),
+            json.dumps(gaps),
+            json.dumps(resume_pointers),
+            location_note,
+            1 if location_blocker else 0,
+            provider,
+            model,
+            prompt_version,
+        ))
+    conn.close()
 
 
 def get_role_family_breakdown(company_type=None):
