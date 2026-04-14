@@ -284,6 +284,7 @@ export const api = {
     fetchApi<SkillRow[]>("/api/skills", { company_type: companyType, limit }),
   jobs: (filters?: JobFilters) =>
     fetchApi<JobRow[]>("/api/jobs", filters as Record<string, string | number | undefined>),
+  jobDetail: (id: number) => fetchApi<JobRow>(`/api/jobs/${id}`),
   jobFilters: () => fetchApi<FilterOptions>("/api/jobs/filters"),
   jobFreshness: (companyType?: string) =>
     fetchApi<FreshnessRow[]>("/api/jobs/freshness", { company_type: companyType }),

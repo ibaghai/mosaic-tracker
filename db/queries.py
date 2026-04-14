@@ -409,6 +409,19 @@ def get_active_jobs(
     return [dict(r) for r in rows]
 
 
+def get_active_job(job_id: int) -> Optional[dict]:
+    """Single active job posting with company metadata for preview/detail views."""
+    conn = get_connection()
+    row = conn.execute("""
+        SELECT jp.*, c.name AS company_name, c.sector
+        FROM job_postings jp
+        JOIN companies c ON c.id = jp.company_id
+        WHERE jp.id = ? AND jp.is_active = 1
+    """, (job_id,)).fetchone()
+    conn.close()
+    return dict(row) if row else None
+
+
 # ── Resume Fit Matching ───────────────────────────────────────────────────────
 
 def upsert_resume_profile(

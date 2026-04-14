@@ -158,6 +158,14 @@ def job_trends():
     return queries.get_job_count_over_time()
 
 
+@app.get("/api/jobs/{job_id}")
+def job_detail(job_id: int):
+    row = queries.get_active_job(job_id)
+    if not row:
+        raise HTTPException(status_code=404, detail="Job not found")
+    return row
+
+
 # ── Changes ──────────────────────────────────────────────────────────────────
 
 @app.get("/api/changes/events")
@@ -213,8 +221,21 @@ def scraper_health():
 
 def _fit_error(exc: Exception) -> HTTPException:
     message = str(exc)
-    if "GROQ_API_KEY" in message or "Groq API" in message:
-        return HTTPException(status_code=503, detail=message)
+    if "GROQ_API_KEY" in message:
+        return HTTPException(
+            status_code=503,
+            detail="Resume matching is not configured yet. Try again later.",
+        )
+    if "rate_limit_exceeded" in message or "429" in message:
+        return HTTPException(
+            status_code=429,
+            detail="Resume matching is temporarily rate-limited. Try again in a few seconds or lower the match count.",
+        )
+    if "Groq API" in message:
+        return HTTPException(
+            status_code=503,
+            detail="Resume matching is temporarily unavailable. Try again later.",
+        )
     return HTTPException(status_code=400, detail=message)
 
 

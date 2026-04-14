@@ -1,9 +1,9 @@
 "use client";
 
-import { Suspense, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
-import { api, FitJobResponse, FitMatchesResponse, JobFitMatch } from "@/lib/api";
+import { useRouter, useSearchParams } from "next/navigation";
+import { api, FitJobResponse, FitMatchesResponse, JobFitMatch, JobRow } from "@/lib/api";
 import { formatRoleFamily, formatSeniority, formatWorkModel } from "@/lib/format";
 
 function scoreColor(score: number) {
@@ -23,10 +23,14 @@ export default function FitPage() {
 
 function FitInner() {
   const params = useSearchParams();
-  const initialJobId = params.get("jobId") || "";
+  const router = useRouter();
+  const selectedJobId = params.get("jobId") || "";
   const [file, setFile] = useState<File | null>(null);
-  const [limit, setLimit] = useState(20);
-  const [jobId, setJobId] = useState(initialJobId);
+  const [limit, setLimit] = useState(10);
+  const [jobId, setJobId] = useState(selectedJobId);
+  const [selectedJob, setSelectedJob] = useState<JobRow | null>(null);
+  const [jobLoading, setJobLoading] = useState(false);
+  const [jobError, setJobError] = useState<string | null>(null);
   const [result, setResult] = useState<FitMatchesResponse | FitJobResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -36,6 +40,53 @@ function FitInner() {
     if ("matches" in result) return result.matches;
     return [result.match];
   }, [result]);
+
+  useEffect(() => {
+    setJobId(selectedJobId);
+    setSelectedJob(null);
+    setJobError(null);
+    setJobLoading(false);
+    if (!selectedJobId) return;
+
+    const numericJobId = Number(selectedJobId);
+    if (!Number.isInteger(numericJobId) || numericJobId <= 0) {
+      setJobError("Selected job was not found.");
+      return;
+    }
+
+    let cancelled = false;
+    setJobLoading(true);
+    void api.jobDetail(numericJobId)
+      .then((job) => {
+        if (!cancelled) setSelectedJob(job);
+      })
+      .catch(() => {
+        if (!cancelled) setJobError("Selected job was not found.");
+      })
+      .finally(() => {
+        if (!cancelled) setJobLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [selectedJobId]);
+
+  const clearSelectedJob = () => {
+    setJobId("");
+    setSelectedJob(null);
+    setJobError(null);
+    router.push("/fit");
+  };
+
+  const loadAdvancedJob = () => {
+    const trimmedJobId = jobId.trim();
+    if (!trimmedJobId) {
+      clearSelectedJob();
+      return;
+    }
+    router.push(`/fit?jobId=${encodeURIComponent(trimmedJobId)}`);
+  };
 
   const handleSubmit = async () => {
     if (!file) {
@@ -48,7 +99,12 @@ function FitInner() {
     try {
       const trimmedJobId = jobId.trim();
       if (trimmedJobId) {
-        const data = await api.fitJob(Number(trimmedJobId), file);
+        const numericJobId = Number(trimmedJobId);
+        if (!Number.isInteger(numericJobId) || numericJobId <= 0) {
+          setError("Enter a valid job ID.");
+          return;
+        }
+        const data = await api.fitJob(numericJobId, file);
         setResult(data);
       } else {
         const data = await api.fitMatches(file, { limit });
@@ -71,7 +127,16 @@ function FitInner() {
       </div>
 
       <div className="bg-card border border-card-border rounded-xl p-4 space-y-4">
-        <div className="grid gap-3 md:grid-cols-[1fr_140px_160px_auto] md:items-end">
+        {(jobLoading || jobError || selectedJob) && (
+          <SelectedJobCard
+            job={selectedJob}
+            loading={jobLoading}
+            error={jobError}
+            onClear={clearSelectedJob}
+          />
+        )}
+
+        <div className={jobId.trim() ? "grid gap-3 md:grid-cols-[1fr_auto] md:items-end" : "grid gap-3 md:grid-cols-[1fr_140px_auto] md:items-end"}>
           <label className="block">
             <span className="text-xs text-muted">Resume</span>
             <input
@@ -81,38 +146,49 @@ function FitInner() {
               className="mt-1 block w-full text-sm text-muted file:mr-3 file:rounded-lg file:border file:border-card-border file:bg-background file:px-3 file:py-2 file:text-foreground"
             />
           </label>
-          <label className="block">
-            <span className="text-xs text-muted">Matches</span>
-            <input
-              type="number"
-              min={1}
-              max={40}
-              value={limit}
-              onChange={(event) => setLimit(Number(event.target.value))}
-              disabled={Boolean(jobId.trim())}
-              className="mt-1 w-full bg-background border border-card-border rounded-lg px-3 py-2 text-sm text-foreground disabled:opacity-40"
-            />
-          </label>
-          <label className="block">
-            <span className="text-xs text-muted">Job ID</span>
-            <input
-              type="text"
-              value={jobId}
-              onChange={(event) => setJobId(event.target.value)}
-              placeholder="Optional"
-              className="mt-1 w-full bg-background border border-card-border rounded-lg px-3 py-2 text-sm text-foreground"
-            />
-          </label>
+          {!jobId.trim() && (
+            <label className="block">
+              <span className="text-xs text-muted">Matches</span>
+              <input
+                type="number"
+                min={1}
+                max={40}
+                value={limit}
+                onChange={(event) => setLimit(Number(event.target.value))}
+                className="mt-1 w-full bg-background border border-card-border rounded-lg px-3 py-2 text-sm text-foreground"
+              />
+            </label>
+          )}
           <button
             onClick={handleSubmit}
             disabled={loading}
             className="px-4 py-2 bg-accent text-white text-sm rounded-lg hover:bg-accent-light disabled:opacity-50 transition-colors"
           >
-            {loading ? "Analyzing..." : jobId.trim() ? "Compare Job" : "Find Fits"}
+            {loading ? "Analyzing..." : jobId.trim() ? "Compare Resume To This Job" : "Find Fits"}
           </button>
         </div>
+
+        <details className="text-xs text-muted">
+          <summary className="cursor-pointer hover:text-foreground">Advanced: paste job ID</summary>
+          <div className="mt-3 flex flex-col gap-2 sm:flex-row">
+            <input
+              type="text"
+              value={jobId}
+              onChange={(event) => setJobId(event.target.value)}
+              placeholder="Optional"
+              className="bg-background border border-card-border rounded-lg px-3 py-2 text-sm text-foreground sm:w-48"
+            />
+            <button
+              onClick={loadAdvancedJob}
+              className="px-3 py-2 text-xs bg-background border border-card-border rounded-lg text-muted hover:text-foreground"
+            >
+              Load job
+            </button>
+          </div>
+        </details>
+
         <p className="text-xs text-muted">
-          Raw resume text is parsed into a compact profile and not stored. Set `GROQ_API_KEY` on the backend before running analysis.
+          Raw resume text is parsed into a compact profile for matching and is not stored.
         </p>
         {error && (
           <div className="border border-red/40 bg-red/10 rounded-lg p-3 text-sm text-red">
@@ -154,6 +230,68 @@ function FitInner() {
           </section>
         </div>
       )}
+    </div>
+  );
+}
+
+function SelectedJobCard({
+  job,
+  loading,
+  error,
+  onClear,
+}: {
+  job: JobRow | null;
+  loading: boolean;
+  error: string | null;
+  onClear: () => void;
+}) {
+  if (loading) {
+    return (
+      <div className="bg-background border border-card-border rounded-lg p-4 text-sm text-muted">
+        Loading selected job...
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="bg-background border border-red/40 rounded-lg p-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <p className="text-sm text-red">{error}</p>
+        <button onClick={onClear} className="text-xs text-muted hover:text-foreground">
+          Clear selected job
+        </button>
+      </div>
+    );
+  }
+
+  if (!job) return null;
+
+  return (
+    <div className="bg-background border border-card-border rounded-lg p-4">
+      <p className="text-xs text-muted">Comparing against</p>
+      <div className="mt-2 flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+        <div>
+          <h3 className="font-semibold">{job.title}</h3>
+          <p className="text-sm text-muted mt-1">
+            <Link href={`/companies/${job.company_id}`} className="hover:text-accent-light">{job.company_name}</Link>
+            {job.sector ? ` · ${job.sector}` : ""}
+          </p>
+          <p className="text-xs text-muted mt-2">
+            {formatRoleFamily(job.role_family)} · {formatSeniority(job.seniority)} · {formatWorkModel(job.work_model)}
+            {job.location ? ` · ${job.location}` : ""}
+          </p>
+        </div>
+        <div className="flex gap-3 text-xs md:justify-end">
+          {job.url && (
+            <a href={job.url} target="_blank" rel="noopener noreferrer" className="text-accent-light hover:underline">
+              Apply
+            </a>
+          )}
+          <button onClick={onClear} className="text-muted hover:text-foreground">
+            Clear selected job
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
@@ -221,7 +359,7 @@ function FitCard({ match }: { match: JobFitMatch }) {
           </a>
         )}
         <Link href={`/fit?jobId=${match.job.id}`} className="text-muted hover:text-foreground">
-          Compare only this job
+          Focus on this job
         </Link>
       </div>
     </article>
