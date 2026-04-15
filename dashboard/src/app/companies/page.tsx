@@ -2,20 +2,24 @@
 
 import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
-import { api, CompanyRow, CompanyVelocity } from "@/lib/api";
+import { api, CompanyRow } from "@/lib/api";
 import { downloadCSV } from "@/lib/export";
 import { formatDate, formatMoney, fundingBadgeColor, FUNDING_ORDER } from "@/lib/format";
+import { MultiValuePicker } from "@/components/MultiValuePicker";
 
 type SortKey = "name" | "active_jobs" | "sector" | "funding_round" | "net";
-type CompanyTypeFilter = "" | "startup" | "bigco";
+const COMPANY_TYPE_OPTIONS = [
+  { value: "startup", label: "Startups" },
+  { value: "bigco", label: "Big Tech" },
+];
 
 export default function CompaniesPage() {
   const [companies, setCompanies] = useState<CompanyRow[]>([]);
   const [velocity, setVelocity] = useState<Record<number, number>>({});
   const [search, setSearch] = useState("");
-  const [sectorFilter, setSectorFilter] = useState("");
-  const [fundingFilter, setFundingFilter] = useState("");
-  const [typeFilter, setTypeFilter] = useState<CompanyTypeFilter>("");
+  const [sectorFilter, setSectorFilter] = useState<string[]>([]);
+  const [fundingFilter, setFundingFilter] = useState<string[]>([]);
+  const [typeFilter, setTypeFilter] = useState<string[]>([]);
   const [hideZeroJobs, setHideZeroJobs] = useState(true);
   const [compareIds, setCompareIds] = useState<number[]>([]);
   const [sortKey, setSortKey] = useState<SortKey>("active_jobs");
@@ -46,9 +50,9 @@ export default function CompaniesPage() {
       const q = search.toLowerCase();
       list = list.filter((c) => c.name.toLowerCase().includes(q));
     }
-    if (sectorFilter) list = list.filter((c) => c.sector === sectorFilter);
-    if (typeFilter) list = list.filter((c) => c.company_type === typeFilter);
-    if (fundingFilter) list = list.filter((c) => c.funding_round === fundingFilter);
+    if (sectorFilter.length) list = list.filter((c) => sectorFilter.includes(c.sector || ""));
+    if (typeFilter.length) list = list.filter((c) => typeFilter.includes(c.company_type));
+    if (fundingFilter.length) list = list.filter((c) => fundingFilter.includes(c.funding_round || ""));
     if (hideZeroJobs) list = list.filter((c) => c.active_jobs > 0);
     return list;
   }, [companies, search, sectorFilter, typeFilter, fundingFilter, hideZeroJobs]);
@@ -99,19 +103,6 @@ export default function CompaniesPage() {
             {filtered.length} of {companies.length} companies
           </p>
         </div>
-        <div className="flex gap-1 bg-card border border-card-border rounded-lg p-1">
-          {([["", "All"], ["startup", "Startups"], ["bigco", "Big Tech"]] as [CompanyTypeFilter, string][]).map(([val, label]) => (
-            <button
-              key={val}
-              onClick={() => setTypeFilter(val)}
-              className={`px-3 py-1 text-xs rounded transition-colors ${
-                typeFilter === val ? "bg-accent text-white" : "text-muted hover:text-foreground"
-              }`}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
       </div>
 
       <div className="flex gap-3 flex-wrap items-center">
@@ -122,22 +113,27 @@ export default function CompaniesPage() {
           onChange={(e) => setSearch(e.target.value)}
           className="bg-card border border-card-border rounded-lg px-3 py-2 text-sm text-foreground w-full sm:w-56"
         />
-        <select
-          value={sectorFilter}
-          onChange={(e) => setSectorFilter(e.target.value)}
+        <MultiValuePicker
+          placeholder="Add sector"
+          options={sectors.map((item) => ({ value: item, label: item }))}
+          values={sectorFilter}
+          onChange={setSectorFilter}
           className="bg-card border border-card-border rounded-lg px-3 py-2 text-sm text-foreground"
-        >
-          <option value="">All Sectors</option>
-          {sectors.map((s) => <option key={s} value={s}>{s}</option>)}
-        </select>
-        <select
-          value={fundingFilter}
-          onChange={(e) => setFundingFilter(e.target.value)}
+        />
+        <MultiValuePicker
+          placeholder="Add stage"
+          options={fundingRounds.map((item) => ({ value: item, label: item }))}
+          values={fundingFilter}
+          onChange={setFundingFilter}
           className="bg-card border border-card-border rounded-lg px-3 py-2 text-sm text-foreground"
-        >
-          <option value="">All Stages</option>
-          {fundingRounds.map((r) => <option key={r} value={r}>{r}</option>)}
-        </select>
+        />
+        <MultiValuePicker
+          placeholder="Add company type"
+          options={COMPANY_TYPE_OPTIONS}
+          values={typeFilter}
+          onChange={setTypeFilter}
+          className="bg-card border border-card-border rounded-lg px-3 py-2 text-sm text-foreground"
+        />
         <label className="flex items-center gap-2 text-sm text-muted cursor-pointer select-none">
           <input
             type="checkbox"
@@ -147,6 +143,19 @@ export default function CompaniesPage() {
           />
           Hide 0-job
         </label>
+        {(search || sectorFilter.length || fundingFilter.length || typeFilter.length) && (
+          <button
+            onClick={() => {
+              setSearch("");
+              setSectorFilter([]);
+              setFundingFilter([]);
+              setTypeFilter([]);
+            }}
+            className="px-3 py-2 text-xs text-red border border-red/30 rounded-lg hover:bg-red/10 transition-colors"
+          >
+            Clear filters
+          </button>
+        )}
         <button
           onClick={handleExport}
           className="ml-auto px-3 py-2 text-xs bg-card border border-card-border rounded-lg text-muted hover:text-foreground transition-colors"

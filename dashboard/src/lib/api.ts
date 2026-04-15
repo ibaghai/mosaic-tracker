@@ -1,12 +1,21 @@
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
-async function fetchApi<T>(path: string, params?: Record<string, string | number | undefined>): Promise<T> {
+async function fetchApi<T>(
+  path: string,
+  params?: Record<string, string | number | string[] | number[] | undefined>
+): Promise<T> {
   const url = new URL(`${API_BASE}${path}`);
   if (params) {
     Object.entries(params).forEach(([k, v]) => {
-      if (v !== undefined && v !== null && v !== "") {
-        url.searchParams.set(k, String(v));
+      if (v === undefined || v === null || v === "") return;
+      if (Array.isArray(v)) {
+        const values = v.map((entry) => String(entry).trim()).filter(Boolean);
+        if (values.length > 0) {
+          url.searchParams.set(k, values.join(","));
+        }
+        return;
       }
+      url.searchParams.set(k, String(v));
     });
   }
   const res = await fetch(url.toString());
@@ -158,6 +167,9 @@ export interface JobRow {
   is_active: number;
   company_name: string;
   sector: string;
+  company_type: string;
+  ats_type: string | null;
+  funding_round: string | null;
   normalized_department: string | null;
   seniority: string | null;
   work_model: string | null;
@@ -252,14 +264,16 @@ export interface FitJobResponse {
 
 export interface JobFilters {
   search?: string;
-  sector?: string;
-  employment_type?: string;
-  skill?: string;
-  seniority?: string;
-  work_model?: string;
-  company_type?: string;
+  sector?: string | string[];
+  employment_type?: string | string[];
+  skill?: string | string[];
+  seniority?: string | string[];
+  work_model?: string | string[];
+  company_type?: string | string[];
   company_id?: number;
-  department?: string;
+  department?: string | string[];
+  ats_type?: string | string[];
+  funding_round?: string | string[];
 }
 
 // API functions
@@ -281,7 +295,7 @@ export const api = {
   skills: (companyType?: string, limit?: number) =>
     fetchApi<SkillRow[]>("/api/skills", { company_type: companyType, limit }),
   jobs: (filters?: JobFilters) =>
-    fetchApi<JobRow[]>("/api/jobs", filters as Record<string, string | number | undefined>),
+    fetchApi<JobRow[]>("/api/jobs", filters as Record<string, string | number | string[] | number[] | undefined>),
   jobDetail: (id: number) => fetchApi<JobRow>(`/api/jobs/${id}`),
   jobFilters: () => fetchApi<FilterOptions>("/api/jobs/filters"),
   jobFreshness: (companyType?: string) =>

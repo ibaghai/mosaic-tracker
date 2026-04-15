@@ -4,12 +4,13 @@ import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import { api, CompanyRow } from "@/lib/api";
 import { formatMoney, fundingBadgeColor, FUNDING_ORDER } from "@/lib/format";
+import { MultiValuePicker } from "@/components/MultiValuePicker";
 
 export default function CoveragePage() {
   const [companies, setCompanies] = useState<CompanyRow[]>([]);
   const [search, setSearch] = useState("");
-  const [sectorFilter, setSectorFilter] = useState("");
-  const [fundingFilter, setFundingFilter] = useState("");
+  const [sectorFilter, setSectorFilter] = useState<string[]>([]);
+  const [fundingFilter, setFundingFilter] = useState<string[]>([]);
   const [hideZeroJobs, setHideZeroJobs] = useState(true);
   const [view, setView] = useState<"grid" | "list">("grid");
 
@@ -41,12 +42,14 @@ export default function CoveragePage() {
     return {
       startups: startups.filter((c) =>
         (!q || c.name.toLowerCase().includes(q)) &&
-        (!sectorFilter || c.sector === sectorFilter) &&
-        (!fundingFilter || c.funding_round === fundingFilter) &&
+        (!sectorFilter.length || sectorFilter.includes(c.sector || "")) &&
+        (!fundingFilter.length || fundingFilter.includes(c.funding_round || "")) &&
         (!hideZeroJobs || c.active_jobs > 0)
       ),
       bigcos: bigcos.filter((c) =>
         (!q || c.name.toLowerCase().includes(q)) &&
+        (!sectorFilter.length || sectorFilter.includes(c.sector || "")) &&
+        (!fundingFilter.length || fundingFilter.includes(c.funding_round || "")) &&
         (!hideZeroJobs || c.active_jobs > 0)
       ),
     };
@@ -103,22 +106,20 @@ export default function CoveragePage() {
           onChange={(e) => setSearch(e.target.value)}
           className="bg-card border border-card-border rounded-lg px-3 py-2 text-sm text-foreground w-full sm:w-64"
         />
-        <select
-          value={sectorFilter}
-          onChange={(e) => setSectorFilter(e.target.value)}
+        <MultiValuePicker
+          placeholder="Add sector"
+          options={sectors.map((item) => ({ value: item, label: item }))}
+          values={sectorFilter}
+          onChange={setSectorFilter}
           className="bg-card border border-card-border rounded-lg px-3 py-2 text-sm text-foreground"
-        >
-          <option value="">All Sectors</option>
-          {sectors.map((s) => <option key={s} value={s}>{s}</option>)}
-        </select>
-        <select
-          value={fundingFilter}
-          onChange={(e) => setFundingFilter(e.target.value)}
+        />
+        <MultiValuePicker
+          placeholder="Add stage"
+          options={fundingRounds.map((item) => ({ value: item, label: item }))}
+          values={fundingFilter}
+          onChange={setFundingFilter}
           className="bg-card border border-card-border rounded-lg px-3 py-2 text-sm text-foreground"
-        >
-          <option value="">All Stages</option>
-          {fundingRounds.map((r) => <option key={r} value={r}>{r}</option>)}
-        </select>
+        />
         <label className="flex items-center gap-2 text-sm text-muted cursor-pointer select-none">
           <input
             type="checkbox"
@@ -128,9 +129,9 @@ export default function CoveragePage() {
           />
           Hide 0-job companies
         </label>
-        {(search || sectorFilter || fundingFilter) && (
+        {(search || sectorFilter.length || fundingFilter.length) && (
           <button
-            onClick={() => { setSearch(""); setSectorFilter(""); setFundingFilter(""); }}
+            onClick={() => { setSearch(""); setSectorFilter([]); setFundingFilter([]); }}
             className="px-3 py-2 text-xs text-red border border-red/30 rounded-lg hover:bg-red/10 transition-colors"
           >
             Clear

@@ -2,11 +2,16 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { api, JobRow, SkillRow, DepartmentRow, JobFilters, FreshnessRow } from "@/lib/api";
-import { formatRoleFamily, formatSeniority, formatWorkModel, SENIORITY_LABELS } from "@/lib/format";
+import { api, CompanyRow, JobRow, SkillRow, DepartmentRow, JobFilters, FreshnessRow } from "@/lib/api";
+import { formatRoleFamily, formatSeniority, formatWorkModel, FUNDING_ORDER, SENIORITY_LABELS } from "@/lib/format";
 import { downloadCSV } from "@/lib/export";
+import { MultiValuePicker } from "@/components/MultiValuePicker";
 
 const WORK_MODELS = ["remote", "hybrid", "onsite"];
+const COMPANY_TYPE_OPTIONS = [
+  { value: "startup", label: "Startups" },
+  { value: "bigco", label: "Big companies" },
+];
 
 export default function JobFeedPage() {
   const [jobs, setJobs] = useState<JobRow[]>([]);
@@ -14,33 +19,67 @@ export default function JobFeedPage() {
   const [departments, setDepartments] = useState<DepartmentRow[]>([]);
   const [freshness, setFreshness] = useState<FreshnessRow[]>([]);
   const [loading, setLoading] = useState(false);
+  const [sectorOptions, setSectorOptions] = useState<string[]>([]);
+  const [empTypeOptions, setEmpTypeOptions] = useState<string[]>([]);
+  const [atsTypeOptions, setAtsTypeOptions] = useState<string[]>([]);
+  const [fundingRoundOptions, setFundingRoundOptions] = useState<string[]>([]);
 
   // Filters
   const [search, setSearch] = useState("");
-  const [sector, setSector] = useState("");
-  const [empType, setEmpType] = useState("");
-  const [skill, setSkill] = useState("");
-  const [seniority, setSeniority] = useState("");
-  const [workModel, setWorkModel] = useState("");
-  const [companyType, setCompanyType] = useState("");
-  const [department, setDepartment] = useState("");
+  const [sector, setSector] = useState<string[]>([]);
+  const [empType, setEmpType] = useState<string[]>([]);
+  const [skill, setSkill] = useState<string[]>([]);
+  const [seniority, setSeniority] = useState<string[]>([]);
+  const [workModel, setWorkModel] = useState<string[]>([]);
+  const [companyType, setCompanyType] = useState<string[]>([]);
+  const [department, setDepartment] = useState<string[]>([]);
+  const [atsType, setAtsType] = useState<string[]>([]);
+  const [fundingRound, setFundingRound] = useState<string[]>([]);
 
   useEffect(() => {
-    void api.skills(undefined, 95).then(setSkills);
-    void api.departments().then(setDepartments);
-    void api.jobFreshness().then(setFreshness);
+    void Promise.all([
+      api.skills(undefined, 95),
+      api.departments(),
+      api.jobFreshness(),
+      api.companies(),
+      api.jobFilters(),
+    ]).then(([skillRows, deptRows, freshRows, companyRows, jobFilterOptions]) => {
+      setSkills(skillRows);
+      setDepartments(deptRows);
+      setFreshness(freshRows);
+
+      const companySectors = [...new Set(companyRows.map((company: CompanyRow) => company.sector).filter(Boolean))].sort();
+      const companyAtsTypes = [...new Set(companyRows.map((company: CompanyRow) => company.ats_type).filter((value): value is string => Boolean(value)))].sort();
+      const fundingSet = new Set(
+        companyRows
+          .map((company: CompanyRow) => company.funding_round)
+          .filter((value): value is string => Boolean(value))
+      );
+      const orderedFunding = [
+        ...FUNDING_ORDER.filter((round) => fundingSet.has(round)),
+        ...[...fundingSet].filter((round) => !FUNDING_ORDER.includes(round)).sort(),
+      ];
+      const employmentTypes = [...new Set(jobFilterOptions.employment_types.map((value) => value.trim()).filter(Boolean))].sort();
+
+      setSectorOptions(companySectors);
+      setAtsTypeOptions(companyAtsTypes);
+      setFundingRoundOptions(orderedFunding);
+      setEmpTypeOptions(employmentTypes);
+    });
   }, []);
 
   const filters = useMemo((): JobFilters => ({
     search: search || undefined,
-    sector: sector || undefined,
-    employment_type: empType || undefined,
-    skill: skill || undefined,
-    seniority: seniority || undefined,
-    work_model: workModel || undefined,
-    company_type: companyType || undefined,
-    department: department || undefined,
-  }), [search, sector, empType, skill, seniority, workModel, companyType, department]);
+    sector: sector.length ? sector : undefined,
+    employment_type: empType.length ? empType : undefined,
+    skill: skill.length ? skill : undefined,
+    seniority: seniority.length ? seniority : undefined,
+    work_model: workModel.length ? workModel : undefined,
+    company_type: companyType.length ? companyType : undefined,
+    department: department.length ? department : undefined,
+    ats_type: atsType.length ? atsType : undefined,
+    funding_round: fundingRound.length ? fundingRound : undefined,
+  }), [search, sector, empType, skill, seniority, workModel, companyType, department, atsType, fundingRound]);
 
   useEffect(() => {
     let cancelled = false;
@@ -60,17 +99,16 @@ export default function JobFeedPage() {
     };
   }, [filters]);
 
-  const sectors = useMemo(
-    () => [...new Set(jobs.map((j) => j.sector).filter(Boolean))].sort(),
-    [jobs]
-  );
-
-  const empTypes = useMemo(
-    () => [...new Set(jobs.map((j) => j.employment_type).filter((t): t is string => Boolean(t)))].sort(),
-    [jobs]
-  );
-
-  const activeFilters = [search, sector, empType, skill, seniority, workModel, companyType, department].filter(Boolean).length;
+  const activeFilters = Number(Boolean(search))
+    + sector.length
+    + empType.length
+    + skill.length
+    + seniority.length
+    + workModel.length
+    + companyType.length
+    + department.length
+    + atsType.length
+    + fundingRound.length;
 
   const freshnessLookup = useMemo(
     () => freshness.reduce<Record<string, number>>((acc, row) => {
@@ -126,72 +164,79 @@ export default function JobFeedPage() {
             onChange={(e) => setSearch(e.target.value)}
             className="bg-background border border-card-border rounded-lg px-3 py-2 text-sm text-foreground w-full sm:w-64"
           />
-          <select
-            value={sector}
-            onChange={(e) => setSector(e.target.value)}
-            className="bg-background border border-card-border rounded-lg px-3 py-2 text-sm text-foreground"
-          >
-            <option value="">All Sectors</option>
-            {sectors.map((s) => <option key={s} value={s}>{s}</option>)}
-          </select>
-          <select
-            value={companyType}
-            onChange={(e) => setCompanyType(e.target.value)}
-            className="bg-background border border-card-border rounded-lg px-3 py-2 text-sm text-foreground"
-          >
-            <option value="">Both</option>
-            <option value="startup">Startups</option>
-            <option value="bigco">Big companies</option>
-          </select>
+          <MultiValuePicker
+            placeholder="Add sector"
+            options={sectorOptions.map((item) => ({ value: item, label: item }))}
+            values={sector}
+            onChange={setSector}
+          />
+          <MultiValuePicker
+            placeholder="Add company type"
+            options={COMPANY_TYPE_OPTIONS}
+            values={companyType}
+            onChange={setCompanyType}
+          />
+          <MultiValuePicker
+            placeholder="Add ATS"
+            options={atsTypeOptions.map((item) => ({ value: item, label: item }))}
+            values={atsType}
+            onChange={setAtsType}
+          />
+          <MultiValuePicker
+            placeholder="Add funding stage"
+            options={fundingRoundOptions.map((item) => ({ value: item, label: item }))}
+            values={fundingRound}
+            onChange={setFundingRound}
+          />
         </div>
         <div className="flex flex-wrap gap-3">
-          <select
-            value={department}
-            onChange={(e) => setDepartment(e.target.value)}
-            className="bg-background border border-card-border rounded-lg px-3 py-2 text-sm text-foreground"
-          >
-            <option value="">All Departments</option>
-            {departments.map((d) => <option key={d.category} value={d.category}>{d.category} ({d.job_count.toLocaleString()})</option>)}
-          </select>
-          <select
-            value={skill}
-            onChange={(e) => setSkill(e.target.value)}
-            className="bg-background border border-card-border rounded-lg px-3 py-2 text-sm text-foreground"
-          >
-            <option value="">Any Skill</option>
-            {skills.map((s) => <option key={s.skill} value={s.skill}>{s.skill} ({s.count})</option>)}
-          </select>
-          <select
-            value={seniority}
-            onChange={(e) => setSeniority(e.target.value)}
-            className="bg-background border border-card-border rounded-lg px-3 py-2 text-sm text-foreground"
-          >
-            <option value="">Any Seniority</option>
-            {Object.entries(SENIORITY_LABELS).map(([val, label]) => (
-              <option key={val} value={val}>{label}</option>
-            ))}
-          </select>
-          <select
-            value={workModel}
-            onChange={(e) => setWorkModel(e.target.value)}
-            className="bg-background border border-card-border rounded-lg px-3 py-2 text-sm text-foreground"
-          >
-            <option value="">Any Work Model</option>
-            {WORK_MODELS.map((m) => (
-              <option key={m} value={m}>{formatWorkModel(m)}</option>
-            ))}
-          </select>
-          <select
-            value={empType}
-            onChange={(e) => setEmpType(e.target.value)}
-            className="bg-background border border-card-border rounded-lg px-3 py-2 text-sm text-foreground"
-          >
-            <option value="">All Employment Types</option>
-            {empTypes.map((t) => <option key={t} value={t}>{t}</option>)}
-          </select>
+          <MultiValuePicker
+            placeholder="Add department"
+            options={departments.map((item) => ({
+              value: item.category,
+              label: `${item.category} (${item.job_count.toLocaleString()})`,
+            }))}
+            values={department}
+            onChange={setDepartment}
+          />
+          <MultiValuePicker
+            placeholder="Add skill"
+            options={skills.map((item) => ({ value: item.skill, label: `${item.skill} (${item.count})` }))}
+            values={skill}
+            onChange={setSkill}
+          />
+          <MultiValuePicker
+            placeholder="Add seniority"
+            options={Object.entries(SENIORITY_LABELS).map(([value, label]) => ({ value, label }))}
+            values={seniority}
+            onChange={setSeniority}
+          />
+          <MultiValuePicker
+            placeholder="Add work model"
+            options={WORK_MODELS.map((item) => ({ value: item, label: formatWorkModel(item) }))}
+            values={workModel}
+            onChange={setWorkModel}
+          />
+          <MultiValuePicker
+            placeholder="Add employment type"
+            options={empTypeOptions.map((item) => ({ value: item, label: item }))}
+            values={empType}
+            onChange={setEmpType}
+          />
           {activeFilters > 0 && (
             <button
-              onClick={() => { setSearch(""); setSector(""); setEmpType(""); setSkill(""); setSeniority(""); setWorkModel(""); setCompanyType(""); setDepartment(""); }}
+              onClick={() => {
+                setSearch("");
+                setSector([]);
+                setEmpType([]);
+                setSkill([]);
+                setSeniority([]);
+                setWorkModel([]);
+                setCompanyType([]);
+                setDepartment([]);
+                setAtsType([]);
+                setFundingRound([]);
+              }}
               className="px-3 py-2 text-xs text-red border border-red/30 rounded-lg hover:bg-red/10 transition-colors"
             >
               Clear all

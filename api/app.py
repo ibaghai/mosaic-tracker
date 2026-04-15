@@ -133,6 +133,8 @@ def jobs(
     work_model: Optional[str] = None,
     company_type: Optional[str] = None,
     department: Optional[str] = None,
+    ats_type: Optional[str] = None,
+    funding_round: Optional[str] = None,
 ):
     return queries.get_active_jobs(
         company_id=company_id,
@@ -147,6 +149,8 @@ def jobs(
         work_model=work_model,
         company_type=company_type,
         department=department,
+        ats_type=ats_type,
+        funding_round=funding_round,
     )
 
 

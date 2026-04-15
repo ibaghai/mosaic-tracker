@@ -348,6 +348,25 @@ def get_company_stats() -> list:
     return [dict(r) for r in rows]
 
 
+def _split_filter_values(value) -> list[str]:
+    if value is None:
+        return []
+    if isinstance(value, (list, tuple, set)):
+        raw_values = [str(item) for item in value]
+    else:
+        raw_values = str(value).split(",")
+    return [item.strip() for item in raw_values if str(item).strip()]
+
+
+def _append_in_filter(sql: str, params: list, column: str, values: list[str]) -> str:
+    if not values:
+        return sql
+    placeholders = ",".join("?" for _ in values)
+    sql += f" AND {column} IN ({placeholders})"
+    params.extend(values)
+    return sql
+
+
 def get_active_jobs(
     company_id: Optional[int] = None,
     exclude_company_ids: Optional[List[int]] = None,
@@ -362,21 +381,26 @@ def get_active_jobs(
     work_model: Optional[str] = None,
     company_type: Optional[str] = None,
     department: Optional[str] = None,
+    ats_type: Optional[str] = None,
+    funding_round: Optional[str] = None,
 ) -> list:
     """Active job postings with optional filters."""
     conn = get_connection()
-    if skill:
+    skill_values = _split_filter_values(skill)
+    if skill_values:
+        skill_placeholders = ",".join("?" for _ in skill_values)
         sql = """
-            SELECT jp.*, c.name AS company_name, c.sector
+            SELECT jp.*, c.name AS company_name, c.sector, c.ats_type, c.funding_round, c.company_type
             FROM job_postings jp
             JOIN companies c ON c.id = jp.company_id
             JOIN job_skills js ON js.job_id = jp.id
-            WHERE jp.is_active = 1 AND js.skill = ?
+            WHERE jp.is_active = 1 AND js.skill IN ({})
         """
-        params = [skill]
+        sql = sql.format(skill_placeholders)
+        params = list(skill_values)
     else:
         sql = """
-            SELECT jp.*, c.name AS company_name, c.sector
+            SELECT jp.*, c.name AS company_name, c.sector, c.ats_type, c.funding_round, c.company_type
             FROM job_postings jp
             JOIN companies c ON c.id = jp.company_id
             WHERE jp.is_active = 1
@@ -389,12 +413,10 @@ def get_active_jobs(
         placeholders = ",".join("?" for _ in exclude_company_ids)
         sql += f" AND jp.company_id NOT IN ({placeholders})"
         params.extend(exclude_company_ids)
-    if sector:
-        sql += " AND c.sector = ?"
-        params.append(sector)
-    if company_type:
-        sql += " AND c.company_type = ?"
-        params.append(company_type)
+    sql = _append_in_filter(sql, params, "c.sector", _split_filter_values(sector))
+    sql = _append_in_filter(sql, params, "c.company_type", _split_filter_values(company_type))
+    sql = _append_in_filter(sql, params, "c.ats_type", _split_filter_values(ats_type))
+    sql = _append_in_filter(sql, params, "c.funding_round", _split_filter_values(funding_round))
     if search:
         sql += " AND (jp.title LIKE ? OR jp.department LIKE ?)"
         params += [f"%{search}%", f"%{search}%"]
@@ -407,18 +429,10 @@ def get_active_jobs(
     if location:
         sql += " AND jp.location LIKE ?"
         params.append(f"%{location}%")
-    if employment_type:
-        sql += " AND jp.employment_type = ?"
-        params.append(employment_type)
-    if seniority:
-        sql += " AND jp.seniority = ?"
-        params.append(seniority)
-    if work_model:
-        sql += " AND jp.work_model = ?"
-        params.append(work_model)
-    if department:
-        sql += " AND jp.normalized_department = ?"
-        params.append(department)
+    sql = _append_in_filter(sql, params, "jp.employment_type", _split_filter_values(employment_type))
+    sql = _append_in_filter(sql, params, "jp.seniority", _split_filter_values(seniority))
+    sql = _append_in_filter(sql, params, "jp.work_model", _split_filter_values(work_model))
+    sql = _append_in_filter(sql, params, "jp.normalized_department", _split_filter_values(department))
     sql += " ORDER BY jp.first_seen_at DESC"
     rows = conn.execute(sql, params).fetchall()
     conn.close()
@@ -429,7 +443,7 @@ def get_active_job(job_id: int) -> Optional[dict]:
     """Single active job posting with company metadata for preview/detail views."""
     conn = get_connection()
     row = conn.execute("""
-        SELECT jp.*, c.name AS company_name, c.sector
+        SELECT jp.*, c.name AS company_name, c.sector, c.ats_type, c.funding_round, c.company_type
         FROM job_postings jp
         JOIN companies c ON c.id = jp.company_id
         WHERE jp.id = ? AND jp.is_active = 1
