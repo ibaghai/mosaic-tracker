@@ -1,0 +1,73 @@
+# Hybrid tracker config inspired by career-ops.
+#
+# Copy to `portals.yml` to activate YAML-based company loading.
+# If `portals.yml` is absent, the tracker falls back to `companies.json`.
+#
+# tracked_companies:
+#   - enabled: set false to keep an entry in config without scraping it
+#   - ats_type: greenhouse | lever | ashby | smartrecruiters | teamtailor | workable | playwright | static
+#               | workday
+#   - ats_identifier:
+#       greenhouse     -> board slug
+#       lever          -> company slug
+#       ashby          -> company slug
+#       smartrecruiters -> company slug
+#       teamtailor     -> base careers URL
+#       workable       -> Workable slug or full careers URL
+#       workday        -> full public Workday jobs URL
+#       playwright     -> full careers URL
+#       static         -> full careers URL
+#   - careers_url: direct landing page for jobs, used for future hybrid discovery
+#   - selectors: only needed for `playwright` custom sites
+
+tracked_companies:
+  - name: Anthropic
+    enabled: true
+    ats_type: greenhouse
+    ats_identifier: anthropic
+    careers_url: https://job-boards.greenhouse.io/anthropic
+    website: https://www.anthropic.com
+    sector: AI & Machine Learning
+    company_type: startup
+
+  - name: Arcadia
+    enabled: true
+    ats_type: lever
+    ats_identifier: arcadia
+    careers_url: https://jobs.lever.co/arcadia
+    website: https://arcadia.com
+    sector: Climate & Energy
+    funding_round: Series D
+    funding_amount_m: 200
+    funding_date: 2023-11-01
+
+  - name: Doist
+    enabled: true
+    ats_type: workable
+    ats_identifier: doist
+    careers_url: https://apply.workable.com/doist/
+    website: https://doist.com
+    sector: Productivity Software
+    company_type: startup
+
+  - name: OpenAI
+    enabled: true
+    ats_type: playwright
+    ats_identifier: https://openai.com/careers/search
+    careers_url: https://openai.com/careers/search
+    website: https://openai.com
+    sector: AI & Machine Learning
+    selectors:
+      job_container: 'a[href*="/careers/"]'
+      title: 'h3, [data-testid="title"]'
+      location: '[data-testid="location"], .text-sm'
+      link: 'a'
+
+  - name: Workday
+    enabled: false
+    ats_type: workday
+    ats_identifier: https://workday.wd5.myworkdayjobs.com/Workday
+    careers_url: https://workday.wd5.myworkdayjobs.com/Workday
+    website: https://workday.com
+    sector: Enterprise Software
+    company_type: bigco

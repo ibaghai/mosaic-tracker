@@ -2,30 +2,57 @@
 
 import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
-import { api, CompanyRow, CompanyVelocity } from "@/lib/api";
+import { api, CompanyRow, SavedView, Watchlist } from "@/lib/api";
 import { downloadCSV } from "@/lib/export";
 import { formatDate, formatMoney, fundingBadgeColor, FUNDING_ORDER } from "@/lib/format";
+import { MultiValuePicker } from "@/components/MultiValuePicker";
 
 type SortKey = "name" | "active_jobs" | "sector" | "funding_round" | "net";
-type CompanyTypeFilter = "" | "startup" | "bigco";
+const COMPANY_TYPE_OPTIONS = [
+  { value: "startup", label: "Startups" },
+  { value: "bigco", label: "Big Tech" },
+];
+
+function toMultiValues(value: unknown): string[] {
+  if (Array.isArray(value)) {
+    return value.map((entry) => String(entry).trim()).filter(Boolean);
+  }
+  if (typeof value === "string") {
+    return value.split(",").map((entry) => entry.trim()).filter(Boolean);
+  }
+  return [];
+}
 
 export default function CompaniesPage() {
   const [companies, setCompanies] = useState<CompanyRow[]>([]);
   const [velocity, setVelocity] = useState<Record<number, number>>({});
   const [search, setSearch] = useState("");
-  const [sectorFilter, setSectorFilter] = useState("");
-  const [fundingFilter, setFundingFilter] = useState("");
-  const [typeFilter, setTypeFilter] = useState<CompanyTypeFilter>("");
+  const [sectorFilter, setSectorFilter] = useState<string[]>([]);
+  const [fundingFilter, setFundingFilter] = useState<string[]>([]);
+  const [typeFilter, setTypeFilter] = useState<string[]>([]);
   const [hideZeroJobs, setHideZeroJobs] = useState(true);
   const [compareIds, setCompareIds] = useState<number[]>([]);
   const [sortKey, setSortKey] = useState<SortKey>("active_jobs");
   const [sortAsc, setSortAsc] = useState(false);
+  const [savedViews, setSavedViews] = useState<SavedView[]>([]);
+  const [viewName, setViewName] = useState("");
+  const [watchlists, setWatchlists] = useState<Watchlist[]>([]);
+  const [selectedWatchlistId, setSelectedWatchlistId] = useState("");
+  const [actionError, setActionError] = useState("");
 
   useEffect(() => {
-    api.companies().then(setCompanies);
-    api.companyVelocity(7).then((rows) => {
+    Promise.all([
+      api.companies(),
+      api.companyVelocity(7),
+      api.savedViews("companies"),
+      api.watchlists("recruiter"),
+    ]).then(([companyRows, velocityRows, views, lists]) => {
+      setCompanies(companyRows);
+      setSavedViews(views);
+      setWatchlists(lists);
+      if (lists.length > 0) setSelectedWatchlistId(String(lists[0].id));
       const map: Record<number, number> = {};
-      rows.forEach((r) => { map[r.company_id] = r.net; });
+      velocityRows.forEach((r) => { map[r.company_id] = r.net; });
       setVelocity(map);
     });
   }, []);
@@ -46,9 +73,9 @@ export default function CompaniesPage() {
       const q = search.toLowerCase();
       list = list.filter((c) => c.name.toLowerCase().includes(q));
     }
-    if (sectorFilter) list = list.filter((c) => c.sector === sectorFilter);
-    if (typeFilter) list = list.filter((c) => c.company_type === typeFilter);
-    if (fundingFilter) list = list.filter((c) => c.funding_round === fundingFilter);
+    if (sectorFilter.length) list = list.filter((c) => sectorFilter.includes(c.sector || ""));
+    if (typeFilter.length) list = list.filter((c) => typeFilter.includes(c.company_type));
+    if (fundingFilter.length) list = list.filter((c) => fundingFilter.includes(c.funding_round || ""));
     if (hideZeroJobs) list = list.filter((c) => c.active_jobs > 0);
     return list;
   }, [companies, search, sectorFilter, typeFilter, fundingFilter, hideZeroJobs]);
@@ -90,6 +117,87 @@ export default function CompaniesPage() {
     downloadCSV(rows as Record<string, unknown>[], "mosaic-companies.csv");
   };
 
+  const refreshSavedViews = () => {
+    void api.savedViews("companies").then(setSavedViews);
+  };
+
+  const refreshWatchlists = () => {
+    void api.watchlists("recruiter").then((lists) => {
+      setWatchlists(lists);
+      if (!selectedWatchlistId && lists.length > 0) setSelectedWatchlistId(String(lists[0].id));
+    });
+  };
+
+  const saveCurrentView = async () => {
+    if (!viewName.trim()) return;
+    try {
+      setActionError("");
+      await api.createSavedView({
+        name: viewName.trim(),
+        view_type: "companies",
+        persona: "recruiter",
+        filters: {
+          search,
+          sector: sectorFilter,
+          funding_round: fundingFilter,
+          company_type: typeFilter,
+          hide_zero_jobs: hideZeroJobs,
+        },
+      });
+      setViewName("");
+      refreshSavedViews();
+    } catch (err) {
+      setActionError(err instanceof Error ? err.message : "Could not save view");
+    }
+  };
+
+  const applySavedView = async (view: SavedView) => {
+    const f = view.filters || {};
+    setSearch(String(f.search || ""));
+    setSectorFilter(toMultiValues(f.sector));
+    setFundingFilter(toMultiValues(f.funding_round));
+    setTypeFilter(toMultiValues(f.company_type));
+    setHideZeroJobs(Boolean(f.hide_zero_jobs ?? true));
+    try {
+      setActionError("");
+      await api.markSavedViewViewed(view.id);
+      refreshSavedViews();
+    } catch (err) {
+      setActionError(err instanceof Error ? err.message : "Could not apply view");
+    }
+  };
+
+  const addSelectedToWatchlist = async () => {
+    if (!selectedWatchlistId || compareIds.length === 0) return;
+    const watchlistId = Number(selectedWatchlistId);
+    if (!Number.isFinite(watchlistId)) return;
+    try {
+      setActionError("");
+      await Promise.all(compareIds.map((companyId) =>
+        api.addWatchlistItem(watchlistId, {
+          item_type: "company",
+          item_value: String(companyId),
+          company_id: companyId,
+        })
+      ));
+      refreshWatchlists();
+    } catch (err) {
+      setActionError(err instanceof Error ? err.message : "Could not add companies to watchlist");
+    }
+  };
+
+  const createRecruiterWatchlist = async () => {
+    const base = `Recruiter Watchlist ${new Date().toLocaleDateString()}`;
+    try {
+      setActionError("");
+      const created = await api.createWatchlist({ name: base, persona: "recruiter" });
+      setSelectedWatchlistId(String(created.id));
+      refreshWatchlists();
+    } catch (err) {
+      setActionError(err instanceof Error ? err.message : "Could not create watchlist");
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-start justify-between">
@@ -99,19 +207,54 @@ export default function CompaniesPage() {
             {filtered.length} of {companies.length} companies
           </p>
         </div>
-        <div className="flex gap-1 bg-card border border-card-border rounded-lg p-1">
-          {([["", "All"], ["startup", "Startups"], ["bigco", "Big Tech"]] as [CompanyTypeFilter, string][]).map(([val, label]) => (
-            <button
-              key={val}
-              onClick={() => setTypeFilter(val)}
-              className={`px-3 py-1 text-xs rounded transition-colors ${
-                typeFilter === val ? "bg-accent text-white" : "text-muted hover:text-foreground"
-              }`}
-            >
-              {label}
-            </button>
-          ))}
+      </div>
+
+      <div className="bg-card border border-card-border rounded-xl p-4 space-y-3">
+        <div className="flex flex-wrap gap-3 items-center">
+          <input
+            type="text"
+            placeholder="Name this view..."
+            value={viewName}
+            onChange={(e) => setViewName(e.target.value)}
+            className="bg-background border border-card-border rounded-lg px-3 py-2 text-sm text-foreground w-full sm:w-56"
+          />
+          <button
+            onClick={() => { void saveCurrentView(); }}
+            className="px-3 py-2 text-xs bg-accent text-white rounded-lg hover:bg-accent/90 transition-colors"
+          >
+            Save current view
+          </button>
         </div>
+        {savedViews.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {savedViews.map((view) => (
+              <div key={view.id} className="inline-flex items-center gap-1 bg-background border border-card-border rounded-lg px-2 py-1">
+                <button
+                  onClick={() => { void applySavedView(view); }}
+                  className="text-xs text-muted hover:text-foreground"
+                >
+                  {view.name}
+                  <span className="ml-1 opacity-70">({view.total_count})</span>
+                  {view.new_count > 0 && (
+                    <span className="ml-1 text-green">+{view.new_count} new</span>
+                  )}
+                </button>
+                <button
+                  onClick={() => {
+                    void api.deleteSavedView(view.id)
+                      .then(refreshSavedViews)
+                      .catch((err) => setActionError(err instanceof Error ? err.message : "Could not delete view"));
+                  }}
+                  className="text-xs text-muted hover:text-red px-1"
+                  title="Delete view"
+                >
+                  x
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+        {actionError && <p className="text-xs text-red">{actionError}</p>}
       </div>
 
       <div className="flex gap-3 flex-wrap items-center">
@@ -122,22 +265,27 @@ export default function CompaniesPage() {
           onChange={(e) => setSearch(e.target.value)}
           className="bg-card border border-card-border rounded-lg px-3 py-2 text-sm text-foreground w-full sm:w-56"
         />
-        <select
-          value={sectorFilter}
-          onChange={(e) => setSectorFilter(e.target.value)}
+        <MultiValuePicker
+          placeholder="Add sector"
+          options={sectors.map((item) => ({ value: item, label: item }))}
+          values={sectorFilter}
+          onChange={setSectorFilter}
           className="bg-card border border-card-border rounded-lg px-3 py-2 text-sm text-foreground"
-        >
-          <option value="">All Sectors</option>
-          {sectors.map((s) => <option key={s} value={s}>{s}</option>)}
-        </select>
-        <select
-          value={fundingFilter}
-          onChange={(e) => setFundingFilter(e.target.value)}
+        />
+        <MultiValuePicker
+          placeholder="Add stage"
+          options={fundingRounds.map((item) => ({ value: item, label: item }))}
+          values={fundingFilter}
+          onChange={setFundingFilter}
           className="bg-card border border-card-border rounded-lg px-3 py-2 text-sm text-foreground"
-        >
-          <option value="">All Stages</option>
-          {fundingRounds.map((r) => <option key={r} value={r}>{r}</option>)}
-        </select>
+        />
+        <MultiValuePicker
+          placeholder="Add company type"
+          options={COMPANY_TYPE_OPTIONS}
+          values={typeFilter}
+          onChange={setTypeFilter}
+          className="bg-card border border-card-border rounded-lg px-3 py-2 text-sm text-foreground"
+        />
         <label className="flex items-center gap-2 text-sm text-muted cursor-pointer select-none">
           <input
             type="checkbox"
@@ -147,6 +295,19 @@ export default function CompaniesPage() {
           />
           Hide 0-job
         </label>
+        {(search || sectorFilter.length || fundingFilter.length || typeFilter.length) && (
+          <button
+            onClick={() => {
+              setSearch("");
+              setSectorFilter([]);
+              setFundingFilter([]);
+              setTypeFilter([]);
+            }}
+            className="px-3 py-2 text-xs text-red border border-red/30 rounded-lg hover:bg-red/10 transition-colors"
+          >
+            Clear filters
+          </button>
+        )}
         <button
           onClick={handleExport}
           className="ml-auto px-3 py-2 text-xs bg-card border border-card-border rounded-lg text-muted hover:text-foreground transition-colors"
@@ -171,6 +332,29 @@ export default function CompaniesPage() {
             className="text-xs text-muted hover:text-foreground ml-auto"
           >
             Clear
+          </button>
+          <select
+            value={selectedWatchlistId}
+            onChange={(e) => setSelectedWatchlistId(e.target.value)}
+            className="bg-card border border-card-border rounded-lg px-2.5 py-1.5 text-xs text-foreground"
+          >
+            <option value="">Select watchlist</option>
+            {watchlists.map((w) => (
+              <option key={w.id} value={String(w.id)}>{w.name}</option>
+            ))}
+          </select>
+          <button
+            onClick={() => { void addSelectedToWatchlist(); }}
+            disabled={!selectedWatchlistId}
+            className="px-2.5 py-1.5 text-xs bg-card border border-card-border rounded-lg text-muted hover:text-foreground disabled:opacity-40"
+          >
+            Add to watchlist
+          </button>
+          <button
+            onClick={() => { void createRecruiterWatchlist(); }}
+            className="px-2.5 py-1.5 text-xs bg-card border border-card-border rounded-lg text-muted hover:text-foreground"
+          >
+            New watchlist
           </button>
         </div>
       )}

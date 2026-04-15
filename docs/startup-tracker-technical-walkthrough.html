@@ -1,0 +1,2116 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Startup Tracker Technical Walkthrough</title>
+  <style>
+    @page {
+      size: Letter landscape;
+      margin: 0;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: #1f2933;
+      background: #f6f8f7;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.4;
+    }
+
+    .page {
+      width: 11in;
+      height: 8.5in;
+      padding: 0.42in 0.52in;
+      page-break-after: always;
+      position: relative;
+      overflow: hidden;
+      background:
+        linear-gradient(90deg, rgba(25, 122, 108, 0.06), rgba(226, 74, 74, 0.05)),
+        #fbfcfb;
+    }
+
+    .page:last-child {
+      page-break-after: auto;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin: 0;
+    }
+
+    h1 {
+      font-size: 44px;
+      line-height: 1.02;
+      letter-spacing: 0;
+      max-width: 760px;
+    }
+
+    h2 {
+      font-size: 30px;
+      line-height: 1.12;
+      margin-bottom: 14px;
+    }
+
+    h3 {
+      font-size: 16px;
+      margin-bottom: 6px;
+    }
+
+    .eyebrow {
+      color: #197a6c;
+      font-weight: 800;
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: 0;
+      margin-bottom: 10px;
+    }
+
+    .muted {
+      color: #60707d;
+      font-size: 13px;
+    }
+
+    .tiny {
+      color: #60707d;
+      font-size: 10px;
+      line-height: 1.35;
+    }
+
+    .grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .grid.two {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .grid.three {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .grid.left-wide {
+      grid-template-columns: 1.25fr 0.75fr;
+    }
+
+    .card {
+      background: #ffffff;
+      border: 1px solid #dce5e1;
+      border-radius: 8px;
+      padding: 14px;
+      box-shadow: 0 10px 30px rgba(31, 41, 51, 0.06);
+    }
+
+    .card.green {
+      border-color: rgba(25, 122, 108, 0.34);
+      background: #f2fbf7;
+    }
+
+    .card.red {
+      border-color: rgba(226, 74, 74, 0.34);
+      background: #fff6f5;
+    }
+
+    .card.yellow {
+      border-color: rgba(191, 140, 25, 0.36);
+      background: #fffaf0;
+    }
+
+    .code {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-size: 10.5px;
+      line-height: 1.45;
+      white-space: pre-wrap;
+      background: #101820;
+      color: #e9fff6;
+      border-radius: 8px;
+      padding: 12px;
+      border: 1px solid #21313b;
+    }
+
+    .code .comment {
+      color: #8db9ad;
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .pill {
+      border: 1px solid #cad7d2;
+      border-radius: 8px;
+      background: #ffffff;
+      padding: 7px 10px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #30414a;
+    }
+
+    .stat-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .stat {
+      background: #ffffff;
+      border: 1px solid #dce5e1;
+      border-radius: 8px;
+      padding: 13px;
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 26px;
+      color: #197a6c;
+      line-height: 1;
+      margin-bottom: 5px;
+    }
+
+    .callout {
+      border-left: 5px solid #e24a4a;
+      padding: 10px 12px;
+      background: #fff6f5;
+      border-radius: 8px;
+      font-size: 13px;
+    }
+
+    .lesson {
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      gap: 10px;
+      align-items: start;
+      margin-top: 11px;
+    }
+
+    .num {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: #197a6c;
+      color: #ffffff;
+      display: grid;
+      place-items: center;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .lesson p {
+      font-size: 12.5px;
+      color: #536673;
+    }
+
+    .mini-ui {
+      border-radius: 8px;
+      border: 1px solid #dce5e1;
+      background: #ffffff;
+      overflow: hidden;
+      box-shadow: 0 8px 22px rgba(31, 41, 51, 0.08);
+    }
+
+    .mini-bar {
+      height: 30px;
+      background: #16212a;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 0 10px;
+    }
+
+    .mini-body {
+      padding: 12px;
+    }
+
+    .tag {
+      display: inline-block;
+      border-radius: 8px;
+      background: #eefaf5;
+      color: #197a6c;
+      border: 1px solid #b9ded5;
+      padding: 4px 7px;
+      font-size: 10px;
+      font-weight: 800;
+      margin: 2px;
+    }
+
+    .chart-bars {
+      display: grid;
+      gap: 8px;
+    }
+
+    .chart-row {
+      display: grid;
+      grid-template-columns: 92px 1fr 38px;
+      gap: 8px;
+      align-items: center;
+      font-size: 10px;
+      color: #536673;
+    }
+
+    .bar-fill {
+      height: 12px;
+      border-radius: 6px;
+      background: #197a6c;
+    }
+
+    .shot {
+      width: 100%;
+      border-radius: 8px;
+      border: 1px solid #dce5e1;
+      box-shadow: 0 10px 26px rgba(31, 41, 51, 0.10);
+      display: block;
+    }
+
+    .toc {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px 16px;
+      margin-top: 14px;
+      font-size: 12px;
+      color: #536673;
+    }
+
+    .toc strong {
+      color: #1f2933;
+    }
+
+    .file-map {
+      display: grid;
+      grid-template-columns: 1fr 1.4fr;
+      gap: 8px 12px;
+      font-size: 11px;
+      color: #536673;
+      align-items: start;
+    }
+
+    .file-map code {
+      color: #1f2933;
+      font-weight: 800;
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-size: 10px;
+    }
+
+    .checklist {
+      display: grid;
+      gap: 7px;
+      font-size: 12px;
+      color: #536673;
+    }
+
+    .checklist div {
+      padding: 8px 10px;
+      border: 1px solid #dce5e1;
+      border-radius: 8px;
+      background: #ffffff;
+    }
+
+    .footer {
+      position: absolute;
+      left: 0.52in;
+      right: 0.52in;
+      bottom: 0.28in;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #72808a;
+      font-size: 10px;
+      border-top: 1px solid #dce5e1;
+      padding-top: 8px;
+    }
+
+    svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .label {
+      font-size: 12px;
+      font-weight: 800;
+      fill: #1f2933;
+    }
+
+    .small-label {
+      font-size: 10px;
+      fill: #536673;
+    }
+
+    .box {
+      fill: #ffffff;
+      stroke: #b9cbc5;
+      stroke-width: 1.4;
+      rx: 8;
+    }
+
+    .box-green {
+      fill: #eefaf5;
+      stroke: #197a6c;
+      stroke-width: 1.5;
+      rx: 8;
+    }
+
+    .box-red {
+      fill: #fff4f2;
+      stroke: #e24a4a;
+      stroke-width: 1.5;
+      rx: 8;
+    }
+
+    .box-yellow {
+      fill: #fff8df;
+      stroke: #bf8c19;
+      stroke-width: 1.5;
+      rx: 8;
+    }
+
+    .line {
+      stroke: #536673;
+      stroke-width: 1.6;
+      marker-end: url(#arrow);
+      fill: none;
+    }
+
+    .soft-line {
+      stroke: #a4b4ad;
+      stroke-width: 1.2;
+      marker-end: url(#arrow);
+      fill: none;
+    }
+
+    .mock {
+      background: #172026;
+      border: 1px solid #2e4048;
+      border-radius: 8px;
+      padding: 10px;
+      color: #dbe7e2;
+    }
+
+    .mock-header {
+      display: flex;
+      gap: 5px;
+      margin-bottom: 9px;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #e24a4a;
+    }
+
+    .dot:nth-child(2) {
+      background: #bf8c19;
+    }
+
+    .dot:nth-child(3) {
+      background: #197a6c;
+    }
+
+    .mock-row {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr 0.9fr 0.8fr;
+      gap: 7px;
+      align-items: center;
+      border-top: 1px solid #31414a;
+      padding: 7px 0;
+      font-size: 10px;
+    }
+
+    .mock-cell {
+      height: 9px;
+      background: #e9fff6;
+      border-radius: 4px;
+      opacity: 0.82;
+    }
+
+    .mock-cell.dim {
+      opacity: 0.42;
+    }
+
+    .screen-title {
+      font-size: 12px;
+      font-weight: 800;
+      margin-bottom: 6px;
+      color: #e9fff6;
+    }
+  </style>
+</head>
+<body>
+  <section class="page">
+    <div class="eyebrow">Mosaic startup tracker - technical walkthrough</div>
+    <div class="grid left-wide">
+      <div>
+        <h1>How the web app fits together</h1>
+        <p class="muted" style="font-size:16px; max-width:720px; margin-top:16px;">
+          A picture-first guide to the data pipeline, API, dashboard, and Groq-backed resume fit flow.
+        </p>
+        <div class="stat-row">
+          <div class="stat"><strong>515</strong><span class="tiny">companies in the local dataset</span></div>
+          <div class="stat"><strong>24,898</strong><span class="tiny">active job rows</span></div>
+          <div class="stat"><strong>68,651</strong><span class="tiny">job-skill links</span></div>
+          <div class="stat"><strong>2</strong><span class="tiny">cached resume profiles</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Framework stack</h3>
+        <div class="pill-row">
+          <span class="pill">Next.js 16</span>
+          <span class="pill">React 19</span>
+          <span class="pill">TypeScript</span>
+          <span class="pill">Tailwind v4</span>
+          <span class="pill">Recharts</span>
+          <span class="pill">FastAPI</span>
+          <span class="pill">SQLite</span>
+          <span class="pill">Groq API</span>
+          <span class="pill">Playwright</span>
+        </div>
+        <div class="callout" style="margin-top:18px;">
+          Frontend and backend deploy separately: Vercel serves `dashboard/`, Railway runs the FastAPI app from the repo root.
+        </div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:22px;">
+      <svg viewBox="0 0 940 185" aria-label="High level architecture">
+        <defs>
+          <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+            <path d="M0,0 L8,4 L0,8 Z" fill="#536673"></path>
+          </marker>
+        </defs>
+        <rect class="box-yellow" x="18" y="28" width="150" height="74"></rect>
+        <text class="label" x="38" y="58">Company config</text>
+        <text class="small-label" x="38" y="78">companies.json</text>
+        <text class="small-label" x="38" y="94">ATS identifiers</text>
+
+        <rect class="box-green" x="228" y="28" width="150" height="74"></rect>
+        <text class="label" x="248" y="58">Scrapers</text>
+        <text class="small-label" x="248" y="78">async adapters</text>
+        <text class="small-label" x="248" y="94">Greenhouse, Lever, etc.</text>
+
+        <rect class="box" x="438" y="28" width="150" height="74"></rect>
+        <text class="label" x="458" y="58">SQLite</text>
+        <text class="small-label" x="458" y="78">jobs, runs, skills</text>
+        <text class="small-label" x="458" y="94">resume fit cache</text>
+
+        <rect class="box-red" x="648" y="28" width="150" height="74"></rect>
+        <text class="label" x="668" y="58">FastAPI</text>
+        <text class="small-label" x="668" y="78">typed route layer</text>
+        <text class="small-label" x="668" y="94">/api/jobs, /api/fit</text>
+
+        <rect class="box-green" x="438" y="128" width="150" height="42"></rect>
+        <text class="label" x="463" y="154">Groq LLM fit engine</text>
+
+        <rect class="box-yellow" x="858" y="28" width="64" height="74"></rect>
+        <text class="label" x="870" y="58">Next</text>
+        <text class="small-label" x="868" y="78">UI</text>
+        <text class="small-label" x="868" y="94">Vercel</text>
+
+        <path class="line" d="M168 65 H226"></path>
+        <path class="line" d="M378 65 H436"></path>
+        <path class="line" d="M588 65 H646"></path>
+        <path class="line" d="M798 65 H856"></path>
+        <path class="soft-line" d="M724 102 C690 146 620 150 590 150"></path>
+        <path class="soft-line" d="M438 150 C392 150 384 102 438 88"></path>
+      </svg>
+    </div>
+    <div class="footer"><span>1. System overview</span><span>Generated from the local repo</span></div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">Data ingestion</div>
+    <h2>The tracker starts as a batch pipeline</h2>
+    <div class="grid two">
+      <div class="card">
+        <svg viewBox="0 0 450 420" aria-label="Scraper pipeline">
+          <defs>
+            <marker id="arrow2" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+              <path d="M0,0 L8,4 L0,8 Z" fill="#536673"></path>
+            </marker>
+          </defs>
+          <rect class="box-yellow" x="35" y="28" width="380" height="58"></rect>
+          <text class="label" x="60" y="57">1. Load tracked companies</text>
+          <text class="small-label" x="60" y="75">name, ATS type, identifier, sector, company_type</text>
+          <path class="line" style="marker-end:url(#arrow2)" d="M225 86 V124"></path>
+
+          <rect class="box-green" x="35" y="124" width="380" height="78"></rect>
+          <text class="label" x="60" y="153">2. Run async scraper adapter</text>
+          <text class="small-label" x="60" y="172">Greenhouse, Lever, Ashby, SmartRecruiters, Teamtailor</text>
+          <text class="small-label" x="60" y="189">plus generic static / Playwright fallbacks</text>
+          <path class="line" style="marker-end:url(#arrow2)" d="M225 202 V240"></path>
+
+          <rect class="box" x="35" y="240" width="380" height="62"></rect>
+          <text class="label" x="60" y="269">3. Sync against previous active jobs</text>
+          <text class="small-label" x="60" y="287">insert new postings, mark missing postings inactive</text>
+          <path class="line" style="marker-end:url(#arrow2)" d="M225 302 V340"></path>
+
+          <rect class="box-red" x="35" y="340" width="380" height="58"></rect>
+          <text class="label" x="60" y="369">4. Enrich fields for the dashboard</text>
+          <text class="small-label" x="60" y="387">seniority, department, work model, skills</text>
+        </svg>
+      </div>
+      <div class="grid">
+        <div class="card">
+          <h3>Orchestrator shape</h3>
+          <pre class="code">async def run():
+    init_db()
+    companies = load_companies()
+    company_ids = {c["name"]: upsert_company(c) for c in companies}
+
+    semaphore = asyncio.Semaphore(SCRAPE_CONCURRENCY)
+    tasks = [
+        scrape_company_limited(semaphore, c, company_ids[c["name"]])
+        for c in companies
+    ]
+    results = await asyncio.gather(*tasks, return_exceptions=True)</pre>
+        </div>
+        <div class="card green">
+          <h3>Why this shape works</h3>
+          <p class="muted">Scraping is I/O bound, so concurrency gives speed without complicating the database write path. Each run records found, added, removed, and failed counts, which powers health and change views.</p>
+        </div>
+        <div class="card yellow">
+          <h3>Where the app learns structure</h3>
+          <p class="muted">Raw postings become dashboard-friendly fields after enrichment: normalized department, seniority, work model, role family, and skill tags.</p>
+        </div>
+      </div>
+    </div>
+    <div class="footer"><span>2. Ingestion pipeline</span><span>`tracker.py` + scraper adapters + enrichment</span></div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">Database layer</div>
+    <h2>SQLite is the product memory</h2>
+    <div class="grid left-wide">
+      <div class="card">
+        <svg viewBox="0 0 660 430" aria-label="Database entity relationship diagram">
+          <defs>
+            <marker id="arrow3" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+              <path d="M0,0 L8,4 L0,8 Z" fill="#536673"></path>
+            </marker>
+          </defs>
+          <rect class="box-green" x="34" y="32" width="178" height="106"></rect>
+          <text class="label" x="54" y="62">companies</text>
+          <text class="small-label" x="54" y="85">name, website, ATS</text>
+          <text class="small-label" x="54" y="103">sector, company_type</text>
+          <text class="small-label" x="54" y="121">funding metadata</text>
+
+          <rect class="box" x="286" y="32" width="190" height="126"></rect>
+          <text class="label" x="306" y="62">job_postings</text>
+          <text class="small-label" x="306" y="85">title, department, location</text>
+          <text class="small-label" x="306" y="103">seniority, work_model</text>
+          <text class="small-label" x="306" y="121">role_family, description</text>
+          <text class="small-label" x="306" y="139">posting_status, is_active</text>
+
+          <rect class="box-yellow" x="34" y="238" width="178" height="92"></rect>
+          <text class="label" x="54" y="268">scrape_runs</text>
+          <text class="small-label" x="54" y="291">run_at, status</text>
+          <text class="small-label" x="54" y="309">jobs_found, added, removed</text>
+
+          <rect class="box-yellow" x="286" y="246" width="190" height="72"></rect>
+          <text class="label" x="306" y="275">job_skills</text>
+          <text class="small-label" x="306" y="298">job_id + normalized skill</text>
+
+          <rect class="box-red" x="512" y="64" width="120" height="86"></rect>
+          <text class="label" x="532" y="94">resume</text>
+          <text class="label" x="532" y="113">profiles</text>
+          <text class="small-label" x="532" y="132">hash + JSON</text>
+
+          <rect class="box-red" x="502" y="228" width="140" height="104"></rect>
+          <text class="label" x="522" y="258">resume</text>
+          <text class="label" x="522" y="277">job fits</text>
+          <text class="small-label" x="522" y="299">fit_score, why, gaps</text>
+          <text class="small-label" x="522" y="317">cached per prompt</text>
+
+          <path class="line" style="marker-end:url(#arrow3)" d="M212 85 H284"></path>
+          <path class="line" style="marker-end:url(#arrow3)" d="M212 282 H284"></path>
+          <path class="line" style="marker-end:url(#arrow3)" d="M381 158 V244"></path>
+          <path class="soft-line" style="marker-end:url(#arrow3)" d="M476 96 H510"></path>
+          <path class="soft-line" style="marker-end:url(#arrow3)" d="M572 150 V226"></path>
+          <path class="soft-line" style="marker-end:url(#arrow3)" d="M476 282 H500"></path>
+        </svg>
+      </div>
+      <div class="grid">
+        <div class="card">
+          <h3>Schema source</h3>
+          <pre class="code">CREATE TABLE IF NOT EXISTS resume_job_fits (
+    resume_id INTEGER NOT NULL,
+    job_id INTEGER NOT NULL,
+    deterministic_score REAL NOT NULL,
+    fit_score INTEGER NOT NULL,
+    rationale_json TEXT NOT NULL,
+    gaps_json TEXT NOT NULL,
+    suggestions_json TEXT NOT NULL,
+    prompt_version TEXT NOT NULL,
+    UNIQUE(resume_id, job_id, prompt_version)
+);</pre>
+        </div>
+        <div class="card green">
+          <h3>Constraint that matters</h3>
+          <p class="muted">Raw resume text is not stored. The DB stores a resume hash, a compact extracted profile JSON, and per-job fit outputs. That makes repeat comparisons cheaper while keeping the sensitive raw upload out of persistence.</p>
+        </div>
+      </div>
+    </div>
+    <div class="footer"><span>3. Data model</span><span>`db/models.py` owns tables, `db/queries.py` owns reads and writes</span></div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">Backend API</div>
+    <h2>FastAPI is a thin route layer over query helpers</h2>
+    <div class="grid two">
+      <div class="card">
+        <svg viewBox="0 0 460 420" aria-label="API route groups">
+          <defs>
+            <marker id="arrow4" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+              <path d="M0,0 L8,4 L0,8 Z" fill="#536673"></path>
+            </marker>
+          </defs>
+          <rect class="box-red" x="145" y="20" width="170" height="56"></rect>
+          <text class="label" x="178" y="53">api/app.py</text>
+
+          <rect class="box" x="25" y="116" width="180" height="72"></rect>
+          <text class="label" x="48" y="146">Metrics routes</text>
+          <text class="small-label" x="48" y="166">overview, sectors, roles</text>
+
+          <rect class="box-green" x="255" y="116" width="180" height="72"></rect>
+          <text class="label" x="278" y="146">Job routes</text>
+          <text class="small-label" x="278" y="166">jobs, filters, job detail</text>
+
+          <rect class="box-yellow" x="25" y="238" width="180" height="72"></rect>
+          <text class="label" x="48" y="268">Change routes</text>
+          <text class="small-label" x="48" y="288">events, movers, deltas</text>
+
+          <rect class="box-red" x="255" y="238" width="180" height="72"></rect>
+          <text class="label" x="278" y="268">Resume fit routes</text>
+          <text class="small-label" x="278" y="288">matches, single-job compare</text>
+
+          <rect class="box" x="145" y="350" width="170" height="50"></rect>
+          <text class="label" x="174" y="380">db/queries.py</text>
+
+          <path class="line" style="marker-end:url(#arrow4)" d="M190 76 L120 114"></path>
+          <path class="line" style="marker-end:url(#arrow4)" d="M270 76 L340 114"></path>
+          <path class="line" style="marker-end:url(#arrow4)" d="M190 76 L120 236"></path>
+          <path class="line" style="marker-end:url(#arrow4)" d="M270 76 L340 236"></path>
+          <path class="soft-line" style="marker-end:url(#arrow4)" d="M115 310 C130 350 150 366 144 374"></path>
+          <path class="soft-line" style="marker-end:url(#arrow4)" d="M345 310 C330 350 310 366 316 374"></path>
+        </svg>
+      </div>
+      <div class="grid">
+        <div class="card">
+          <h3>Example job endpoint</h3>
+          <pre class="code">@app.get("/api/jobs")
+def jobs(search: Optional[str] = None,
+         company_type: Optional[str] = None,
+         seniority: Optional[str] = None):
+    return queries.get_active_jobs(
+        search=search,
+        company_type=company_type,
+        seniority=seniority,
+    )</pre>
+        </div>
+        <div class="card">
+          <h3>Example resume endpoint</h3>
+          <pre class="code">@app.post("/api/fit/matches")
+async def fit_matches(resume: UploadFile = File(...),
+                      company_type: Optional[str] = Form(None),
+                      limit: int = Form(20)):
+    content = await resume.read()
+    resume_text = extract_resume_text(resume.filename, content)
+    return analyze_resume_matches(
+        resume_text,
+        company_type=company_type or None,
+        limit=max(1, min(limit, 40)),
+    )</pre>
+        </div>
+      </div>
+    </div>
+    <div class="footer"><span>4. Backend routes</span><span>CORS allows localhost and `FRONTEND_URL`</span></div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">Frontend app</div>
+    <h2>Next.js pages read typed API helpers</h2>
+    <div class="grid left-wide">
+      <div class="card">
+        <svg viewBox="0 0 690 410" aria-label="Frontend route map">
+          <defs>
+            <marker id="arrow5" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+              <path d="M0,0 L8,4 L0,8 Z" fill="#536673"></path>
+            </marker>
+          </defs>
+          <rect class="box-green" x="236" y="20" width="220" height="58"></rect>
+          <text class="label" x="278" y="54">dashboard/src/app</text>
+
+          <rect class="box" x="38" y="120" width="130" height="56"></rect>
+          <text class="label" x="68" y="151">/jobs</text>
+          <text class="small-label" x="56" y="167">feed + filters</text>
+
+          <rect class="box" x="200" y="120" width="130" height="56"></rect>
+          <text class="label" x="232" y="151">/companies</text>
+          <text class="small-label" x="226" y="167">details</text>
+
+          <rect class="box-yellow" x="362" y="120" width="130" height="56"></rect>
+          <text class="label" x="404" y="151">/fit</text>
+          <text class="small-label" x="386" y="167">resume matching</text>
+
+          <rect class="box" x="524" y="120" width="130" height="56"></rect>
+          <text class="label" x="556" y="151">/trends</text>
+          <text class="small-label" x="552" y="167">charts</text>
+
+          <rect class="box" x="120" y="228" width="130" height="56"></rect>
+          <text class="label" x="153" y="259">/changes</text>
+          <text class="small-label" x="151" y="275">events</text>
+
+          <rect class="box" x="282" y="228" width="130" height="56"></rect>
+          <text class="label" x="322" y="259">/roles</text>
+          <text class="small-label" x="312" y="275">seniority mix</text>
+
+          <rect class="box" x="444" y="228" width="130" height="56"></rect>
+          <text class="label" x="474" y="259">/skills</text>
+          <text class="small-label" x="464" y="275">skill counts</text>
+
+          <rect class="box-red" x="236" y="340" width="220" height="50"></rect>
+          <text class="label" x="278" y="370">src/lib/api.ts</text>
+
+          <path class="line" style="marker-end:url(#arrow5)" d="M346 78 V112"></path>
+          <path class="soft-line" style="marker-end:url(#arrow5)" d="M103 176 C120 260 218 334 240 358"></path>
+          <path class="soft-line" style="marker-end:url(#arrow5)" d="M265 176 C290 250 328 320 342 338"></path>
+          <path class="soft-line" style="marker-end:url(#arrow5)" d="M427 176 V338"></path>
+          <path class="soft-line" style="marker-end:url(#arrow5)" d="M589 176 C566 260 474 332 454 358"></path>
+        </svg>
+      </div>
+      <div class="grid">
+        <div class="mock">
+          <div class="mock-header"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+          <div class="screen-title">Job Feed screen</div>
+          <div class="mock-row"><span>Title</span><span>Company</span><span>Work</span><span>Fit</span></div>
+          <div class="mock-row"><span class="mock-cell"></span><span class="mock-cell dim"></span><span class="mock-cell"></span><span>Compare</span></div>
+          <div class="mock-row"><span class="mock-cell dim"></span><span class="mock-cell"></span><span class="mock-cell dim"></span><span>Compare</span></div>
+          <div class="mock-row"><span class="mock-cell"></span><span class="mock-cell dim"></span><span class="mock-cell"></span><span>Compare</span></div>
+        </div>
+        <div class="card">
+          <h3>API client pattern</h3>
+          <pre class="code">const API_BASE =
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+
+jobs: (filters?: JobFilters) =>
+  fetchApi&lt;JobRow[]&gt;("/api/jobs", filters)
+
+fitMatches: (file, options) => {
+  const form = new FormData();
+  form.set("resume", file);
+  form.set("company_type", options.company_type);
+  return postFormApi("/api/fit/matches", form);
+}</pre>
+        </div>
+      </div>
+    </div>
+    <div class="footer"><span>5. Frontend flow</span><span>App Router pages call `api.ts`, then render cards, tables, and Recharts</span></div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">Visual tutorial: page anatomy</div>
+    <h2>How a dashboard page is assembled</h2>
+    <div class="grid two">
+      <div class="card">
+        <div class="mini-ui">
+          <div class="mini-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+          <div class="mini-body">
+            <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:14px;">
+              <div>
+                <div style="font-size:20px; font-weight:800;">Pulse</div>
+                <div class="tiny">Startup hiring market at a glance</div>
+              </div>
+              <div style="border:1px solid #dce5e1; border-radius:8px; padding:5px; font-size:10px;">Startups Only</div>
+            </div>
+            <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:14px;">
+              <div class="stat"><strong style="font-size:17px;">458</strong><span class="tiny">Startups</span></div>
+              <div class="stat"><strong style="font-size:17px;">24.9k</strong><span class="tiny">Jobs</span></div>
+              <div class="stat"><strong style="font-size:17px;">+112</strong><span class="tiny">New</span></div>
+              <div class="stat"><strong style="font-size:17px;">-84</strong><span class="tiny">Closed</span></div>
+            </div>
+            <div class="chart-bars">
+              <div class="chart-row"><span>AI</span><span><span class="bar-fill" style="display:block; width:92%;"></span></span><strong>812</strong></div>
+              <div class="chart-row"><span>Fintech</span><span><span class="bar-fill" style="display:block; width:76%; background:#e24a4a;"></span></span><strong>664</strong></div>
+              <div class="chart-row"><span>Security</span><span><span class="bar-fill" style="display:block; width:61%; background:#bf8c19;"></span></span><strong>529</strong></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="grid">
+        <div class="card">
+          <h3>The page has three jobs</h3>
+          <div class="lesson"><span class="num">1</span><p>Declare client-side state for data and UI controls: overview rows, chart rows, selected scope, and chart mode.</p></div>
+          <div class="lesson"><span class="num">2</span><p>Load data with `useEffect` whenever the scope changes. The page does not talk to SQL directly; it calls typed API helpers.</p></div>
+          <div class="lesson"><span class="num">3</span><p>Render small reusable visual blocks, then feed arrays into Recharts for responsive charts.</p></div>
+        </div>
+        <div class="card">
+          <h3>Code skeleton</h3>
+          <pre class="code">export default function PulsePage() {
+  const [overview, setOverview] = useState(null);
+  const [scope, setScope] = useState&lt;"startup" | "all"&gt;("startup");
+
+  useEffect(() =&gt; {
+    const ct = scope === "startup" ? "startup" : undefined;
+    api.overview(ct).then(setOverview);
+    api.departments(ct).then(setDepartments);
+    api.roleFamilies(ct).then(setRoleFamilies);
+  }, [scope]);
+
+  return &lt;div className="space-y-8"&gt;...&lt;/div&gt;;
+}</pre>
+        </div>
+      </div>
+    </div>
+    <div class="footer"><span>6. Tutorial: page anatomy</span><span>`dashboard/src/app/page.tsx` is the pattern most pages follow</span></div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">Visual tutorial: cards and layout</div>
+    <h2>KPI cards are just small typed components</h2>
+    <div class="grid left-wide">
+      <div class="card">
+        <svg viewBox="0 0 660 410" aria-label="KPI card coding walkthrough">
+          <defs>
+            <marker id="arrow9" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+              <path d="M0,0 L8,4 L0,8 Z" fill="#536673"></path>
+            </marker>
+          </defs>
+          <rect class="box-green" x="32" y="36" width="152" height="86"></rect>
+          <text class="label" x="56" y="68">KpiCard props</text>
+          <text class="small-label" x="56" y="90">label, value, sub</text>
+          <text class="small-label" x="56" y="108">typed in TypeScript</text>
+
+          <rect class="box-yellow" x="254" y="36" width="152" height="86"></rect>
+          <text class="label" x="278" y="68">Formatting</text>
+          <text class="small-label" x="278" y="90">number -> locale</text>
+          <text class="small-label" x="278" y="108">optional subtitle</text>
+
+          <rect class="box-red" x="476" y="36" width="152" height="86"></rect>
+          <text class="label" x="500" y="68">Tailwind classes</text>
+          <text class="small-label" x="500" y="90">card border radius</text>
+          <text class="small-label" x="500" y="108">spacing and color</text>
+
+          <path class="line" style="marker-end:url(#arrow9)" d="M184 79 H252"></path>
+          <path class="line" style="marker-end:url(#arrow9)" d="M406 79 H474"></path>
+
+          <rect class="box" x="92" y="215" width="476" height="120"></rect>
+          <text class="small-label" x="122" y="246">Rendered grid</text>
+          <text class="label" x="122" y="285">Startups Tracked</text>
+          <text class="label" x="292" y="285">Active Jobs</text>
+          <text class="label" x="462" y="285">New This Week</text>
+          <text class="small-label" x="122" y="312">4 cards on desktop, 2 per row on small screens</text>
+          <path class="soft-line" style="marker-end:url(#arrow9)" d="M330 122 V213"></path>
+        </svg>
+      </div>
+      <div class="grid">
+        <div class="card">
+          <h3>Component implementation</h3>
+          <pre class="code">function KpiCard({ label, value, sub }: {
+  label: string;
+  value: string | number;
+  sub?: string;
+}) {
+  return (
+    &lt;div className="bg-card border border-card-border rounded-xl p-5"&gt;
+      &lt;p className="text-sm text-muted"&gt;{label}&lt;/p&gt;
+      &lt;p className="text-2xl font-bold mt-1"&gt;
+        {typeof value === "number" ? value.toLocaleString() : value}
+      &lt;/p&gt;
+      {sub && &lt;p className="text-xs text-muted mt-1"&gt;{sub}&lt;/p&gt;}
+    &lt;/div&gt;
+  );
+}</pre>
+        </div>
+        <div class="card green">
+          <h3>Tutorial takeaway</h3>
+          <p class="muted">The visual design is mostly composition: a typed function, a few props, and utility classes. Once the component exists, the page can render a consistent row of metrics without repeating markup.</p>
+        </div>
+      </div>
+    </div>
+    <div class="footer"><span>7. Tutorial: cards</span><span>Typed props + Tailwind utility classes create reusable visual building blocks</span></div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">Visual tutorial: charts</div>
+    <h2>Recharts turns API rows into responsive visuals</h2>
+    <div class="grid two">
+      <div class="card">
+        <div class="mini-ui">
+          <div class="mini-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+          <div class="mini-body">
+            <h3 style="margin-bottom:12px;">Active Jobs by Sector</h3>
+            <div class="chart-bars">
+              <div class="chart-row"><span>AI</span><span><span class="bar-fill" style="display:block; width:95%;"></span></span><strong>1,420</strong></div>
+              <div class="chart-row"><span>Dev Tools</span><span><span class="bar-fill" style="display:block; width:78%; background:#e24a4a;"></span></span><strong>1,120</strong></div>
+              <div class="chart-row"><span>Security</span><span><span class="bar-fill" style="display:block; width:66%; background:#bf8c19;"></span></span><strong>950</strong></div>
+              <div class="chart-row"><span>Health</span><span><span class="bar-fill" style="display:block; width:50%; background:#536673;"></span></span><strong>713</strong></div>
+            </div>
+          </div>
+        </div>
+        <div class="lesson"><span class="num">1</span><p>The API returns plain rows like `{ sector: "AI", job_count: 1420 }`.</p></div>
+        <div class="lesson"><span class="num">2</span><p>`ResponsiveContainer` lets the chart fill the card width without hand-computing pixels.</p></div>
+        <div class="lesson"><span class="num">3</span><p>`Cell` maps each bar to a color from the palette, so the data array drives the visual.</p></div>
+      </div>
+      <div class="grid">
+        <div class="card">
+          <h3>Chart code</h3>
+          <pre class="code">&lt;ResponsiveContainer width="100%" height={360}&gt;
+  &lt;BarChart data={sectors} layout="vertical" margin={{ left: 20 }}&gt;
+    &lt;XAxis type="number" tick={{ fill: "#9ca3af", fontSize: 12 }} /&gt;
+    &lt;YAxis type="category" dataKey="sector" width={160} /&gt;
+    &lt;Tooltip {...TOOLTIP_STYLE} /&gt;
+    &lt;Bar dataKey="job_count" radius={[0, 4, 4, 0]}&gt;
+      {sectors.map((_, i) =&gt; (
+        &lt;Cell key={i} fill={COLORS[i % COLORS.length]} /&gt;
+      ))}
+    &lt;/Bar&gt;
+  &lt;/BarChart&gt;
+&lt;/ResponsiveContainer&gt;</pre>
+        </div>
+        <div class="card yellow">
+          <h3>Why the charts feel integrated</h3>
+          <p class="muted">The chart container uses the same card shell, border, radius, text color, and tooltip style as the rest of the app. Recharts handles SVG drawing; the app owns layout, labels, and data shaping.</p>
+        </div>
+      </div>
+    </div>
+    <div class="footer"><span>8. Tutorial: charts</span><span>`ResponsiveContainer`, `BarChart`, `PieChart`, and shared tooltip styles</span></div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">Visual tutorial: job feed</div>
+    <h2>The filter bar is controlled React state</h2>
+    <div class="grid left-wide">
+      <div class="card">
+        <svg viewBox="0 0 670 430" aria-label="Filter bar coding flow">
+          <defs>
+            <marker id="arrow10" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+              <path d="M0,0 L8,4 L0,8 Z" fill="#536673"></path>
+            </marker>
+          </defs>
+          <rect class="box-yellow" x="34" y="30" width="162" height="74"></rect>
+          <text class="label" x="58" y="60">Inputs</text>
+          <text class="small-label" x="58" y="80">search, selects</text>
+
+          <rect class="box-green" x="254" y="30" width="162" height="74"></rect>
+          <text class="label" x="278" y="60">State</text>
+          <text class="small-label" x="278" y="80">setSearch, setSkill</text>
+
+          <rect class="box" x="474" y="30" width="162" height="74"></rect>
+          <text class="label" x="498" y="60">JobFilters</text>
+          <text class="small-label" x="498" y="80">useMemo object</text>
+
+          <rect class="box-red" x="254" y="178" width="162" height="74"></rect>
+          <text class="label" x="278" y="208">api.jobs()</text>
+          <text class="small-label" x="278" y="228">runs in useEffect</text>
+
+          <rect class="box-green" x="254" y="326" width="162" height="74"></rect>
+          <text class="label" x="278" y="356">Table rows</text>
+          <text class="small-label" x="278" y="376">jobs.slice(0, 500)</text>
+
+          <path class="line" style="marker-end:url(#arrow10)" d="M196 67 H252"></path>
+          <path class="line" style="marker-end:url(#arrow10)" d="M416 67 H472"></path>
+          <path class="line" style="marker-end:url(#arrow10)" d="M555 104 C550 172 438 200 418 212"></path>
+          <path class="line" style="marker-end:url(#arrow10)" d="M335 252 V324"></path>
+        </svg>
+      </div>
+      <div class="grid">
+        <div class="card">
+          <h3>Controlled input pattern</h3>
+          <pre class="code">&lt;input
+  type="text"
+  placeholder="Search by job title..."
+  value={search}
+  onChange={(e) =&gt; setSearch(e.target.value)}
+  className="bg-background border border-card-border rounded-lg px-3 py-2"
+/&gt;</pre>
+        </div>
+        <div class="card">
+          <h3>Fetch when filters change</h3>
+          <pre class="code">const filters = useMemo(() =&gt; ({
+  search: search || undefined,
+  skill: skill || undefined,
+  company_type: companyType || undefined,
+}), [search, skill, companyType]);
+
+useEffect(() =&gt; {
+  let cancelled = false;
+  api.jobs(filters).then((data) =&gt; {
+    if (!cancelled) setJobs(data);
+  });
+  return () =&gt; { cancelled = true; };
+}, [filters]);</pre>
+        </div>
+      </div>
+    </div>
+    <div class="footer"><span>9. Tutorial: filters</span><span>Every filter has state, updates a memoized object, and triggers a fresh API call</span></div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">Visual tutorial: tables and links</div>
+    <h2>The job table is a visual router into resume comparison</h2>
+    <div class="grid two">
+      <div class="card">
+        <div class="mini-ui">
+          <div class="mini-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+          <div class="mini-body">
+            <div style="display:grid; grid-template-columns:1.5fr 1fr 1fr 0.7fr; gap:8px; font-size:10px; font-weight:800; color:#536673; border-bottom:1px solid #dce5e1; padding-bottom:8px;">
+              <span>Job Title</span><span>Company</span><span>Work Model</span><span>Fit</span>
+            </div>
+            <div style="display:grid; grid-template-columns:1.5fr 1fr 1fr 0.7fr; gap:8px; font-size:10px; padding:9px 0; border-bottom:1px solid #edf2ef;">
+              <span>Backend Engineer</span><span>Ramp</span><span>Hybrid</span><span style="color:#197a6c;">Compare</span>
+            </div>
+            <div style="display:grid; grid-template-columns:1.5fr 1fr 1fr 0.7fr; gap:8px; font-size:10px; padding:9px 0;">
+              <span>Product Designer</span><span>Figma</span><span>Remote</span><span style="color:#197a6c;">Compare</span>
+            </div>
+          </div>
+        </div>
+        <div class="lesson"><span class="num">1</span><p>The table keeps a sticky header and scrollable body so thousands of jobs stay navigable.</p></div>
+        <div class="lesson"><span class="num">2</span><p>Cell values are formatted before display: role families, seniority, work model, dates, and location fallbacks.</p></div>
+        <div class="lesson"><span class="num">3</span><p>The `Compare` link encodes the job id in the URL so `/fit` can load selected job context.</p></div>
+      </div>
+      <div class="grid">
+        <div class="card">
+          <h3>Rows are mapped from API data</h3>
+          <pre class="code">{jobs.slice(0, 500).map((j) =&gt; (
+  &lt;tr key={j.id} className="border-b border-card-border/50"&gt;
+    &lt;td className="font-medium max-w-xs truncate"&gt;{j.title}&lt;/td&gt;
+    &lt;td className="text-muted"&gt;{j.company_name}&lt;/td&gt;
+    &lt;td className="text-xs"&gt;{formatWorkModel(j.work_model)}&lt;/td&gt;
+    &lt;td&gt;
+      &lt;Link href={`/fit?jobId=${j.id}`}&gt;Compare&lt;/Link&gt;
+    &lt;/td&gt;
+  &lt;/tr&gt;
+))}</pre>
+        </div>
+        <div class="card green">
+          <h3>Why links beat hidden state here</h3>
+          <p class="muted">A URL like `/fit?jobId=123` is shareable, reloadable, and works from any screen. The `/fit` page reads that query param and fetches the selected job preview.</p>
+        </div>
+      </div>
+    </div>
+    <div class="footer"><span>10. Tutorial: job table</span><span>`Link href` connects table rows to single-job resume comparison</span></div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">Visual tutorial: resume fit UI</div>
+    <h2>The fit page has two modes</h2>
+    <div class="grid left-wide">
+      <div class="card">
+        <svg viewBox="0 0 670 430" aria-label="Resume fit UI modes">
+          <defs>
+            <marker id="arrow11" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+              <path d="M0,0 L8,4 L0,8 Z" fill="#536673"></path>
+            </marker>
+          </defs>
+          <rect class="box-yellow" x="38" y="34" width="260" height="92"></rect>
+          <text class="label" x="64" y="66">Best-fit mode</text>
+          <text class="small-label" x="64" y="88">no jobId in URL</text>
+          <text class="small-label" x="64" y="106">show matches + company set filters</text>
+
+          <rect class="box-green" x="374" y="34" width="260" height="92"></rect>
+          <text class="label" x="400" y="66">Single-job mode</text>
+          <text class="small-label" x="400" y="88">/fit?jobId=123</text>
+          <text class="small-label" x="400" y="106">show selected job card</text>
+
+          <rect class="box" x="38" y="190" width="260" height="92"></rect>
+          <text class="label" x="64" y="222">Submit resume</text>
+          <text class="small-label" x="64" y="244">POST /api/fit/matches</text>
+          <text class="small-label" x="64" y="262">returns many match cards</text>
+
+          <rect class="box-red" x="374" y="190" width="260" height="92"></rect>
+          <text class="label" x="400" y="222">Compare this job</text>
+          <text class="small-label" x="400" y="244">POST /api/fit/jobs/{id}</text>
+          <text class="small-label" x="400" y="262">returns one match card</text>
+
+          <rect class="box-green" x="206" y="338" width="260" height="64"></rect>
+          <text class="label" x="232" y="370">FitCard visual result</text>
+          <text class="small-label" x="232" y="388">score, verdict, why, gaps, pointers</text>
+
+          <path class="line" style="marker-end:url(#arrow11)" d="M168 126 V188"></path>
+          <path class="line" style="marker-end:url(#arrow11)" d="M504 126 V188"></path>
+          <path class="line" style="marker-end:url(#arrow11)" d="M298 262 C330 296 334 316 334 336"></path>
+          <path class="line" style="marker-end:url(#arrow11)" d="M374 262 C342 296 338 316 338 336"></path>
+        </svg>
+      </div>
+      <div class="grid">
+        <div class="card">
+          <h3>Query param sync</h3>
+          <pre class="code">const selectedJobId = params.get("jobId") || "";
+
+useEffect(() =&gt; {
+  setJobId(selectedJobId);
+  setSelectedJob(null);
+  if (!selectedJobId) return;
+
+  api.jobDetail(Number(selectedJobId))
+    .then(setSelectedJob)
+    .catch(() =&gt; setJobError("Selected job was not found."));
+}, [selectedJobId]);</pre>
+        </div>
+        <div class="card">
+          <h3>Mode switch in JSX</h3>
+          <pre class="code">{!jobId.trim() && (
+  &lt;&gt;
+    &lt;input type="number" value={limit} /&gt;
+    &lt;select value={companyType}&gt;
+      &lt;option value=""&gt;Both&lt;/option&gt;
+      &lt;option value="startup"&gt;Startups&lt;/option&gt;
+      &lt;option value="bigco"&gt;Big companies&lt;/option&gt;
+    &lt;/select&gt;
+  &lt;/&gt;
+)}</pre>
+        </div>
+      </div>
+    </div>
+    <div class="footer"><span>11. Tutorial: fit page modes</span><span>URL state decides whether the page finds many jobs or compares one selected job</span></div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">Visual tutorial: fit result cards</div>
+    <h2>AI output is rendered as structured product UI</h2>
+    <div class="grid two">
+      <div class="card">
+        <div class="mini-ui">
+          <div class="mini-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+          <div class="mini-body">
+            <div style="display:flex; justify-content:space-between; gap:12px;">
+              <div>
+                <div style="font-size:15px; font-weight:800;">Senior Backend Engineer</div>
+                <div class="tiny">Stripe · Fintech</div>
+                <div class="tiny">Software Engineering · Senior · Hybrid</div>
+              </div>
+              <div style="text-align:right;">
+                <div style="font-size:28px; font-weight:900; color:#197a6c;">84</div>
+                <div class="tiny">strong fit</div>
+              </div>
+            </div>
+            <div style="margin-top:10px;"><span class="tag">python</span><span class="tag">fastapi</span><span class="tag">postgresql</span></div>
+            <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:14px; font-size:10px;">
+              <div><strong>Why</strong><br><span class="tiny">Backend APIs and data systems match.</span></div>
+              <div><strong>Gaps</strong><br><span class="tiny">No direct payments domain listed.</span></div>
+              <div><strong>Pointers</strong><br><span class="tiny">Add reliability metrics.</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="grid">
+        <div class="card">
+          <h3>Visual score color</h3>
+          <pre class="code">function scoreColor(score: number) {
+  if (score &gt;= 80) return "text-green";
+  if (score &gt;= 65) return "text-accent-light";
+  if (score &gt;= 50) return "text-yellow-400";
+  return "text-red";
+}</pre>
+        </div>
+        <div class="card">
+          <h3>Rendering structured LLM output</h3>
+          <pre class="code">&lt;ReasonBlock title="Why" rows={match.why} /&gt;
+&lt;ReasonBlock title="Gaps" rows={match.gaps} /&gt;
+&lt;ReasonBlock title="Pointers" rows={match.resume_pointers} /&gt;
+
+{match.matched_skills.map((skill) =&gt; (
+  &lt;span key={skill} className="rounded-full bg-green/10"&gt;
+    {skill}
+  &lt;/span&gt;
+))}</pre>
+        </div>
+        <div class="card yellow">
+          <h3>Tutorial takeaway</h3>
+          <p class="muted">The LLM does not return HTML. It returns arrays and fields. React decides how to present those fields consistently as score, chips, sections, and links.</p>
+        </div>
+      </div>
+    </div>
+    <div class="footer"><span>12. Tutorial: fit cards</span><span>Structured JSON becomes reusable visual sections</span></div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">Visual tutorial: API client</div>
+    <h2>The frontend has one gateway to backend data</h2>
+    <div class="grid left-wide">
+      <div class="card">
+        <svg viewBox="0 0 670 430" aria-label="API client tutorial flow">
+          <defs>
+            <marker id="arrow12" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+              <path d="M0,0 L8,4 L0,8 Z" fill="#536673"></path>
+            </marker>
+          </defs>
+          <rect class="box-green" x="42" y="40" width="170" height="76"></rect>
+          <text class="label" x="70" y="70">Page component</text>
+          <text class="small-label" x="70" y="92">calls api.jobs()</text>
+
+          <rect class="box-yellow" x="250" y="40" width="170" height="76"></rect>
+          <text class="label" x="278" y="70">api.ts helper</text>
+          <text class="small-label" x="278" y="92">adds base URL + params</text>
+
+          <rect class="box-red" x="458" y="40" width="170" height="76"></rect>
+          <text class="label" x="486" y="70">FastAPI route</text>
+          <text class="small-label" x="486" y="92">returns JSON</text>
+
+          <rect class="box" x="250" y="210" width="170" height="76"></rect>
+          <text class="label" x="278" y="240">Typed response</text>
+          <text class="small-label" x="278" y="262">JobRow[], FitMatches</text>
+
+          <rect class="box-green" x="250" y="348" width="170" height="54"></rect>
+          <text class="label" x="278" y="380">Rendered UI</text>
+
+          <path class="line" style="marker-end:url(#arrow12)" d="M212 78 H248"></path>
+          <path class="line" style="marker-end:url(#arrow12)" d="M420 78 H456"></path>
+          <path class="line" style="marker-end:url(#arrow12)" d="M543 116 C526 184 446 228 422 244"></path>
+          <path class="line" style="marker-end:url(#arrow12)" d="M335 286 V346"></path>
+        </svg>
+      </div>
+      <div class="grid">
+        <div class="card">
+          <h3>Generic GET helper</h3>
+          <pre class="code">async function fetchApi&lt;T&gt;(
+  path: string,
+  params?: Record&lt;string, string | number | undefined&gt;
+): Promise&lt;T&gt; {
+  const url = new URL(`${API_BASE}${path}`);
+  Object.entries(params ?? {}).forEach(([k, v]) =&gt; {
+    if (v !== undefined && v !== "") url.searchParams.set(k, String(v));
+  });
+  const res = await fetch(url.toString());
+  if (!res.ok) throw new Error(`API error: ${res.status}`);
+  return res.json();
+}</pre>
+        </div>
+        <div class="card">
+          <h3>Form upload helper</h3>
+          <pre class="code">fitMatches: (file, options) =&gt; {
+  const form = new FormData();
+  form.set("resume", file);
+  if (options?.company_type) form.set("company_type", options.company_type);
+  if (options?.limit) form.set("limit", String(options.limit));
+  return postFormApi&lt;FitMatchesResponse&gt;("/api/fit/matches", form);
+}</pre>
+        </div>
+      </div>
+    </div>
+    <div class="footer"><span>13. Tutorial: API client</span><span>Pages stay simple because network details live in `dashboard/src/lib/api.ts`</span></div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">Search and filtering</div>
+    <h2>Filters become query params, then SQL clauses</h2>
+    <div class="grid two">
+      <div class="card">
+        <svg viewBox="0 0 460 420" aria-label="Job search flow">
+          <defs>
+            <marker id="arrow6" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+              <path d="M0,0 L8,4 L0,8 Z" fill="#536673"></path>
+            </marker>
+          </defs>
+          <rect class="box-yellow" x="60" y="32" width="340" height="62"></rect>
+          <text class="label" x="90" y="62">User chooses filters</text>
+          <text class="small-label" x="90" y="80">search, sector, company set, department, skill</text>
+          <path class="line" style="marker-end:url(#arrow6)" d="M230 94 V132"></path>
+
+          <rect class="box-green" x="60" y="132" width="340" height="70"></rect>
+          <text class="label" x="90" y="162">React state -> JobFilters</text>
+          <text class="small-label" x="90" y="180">empty values become undefined, so API URLs stay clean</text>
+          <path class="line" style="marker-end:url(#arrow6)" d="M230 202 V240"></path>
+
+          <rect class="box-red" x="60" y="240" width="340" height="62"></rect>
+          <text class="label" x="90" y="270">GET /api/jobs?company_type=startup</text>
+          <text class="small-label" x="90" y="288">FastAPI forwards optional filters to query layer</text>
+          <path class="line" style="marker-end:url(#arrow6)" d="M230 302 V340"></path>
+
+          <rect class="box" x="60" y="340" width="340" height="58"></rect>
+          <text class="label" x="90" y="370">SQLite returns active job rows</text>
+          <text class="small-label" x="90" y="388">frontend renders first 500 into the table</text>
+        </svg>
+      </div>
+      <div class="grid">
+        <div class="card">
+          <h3>Frontend filter object</h3>
+          <pre class="code">const filters = useMemo((): JobFilters => ({
+  search: search || undefined,
+  sector: sector || undefined,
+  skill: skill || undefined,
+  seniority: seniority || undefined,
+  work_model: workModel || undefined,
+  company_type: companyType || undefined,
+  department: department || undefined,
+}), [search, sector, skill, seniority, workModel, companyType]);</pre>
+        </div>
+        <div class="card">
+          <h3>Backend SQL shape</h3>
+          <pre class="code">where = "jp.is_active = 1"
+
+if company_type:
+    sql += " AND c.company_type = ?"
+    params.append(company_type)
+
+if search:
+    sql += " AND (jp.title LIKE ? OR jp.department LIKE ?)"</pre>
+        </div>
+        <div class="card green">
+          <h3>Latest product filter</h3>
+          <p class="muted">The job feed and resume-fit search both expose the same choices: Both, Startups, and Big companies. For resume fit, that scope constrains the shortlist before LLM calls happen.</p>
+        </div>
+      </div>
+    </div>
+    <div class="footer"><span>14. Job search flow</span><span>`dashboard/src/app/jobs/page.tsx` -> `api.jobs()` -> `queries.get_active_jobs()`</span></div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">AI integration</div>
+    <h2>Resume Fit is deterministic shortlist plus Groq reasoning</h2>
+    <div class="grid left-wide">
+      <div class="card">
+        <svg viewBox="0 0 690 430" aria-label="Resume fit AI flow">
+          <defs>
+            <marker id="arrow7" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+              <path d="M0,0 L8,4 L0,8 Z" fill="#536673"></path>
+            </marker>
+          </defs>
+          <rect class="box-yellow" x="34" y="30" width="150" height="72"></rect>
+          <text class="label" x="62" y="60">Resume file</text>
+          <text class="small-label" x="62" y="80">txt, md, pdf, docx</text>
+          <path class="line" style="marker-end:url(#arrow7)" d="M184 66 H240"></path>
+
+          <rect class="box-green" x="240" y="30" width="158" height="72"></rect>
+          <text class="label" x="266" y="60">Extract profile</text>
+          <text class="small-label" x="266" y="80">LLM JSON summary</text>
+          <path class="line" style="marker-end:url(#arrow7)" d="M398 66 H456"></path>
+
+          <rect class="box" x="456" y="30" width="190" height="72"></rect>
+          <text class="label" x="482" y="60">Shortlist jobs</text>
+          <text class="small-label" x="482" y="80">skills, role, seniority, title</text>
+
+          <rect class="box-red" x="240" y="172" width="158" height="72"></rect>
+          <text class="label" x="270" y="202">Groq batch</text>
+          <text class="small-label" x="270" y="222">fit score + why/gaps</text>
+          <path class="line" style="marker-end:url(#arrow7)" d="M552 102 C540 162 430 198 400 208"></path>
+
+          <rect class="box-green" x="456" y="300" width="190" height="72"></rect>
+          <text class="label" x="482" y="330">Fit result cards</text>
+          <text class="small-label" x="482" y="350">score, verdict, pointers</text>
+          <path class="line" style="marker-end:url(#arrow7)" d="M398 224 C462 250 520 270 548 298"></path>
+
+          <rect class="box-yellow" x="34" y="300" width="150" height="72"></rect>
+          <text class="label" x="62" y="330">Cache</text>
+          <text class="small-label" x="62" y="350">resume hash + job fit</text>
+          <path class="soft-line" style="marker-end:url(#arrow7)" d="M240 222 C180 244 130 266 112 298"></path>
+          <path class="soft-line" style="marker-end:url(#arrow7)" d="M184 330 H454"></path>
+        </svg>
+      </div>
+      <div class="grid">
+        <div class="card">
+          <h3>Shortlist score before LLM</h3>
+          <pre class="code">score = 0.0
+score += min(len(overlap) * 8.0, 40.0)
+score += 25.0 if role_family matches else 0.0
+score += 15.0 if seniority is compatible else 0.0
+score += title_similarity * 12.0
+score += 5.0 if sector matches resume domains else 0.0
+score += freshness_score(first_seen_at)</pre>
+        </div>
+        <div class="card">
+          <h3>Groq call</h3>
+          <pre class="code">body = {
+    "model": _model(),
+    "messages": messages,
+    "temperature": 0.1,
+    "response_format": {"type": "json_object"},
+}</pre>
+        </div>
+        <div class="callout">
+          Location and remote compatibility are context only. They appear in notes or blocker flags, but they are not weighted into fit score.
+        </div>
+      </div>
+    </div>
+    <div class="footer"><span>15. Resume Fit flow</span><span>`analysis/resume_fit.py` + Groq OpenAI-compatible chat endpoint</span></div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">Runtime and deployment</div>
+    <h2>The deployed app is two services sharing one API contract</h2>
+    <div class="grid two">
+      <div class="card">
+        <svg viewBox="0 0 460 420" aria-label="Deployment flow">
+          <defs>
+            <marker id="arrow8" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+              <path d="M0,0 L8,4 L0,8 Z" fill="#536673"></path>
+            </marker>
+          </defs>
+          <rect class="box" x="150" y="28" width="160" height="58"></rect>
+          <text class="label" x="190" y="62">GitHub main</text>
+          <path class="line" style="marker-end:url(#arrow8)" d="M198 86 C140 126 116 146 112 176"></path>
+          <path class="line" style="marker-end:url(#arrow8)" d="M262 86 C320 126 344 146 348 176"></path>
+
+          <rect class="box-green" x="36" y="176" width="170" height="74"></rect>
+          <text class="label" x="74" y="207">Vercel</text>
+          <text class="small-label" x="70" y="226">dashboard/ Next.js</text>
+
+          <rect class="box-red" x="254" y="176" width="170" height="74"></rect>
+          <text class="label" x="292" y="207">Railway</text>
+          <text class="small-label" x="286" y="226">uvicorn api.app:app</text>
+
+          <rect class="box-yellow" x="254" y="312" width="170" height="66"></rect>
+          <text class="label" x="285" y="342">SQLite demo DB</text>
+          <text class="small-label" x="286" y="360">TRACKER_DB_PATH</text>
+          <path class="line" style="marker-end:url(#arrow8)" d="M339 250 V310"></path>
+          <path class="soft-line" style="marker-end:url(#arrow8)" d="M206 214 H252"></path>
+        </svg>
+      </div>
+      <div class="grid">
+        <div class="card">
+          <h3>Environment contract</h3>
+          <pre class="code"># Frontend
+NEXT_PUBLIC_API_URL=https://your-railway-api
+
+# Backend
+TRACKER_DB_PATH=data/tracker-demo.db
+FRONTEND_URL=https://your-vercel-app
+GROQ_API_KEY=...
+LLM_MODEL=...</pre>
+        </div>
+        <div class="card green">
+          <h3>Local development</h3>
+          <pre class="code">uvicorn api.app:app --reload --port 8000
+
+cd dashboard
+npm run dev</pre>
+        </div>
+        <div class="card yellow">
+          <h3>How to extend it</h3>
+          <p class="muted">Add a field in SQLite, expose it in `db/queries.py`, return it from a FastAPI route, type it in `dashboard/src/lib/api.ts`, then render it in a page component. For AI features, keep the raw resume out of storage and cache only structured profiles and fit decisions.</p>
+        </div>
+      </div>
+    </div>
+    <div class="footer"><span>16. Runtime</span><span>The code path stays simple: page -> typed API helper -> FastAPI route -> query helper -> SQLite or Groq</span></div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">Comprehensive rebuild manual</div>
+    <h2>What you would code, in what order</h2>
+    <div class="grid left-wide">
+      <div class="card">
+        <h3>Goal of the manual section</h3>
+        <p class="muted" style="font-size:14px;">The next pages connect screenshots to the files and functions that create them. Treat it like a guided build: start with layout and theme, add the typed API client, create backend routes, build each screen, then wire resume matching and deployment.</p>
+        <div class="toc">
+          <div><strong>17-18</strong> Screen tour: Pulse and Job Feed</div>
+          <div><strong>19</strong> Screen tour: Resume Fit</div>
+          <div><strong>20</strong> Screen tour: Trends and Roles</div>
+          <div><strong>21</strong> Screen tour: Companies and Changes</div>
+          <div><strong>22</strong> File map and responsibilities</div>
+          <div><strong>23</strong> Theme, root layout, sidebar</div>
+          <div><strong>24</strong> Database functions</div>
+          <div><strong>25</strong> API route functions</div>
+          <div><strong>26</strong> Frontend data client</div>
+          <div><strong>27-29</strong> Page build recipes</div>
+          <div><strong>30</strong> AI fit implementation</div>
+          <div><strong>31-33</strong> Recreate checklist</div>
+        </div>
+      </div>
+      <div class="card green">
+        <h3>Core mental model</h3>
+        <svg viewBox="0 0 430 300" aria-label="Manual mental model">
+          <defs>
+            <marker id="arrow13" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+              <path d="M0,0 L8,4 L0,8 Z" fill="#536673"></path>
+            </marker>
+          </defs>
+          <rect class="box-yellow" x="25" y="28" width="120" height="58"></rect>
+          <text class="label" x="50" y="61">Screen</text>
+          <rect class="box-green" x="155" y="28" width="120" height="58"></rect>
+          <text class="label" x="188" y="61">State</text>
+          <rect class="box-red" x="285" y="28" width="120" height="58"></rect>
+          <text class="label" x="314" y="61">API</text>
+          <rect class="box" x="155" y="140" width="120" height="58"></rect>
+          <text class="label" x="186" y="173">SQL</text>
+          <rect class="box-yellow" x="155" y="242" width="120" height="42"></rect>
+          <text class="label" x="184" y="268">Rows</text>
+          <path class="line" style="marker-end:url(#arrow13)" d="M145 57 H153"></path>
+          <path class="line" style="marker-end:url(#arrow13)" d="M275 57 H283"></path>
+          <path class="line" style="marker-end:url(#arrow13)" d="M345 86 C330 126 285 154 276 164"></path>
+          <path class="line" style="marker-end:url(#arrow13)" d="M215 198 V240"></path>
+          <path class="soft-line" style="marker-end:url(#arrow13)" d="M155 263 C80 240 60 130 80 88"></path>
+        </svg>
+        <p class="muted">Every visual feature follows the same loop: UI state picks a question, API sends the question to FastAPI, SQL returns rows, and React maps rows into cards, charts, tables, or AI result blocks.</p>
+      </div>
+    </div>
+    <div class="footer"><span>17. Rebuild manual overview</span><span>A nontechnical reader can follow the sequence and see how visuals map to code</span></div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">Screenshot to code: Pulse</div>
+    <h2>The homepage dashboard is cards plus charts</h2>
+    <div class="grid left-wide">
+      <div class="card"><img class="shot" src="assets/pulse.png" alt="Pulse dashboard screenshot"></div>
+      <div class="grid">
+        <div class="card">
+          <h3>What you see</h3>
+          <div class="lesson"><span class="num">1</span><p>Scope buttons change whether the dashboard asks for startup-only or all-company data.</p></div>
+          <div class="lesson"><span class="num">2</span><p>KPI cards display totals from `/api/overview`.</p></div>
+          <div class="lesson"><span class="num">3</span><p>Sector, department, role family, and freshness charts render rows from API helpers.</p></div>
+        </div>
+        <div class="card">
+          <h3>Files and functions</h3>
+          <div class="file-map">
+            <code>dashboard/src/app/page.tsx</code><span>`PulsePage`, `KpiCard`, chart JSX, scope state</span>
+            <code>dashboard/src/lib/api.ts</code><span>`api.overview`, `api.departments`, `api.roleFamilies`, `api.jobFreshness`</span>
+            <code>api/app.py</code><span>`overview`, `departments`, `role_families`, `job_freshness`</span>
+            <code>db/queries.py</code><span>`get_overview_stats`, `get_department_breakdown`, `get_role_family_breakdown`, `get_freshness_breakdown`</span>
+          </div>
+        </div>
+        <div class="card green">
+          <h3>Why it affects layout</h3>
+          <p class="muted">The dashboard uses a stable grid: `grid-cols-2 md:grid-cols-4` for cards and `md:grid-cols-2` for charts. Data changes the numbers and bar lengths, but the layout stays predictable.</p>
+        </div>
+      </div>
+    </div>
+    <div class="footer"><span>18. Pulse screenshot walkthrough</span><span>Metrics and chart rows are fetched when `scope` changes</span></div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">Screenshot to code: Job Feed</div>
+    <h2>The job feed is a search UI over active job rows</h2>
+    <div class="grid left-wide">
+      <div class="card"><img class="shot" src="assets/jobs.png" alt="Job Feed screenshot"></div>
+      <div class="grid">
+        <div class="card">
+          <h3>What you see</h3>
+          <div class="lesson"><span class="num">1</span><p>Filter controls are controlled inputs: each one stores its current value in React state.</p></div>
+          <div class="lesson"><span class="num">2</span><p>`useMemo` builds a clean `JobFilters` object, skipping empty fields.</p></div>
+          <div class="lesson"><span class="num">3</span><p>The table maps `JobRow[]` into visible rows, links company names to detail pages, and routes `Compare` to Resume Fit.</p></div>
+        </div>
+        <div class="card">
+          <h3>Code recipe</h3>
+          <pre class="code">const [search, setSearch] = useState("");
+const [companyType, setCompanyType] = useState("");
+
+const filters = useMemo(() =&gt; ({
+  search: search || undefined,
+  company_type: companyType || undefined,
+}), [search, companyType]);
+
+useEffect(() =&gt; {
+  api.jobs(filters).then(setJobs);
+}, [filters]);</pre>
+        </div>
+      </div>
+    </div>
+    <div class="footer"><span>19. Job Feed screenshot walkthrough</span><span>State -> filters -> API -> table rows</span></div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">Screenshot to code: Resume Fit</div>
+    <h2>One page, two user journeys</h2>
+    <div class="grid two">
+      <div class="card">
+        <h3>Best-fit mode</h3>
+        <img class="shot" src="assets/fit-best.png" alt="Resume Fit best-fit screenshot">
+        <p class="muted" style="margin-top:10px;">No `jobId` in the URL. The form shows match count and company set because the user is asking the app to search broadly.</p>
+      </div>
+      <div class="card">
+        <h3>Single-job mode</h3>
+        <img class="shot" src="assets/fit-selected-job.png" alt="Resume Fit selected-job screenshot">
+        <p class="muted" style="margin-top:10px;">With `/fit?jobId=2222`, the page fetches one job and shows the selected-job card above upload controls.</p>
+      </div>
+    </div>
+    <div class="grid two" style="margin-top:14px;">
+      <div class="card">
+        <h3>Files and functions</h3>
+        <div class="file-map">
+          <code>FitInner</code><span>owns file, limit, companyType, jobId, selectedJob, loading, error, result state</span>
+          <code>SelectedJobCard</code><span>renders selected job title, company, sector, role, Apply link, clear button</span>
+          <code>FitCard</code><span>renders score, verdict, skills, why, gaps, pointers</span>
+          <code>ReasonBlock</code><span>renders each explanation section from LLM arrays</span>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Mode decision code</h3>
+        <pre class="code">const selectedJobId = params.get("jobId") || "";
+
+if (trimmedJobId) {
+  const data = await api.fitJob(Number(trimmedJobId), file);
+  setResult(data);
+} else {
+  const data = await api.fitMatches(file, {
+    company_type: companyType || undefined,
+    limit,
+  });
+  setResult(data);
+}</pre>
+      </div>
+    </div>
+    <div class="footer"><span>20. Resume Fit screenshot walkthrough</span><span>URL query state changes what controls the user sees</span></div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">Screenshot to code: Trends and Roles</div>
+    <h2>More charts reuse the same pattern</h2>
+    <div class="grid two">
+      <div class="card">
+        <h3>Trends</h3>
+        <img class="shot" src="assets/trends.png" alt="Trends screenshot">
+      </div>
+      <div class="card">
+        <h3>Roles</h3>
+        <img class="shot" src="assets/roles.png" alt="Roles screenshot">
+      </div>
+    </div>
+    <div class="grid three" style="margin-top:14px;">
+      <div class="card">
+        <h3>Line charts</h3>
+        <p class="muted">`dashboard/src/app/trends/page.tsx` shapes job count rows into a time series and passes them into `LineChart`.</p>
+      </div>
+      <div class="card">
+        <h3>Stacked bars</h3>
+        <p class="muted">Cross-tab rows become multi-series bars by transforming `{ sector, department, job_count }` into one row per sector.</p>
+      </div>
+      <div class="card">
+        <h3>Pie charts</h3>
+        <p class="muted">Roles and company detail pages use `PieChart`, `Pie`, `Cell`, and shared color arrays for category breakdowns.</p>
+      </div>
+    </div>
+    <div class="footer"><span>21. Trends and roles screenshot walkthrough</span><span>Different chart types, same page -> API -> rows -> Recharts flow</span></div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">Screenshot to code: Companies and Changes</div>
+    <h2>Tables, badges, and movement views come from query helpers</h2>
+    <div class="grid two">
+      <div class="card">
+        <h3>Companies</h3>
+        <img class="shot" src="assets/companies.png" alt="Companies screenshot">
+      </div>
+      <div class="card">
+        <h3>Changes</h3>
+        <img class="shot" src="assets/changes.png" alt="Changes screenshot">
+      </div>
+    </div>
+    <div class="grid three" style="margin-top:14px;">
+      <div class="card green"><h3>Companies page</h3><p class="muted">Loads `api.companies()`, then filters/sorts client-side for a management view of tracked companies.</p></div>
+      <div class="card yellow"><h3>Changes page</h3><p class="muted">Combines event logs, mover rows, and sector deltas so the user can see what changed between scrapes.</p></div>
+      <div class="card red"><h3>Health page</h3><p class="muted">Uses scrape run status to show broken, stale, or healthy company sources.</p></div>
+    </div>
+    <div class="footer"><span>22. Company and changes screenshot walkthrough</span><span>Operational data becomes visual status and movement UI</span></div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">File map</div>
+    <h2>Every major file has one job</h2>
+    <div class="grid two">
+      <div class="card">
+        <h3>Frontend files</h3>
+        <div class="file-map">
+          <code>layout.tsx</code><span>Wraps every page with fonts, sidebar, and scrollable main content.</span>
+          <code>globals.css</code><span>Defines design tokens: background, card, borders, accent, green, red, muted.</span>
+          <code>components/Sidebar.tsx</code><span>Navigation list, active link styling, mobile drawer, company count.</span>
+          <code>lib/api.ts</code><span>Typed API functions and upload helpers.</span>
+          <code>lib/format.ts</code><span>Human-readable labels for seniority, work model, role family.</span>
+          <code>app/page.tsx</code><span>Pulse dashboard cards and charts.</span>
+          <code>app/jobs/page.tsx</code><span>Job feed filters, export, table, compare link.</span>
+          <code>app/fit/page.tsx</code><span>Resume upload, selected job mode, fit cards.</span>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Backend and data files</h3>
+        <div class="file-map">
+          <code>tracker.py</code><span>Batch orchestrator: load companies, scrape, sync, enrich, extract skills.</span>
+          <code>scraper/*.py</code><span>ATS-specific job fetchers returning normalized `JobPosting` objects.</span>
+          <code>scraper/enrichment.py</code><span>Infers seniority, work model, department, role family, location fields.</span>
+          <code>analysis/nlp.py</code><span>Extracts skill tags from job descriptions.</span>
+          <code>analysis/resume_fit.py</code><span>Resume parsing, shortlist scoring, Groq prompts, fit normalization.</span>
+          <code>db/models.py</code><span>SQLite connection, schema creation, migrations.</span>
+          <code>db/queries.py</code><span>All SQL reads/writes used by scrapers, API, dashboard, and fit matching.</span>
+          <code>api/app.py</code><span>FastAPI route layer and error sanitization.</span>
+        </div>
+      </div>
+    </div>
+    <div class="footer"><span>23. File map</span><span>Use this as the table of contents when manually recreating the project</span></div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">Manual build step 1</div>
+    <h2>Create the shell: theme, layout, sidebar</h2>
+    <div class="grid left-wide">
+      <div class="grid">
+        <div class="card">
+          <h3>Global theme</h3>
+          <pre class="code">:root {
+  --background: #0f1117;
+  --foreground: #e5e7eb;
+  --card: #1a1d27;
+  --card-border: #2a2d3a;
+  --accent: #6366f1;
+  --accent-light: #818cf8;
+  --green: #22c55e;
+  --red: #ef4444;
+  --muted: #9ca3af;
+}</pre>
+        </div>
+        <div class="card">
+          <h3>Root layout</h3>
+          <pre class="code">&lt;body className="h-full flex"&gt;
+  &lt;Sidebar /&gt;
+  &lt;main className="flex-1 overflow-y-auto p-4 pt-16 md:p-8"&gt;
+    {children}
+  &lt;/main&gt;
+&lt;/body&gt;</pre>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Sidebar logic</h3>
+        <pre class="code">const NAV = [
+  { href: "/", label: "Pulse", icon: Activity },
+  { href: "/changes", label: "Changes", icon: ArrowLeftRight },
+  { href: "/trends", label: "Trends", icon: TrendingUp },
+  { href: "/companies", label: "Companies", icon: Building2 },
+  { href: "/fit", label: "Resume Fit", icon: Sparkles },
+  { href: "/jobs", label: "Job Feed", icon: Briefcase },
+];
+
+const active = pathname === href;
+className={active
+  ? "bg-accent/15 text-accent-light font-medium"
+  : "text-muted hover:text-foreground hover:bg-white/5"
+}</pre>
+        <p class="muted" style="margin-top:12px;">This is why every screenshot has the same frame: dark body, fixed sidebar, active nav color, and scrollable page content.</p>
+      </div>
+    </div>
+    <div class="footer"><span>24. Manual step 1</span><span>Build the app chrome before building any page features</span></div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">Manual build step 2</div>
+    <h2>Create the database and query layer</h2>
+    <div class="grid two">
+      <div class="card">
+        <h3>Core tables to create first</h3>
+        <div class="checklist">
+          <div><strong>companies</strong>: identity, ATS source, sector, company type, funding metadata.</div>
+          <div><strong>job_postings</strong>: title, department, location, URL, role fields, status, active flag.</div>
+          <div><strong>scrape_runs</strong>: run status, counts, errors, batch id.</div>
+          <div><strong>job_events</strong>: added/removed events for Changes.</div>
+          <div><strong>job_skills</strong>: many-to-many skill tags.</div>
+          <div><strong>resume_profiles</strong> and <strong>resume_job_fits</strong>: AI matching cache.</div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Query functions by feature</h3>
+        <div class="file-map">
+          <code>get_company_stats</code><span>Companies table and coverage views.</span>
+          <code>get_active_jobs</code><span>Job Feed filters and company detail listings.</span>
+          <code>get_active_job</code><span>Selected job card on Resume Fit.</span>
+          <code>get_jobs_for_fit_pool</code><span>Candidate pool before deterministic scoring and Groq.</span>
+          <code>get_overview_stats</code><span>Pulse KPI cards.</span>
+          <code>get_recent_events</code><span>Changes event feed.</span>
+          <code>get_fastest_movers</code><span>Companies with the largest add/remove movement.</span>
+          <code>get_dept_sector_cross</code><span>Trend cross-tab charts.</span>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:14px;">
+      <h3>Minimal query shape to copy</h3>
+      <pre class="code">def get_active_jobs(company_type=None, search=None, skill=None):
+    sql = """
+        SELECT jp.*, c.name AS company_name, c.sector
+        FROM job_postings jp
+        JOIN companies c ON c.id = jp.company_id
+        WHERE jp.is_active = 1
+    """
+    params = []
+    if company_type:
+        sql += " AND c.company_type = ?"
+        params.append(company_type)
+    return [dict(r) for r in conn.execute(sql, params).fetchall()]</pre>
+    </div>
+    <div class="footer"><span>25. Manual step 2</span><span>The query layer gives pages clean functions instead of scattered SQL</span></div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">Manual build step 3</div>
+    <h2>Expose query functions with FastAPI</h2>
+    <div class="grid two">
+      <div class="card">
+        <h3>Route groups</h3>
+        <div class="file-map">
+          <code>/api/overview</code><span>`overview` -> `get_overview_stats`</span>
+          <code>/api/companies</code><span>`companies` -> `get_company_stats`</span>
+          <code>/api/companies/{id}</code><span>`company_detail` -> detail, skills, departments</span>
+          <code>/api/jobs</code><span>`jobs` -> `get_active_jobs` with filters</span>
+          <code>/api/jobs/{job_id}</code><span>`job_detail` -> selected fit preview</span>
+          <code>/api/changes/events</code><span>`change_events` -> event feed</span>
+          <code>/api/fit/matches</code><span>`fit_matches` -> upload resume and search many jobs</span>
+          <code>/api/fit/jobs/{job_id}</code><span>`fit_job` -> upload resume and compare one job</span>
+        </div>
+      </div>
+      <div class="grid">
+        <div class="card">
+          <h3>Normal route pattern</h3>
+          <pre class="code">@app.get("/api/jobs")
+def jobs(company_type: Optional[str] = None,
+         search: Optional[str] = None,
+         skill: Optional[str] = None):
+    return queries.get_active_jobs(
+        company_type=company_type,
+        search=search,
+        skill=skill,
+    )</pre>
+        </div>
+        <div class="card red">
+          <h3>Error translation</h3>
+          <p class="muted">The backend catches low-level Groq/config failures and returns product-safe messages. That keeps deployment details out of the user interface.</p>
+        </div>
+      </div>
+    </div>
+    <div class="footer"><span>26. Manual step 3</span><span>FastAPI should stay thin: validate inputs, call query/service functions, return JSON</span></div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">Manual build step 4</div>
+    <h2>Create a typed frontend API client</h2>
+    <div class="grid two">
+      <div class="card">
+        <h3>Why this matters</h3>
+        <p class="muted">Without `api.ts`, every page would hand-roll URLs, form uploads, error parsing, and response types. A single API client turns backend routes into reusable frontend functions.</p>
+        <div class="lesson"><span class="num">1</span><p>Define TypeScript interfaces matching backend response shapes.</p></div>
+        <div class="lesson"><span class="num">2</span><p>Write `fetchApi&lt;T&gt;` for GET routes with optional query params.</p></div>
+        <div class="lesson"><span class="num">3</span><p>Write `postFormApi&lt;T&gt;` for file uploads and parsed backend errors.</p></div>
+        <div class="lesson"><span class="num">4</span><p>Export named API functions like `jobs`, `companyDetail`, `fitMatches`, and `fitJob`.</p></div>
+      </div>
+      <div class="card">
+        <h3>Types drive safer UI code</h3>
+        <pre class="code">export interface JobRow {
+  id: number;
+  company_id: number;
+  title: string;
+  company_name: string;
+  sector: string;
+  seniority: string | null;
+  work_model: string | null;
+  role_family: string | null;
+  url: string | null;
+}
+
+jobs: (filters?: JobFilters) =&gt;
+  fetchApi&lt;JobRow[]&gt;("/api/jobs", filters)
+
+jobDetail: (id: number) =&gt;
+  fetchApi&lt;JobRow&gt;(`/api/jobs/${id}`)</pre>
+      </div>
+    </div>
+    <div class="footer"><span>27. Manual step 4</span><span>`api.ts` is the contract between React pages and FastAPI</span></div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">Manual build step 5</div>
+    <h2>Build each visual page from the same recipe</h2>
+    <div class="grid two">
+      <div class="card">
+        <h3>Reusable page recipe</h3>
+        <div class="checklist">
+          <div><strong>1. Import:</strong> React hooks, API helpers, formatters, chart components.</div>
+          <div><strong>2. State:</strong> create arrays for API rows and controls for filters/toggles.</div>
+          <div><strong>3. Fetch:</strong> call API helpers inside `useEffect`; include control values in dependencies.</div>
+          <div><strong>4. Derive:</strong> use `useMemo` for filtered lists, cross-tab transforms, active filter counts.</div>
+          <div><strong>5. Render:</strong> header, controls, cards/charts/table, empty/loading state.</div>
+          <div><strong>6. Link:</strong> use `next/link` for navigation between related screens.</div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Generic page skeleton</h3>
+        <pre class="code">export default function SomePage() {
+  const [rows, setRows] = useState&lt;RowType[]&gt;([]);
+  const [filter, setFilter] = useState("");
+
+  useEffect(() =&gt; {
+    api.someEndpoint(filter || undefined).then(setRows);
+  }, [filter]);
+
+  const visibleRows = useMemo(() =&gt; {
+    return rows.slice(0, 500);
+  }, [rows]);
+
+  return (
+    &lt;div className="space-y-6"&gt;
+      &lt;Header /&gt;
+      &lt;Controls value={filter} onChange={setFilter} /&gt;
+      &lt;Visual rows={visibleRows} /&gt;
+    &lt;/div&gt;
+  );
+}</pre>
+      </div>
+    </div>
+    <div class="footer"><span>28. Manual step 5</span><span>Once you know one page, the other dashboard pages are variations</span></div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">Manual build step 6</div>
+    <h2>Build the resume AI feature carefully</h2>
+    <div class="grid two">
+      <div class="card">
+        <h3>Backend AI functions</h3>
+        <div class="file-map">
+          <code>extract_resume_text</code><span>Accept `.txt`, `.md`, `.pdf`, `.docx`; convert bytes to text.</span>
+          <code>parse_resume_profile</code><span>Ask Groq for strict JSON: roles, skills, seniority, domains, remote preference.</span>
+          <code>_candidate_filters</code><span>Convert profile into DB filter terms.</span>
+          <code>shortlist_jobs</code><span>Score DB rows deterministically before LLM evaluation.</span>
+          <code>_request_fit_batch</code><span>Ask Groq for fit score, verdict, why, gaps, pointers.</span>
+          <code>_normalize_fit</code><span>Guarantee the UI receives safe fields even if LLM output is incomplete.</span>
+          <code>save_resume_fit</code><span>Cache result by resume id, job id, prompt version.</span>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Frontend AI functions/components</h3>
+        <div class="file-map">
+          <code>FitInner</code><span>Owns mode, form, submit, results, query param sync.</span>
+          <code>handleSubmit</code><span>Chooses `/api/fit/matches` or `/api/fit/jobs/{id}`.</span>
+          <code>SelectedJobCard</code><span>Makes URL-selected jobs obvious to the user.</span>
+          <code>ProfileRow</code><span>Displays parsed resume profile facts.</span>
+          <code>FitCard</code><span>Displays per-job score, matched skills, explanation blocks.</span>
+          <code>ReasonBlock</code><span>Reusable list renderer for why, gaps, and pointers.</span>
+        </div>
+      </div>
+    </div>
+    <div class="card yellow" style="margin-top:14px;">
+      <h3>Safety constraints to preserve</h3>
+      <p class="muted">Do not store raw resume text. Keep `GROQ_API_KEY` only on the backend. Use low temperature and JSON response format. Cache structured profile and fit results, not the uploaded file.</p>
+    </div>
+    <div class="footer"><span>29. Manual step 6</span><span>AI is a service layer plus a careful UI renderer, not magic inside React</span></div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">Manual build step 7</div>
+    <h2>Build the scraper and enrichment pipeline</h2>
+    <div class="grid two">
+      <div class="card">
+        <h3>Scraper function contract</h3>
+        <pre class="code">async def parse(company_name: str, ats_identifier: str) -&gt; list[JobPosting]:
+    # Fetch provider-specific jobs
+    # Normalize each result into JobPosting
+    # Return title, department, location, url, external_id, description
+    return jobs</pre>
+        <p class="muted" style="margin-top:10px;">Every ATS adapter hides provider-specific API or HTML details behind the same `parse` shape.</p>
+      </div>
+      <div class="card">
+        <h3>Orchestrator flow</h3>
+        <pre class="code">companies = load_companies()
+for c in companies:
+    cid = queries.upsert_company(c)
+
+results = await asyncio.gather(*[
+    scrape_company_limited(semaphore, c, company_ids[c["name"]])
+    for c in companies
+])
+
+enrich_all()
+extract_all_skills()</pre>
+      </div>
+    </div>
+    <div class="grid three" style="margin-top:14px;">
+      <div class="card green"><h3>Sync jobs</h3><p class="muted">New jobs become active rows. Missing jobs are marked inactive and produce removal events.</p></div>
+      <div class="card yellow"><h3>Enrich jobs</h3><p class="muted">Titles and locations become normalized fields used by filters and charts.</p></div>
+      <div class="card red"><h3>Extract skills</h3><p class="muted">Descriptions become `job_skills`, powering skill filters and deterministic resume matching.</p></div>
+    </div>
+    <div class="footer"><span>30. Manual step 7</span><span>Data quality comes from adapters, sync logic, enrichment, and skill extraction</span></div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">Recreate checklist</div>
+    <h2>Build order for a nontechnical beginner</h2>
+    <div class="grid two">
+      <div class="card">
+        <h3>Part A: make it run</h3>
+        <div class="checklist">
+          <div><strong>1.</strong> Create a repo with two folders: backend at root and frontend in `dashboard/`.</div>
+          <div><strong>2.</strong> Install backend packages: FastAPI, Uvicorn, python-multipart, pypdf, python-docx.</div>
+          <div><strong>3.</strong> Create a Next.js app in `dashboard/` with TypeScript and Tailwind.</div>
+          <div><strong>4.</strong> Add `db/models.py` with SQLite connection and table creation.</div>
+          <div><strong>5.</strong> Add `db/queries.py` with one query at a time, starting with overview and active jobs.</div>
+          <div><strong>6.</strong> Add `api/app.py` and expose `/api/overview` and `/api/jobs` first.</div>
+          <div><strong>7.</strong> Add `dashboard/src/lib/api.ts` and verify the frontend can fetch backend JSON.</div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Part B: make it useful</h3>
+        <div class="checklist">
+          <div><strong>8.</strong> Build the root layout, global theme, and sidebar navigation.</div>
+          <div><strong>9.</strong> Build the Pulse page with KPI cards and one chart.</div>
+          <div><strong>10.</strong> Build the Job Feed with search, company type, skill filters, and table rows.</div>
+          <div><strong>11.</strong> Build Companies, Changes, Trends, Skills, Roles, Coverage, and Health using the same fetch/render pattern.</div>
+          <div><strong>12.</strong> Add scraper adapters and run the local tracker until the DB has enough data.</div>
+          <div><strong>13.</strong> Add enrichment and skill extraction so filters and charts become meaningful.</div>
+          <div><strong>14.</strong> Add Resume Fit after the normal job data experience works.</div>
+        </div>
+      </div>
+    </div>
+    <div class="footer"><span>31. Recreate checklist</span><span>Start with one route and one page, then repeat the pattern</span></div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">Recreate checklist</div>
+    <h2>Exact feature order to recreate the UI</h2>
+    <div class="grid three">
+      <div class="card">
+        <h3>1. Navigation shell</h3>
+        <p class="muted">Create `Sidebar`, `RootLayout`, and design tokens. You should be able to click between empty pages before adding any data.</p>
+      </div>
+      <div class="card">
+        <h3>2. Typed data client</h3>
+        <p class="muted">Create `fetchApi`, `postFormApi`, and TypeScript interfaces. Replace raw fetch calls with `api.overview()`, `api.jobs()`, and friends.</p>
+      </div>
+      <div class="card">
+        <h3>3. Dashboard primitives</h3>
+        <p class="muted">Build `KpiCard`, shared tooltip style, chart card shells, and formatters for enums.</p>
+      </div>
+      <div class="card">
+        <h3>4. Search screens</h3>
+        <p class="muted">Use controlled inputs, `useMemo` filter objects, and `useEffect` fetches. Render tables from arrays.</p>
+      </div>
+      <div class="card">
+        <h3>5. Chart screens</h3>
+        <p class="muted">Use query helpers to return rows already shaped for charts, then pass arrays to Recharts.</p>
+      </div>
+      <div class="card">
+        <h3>6. AI screens</h3>
+        <p class="muted">Start with file upload and selected job preview, then add backend parsing, shortlist scoring, Groq evaluation, and result cards.</p>
+      </div>
+    </div>
+    <div class="card green" style="margin-top:14px;">
+      <h3>Definition of done</h3>
+      <p class="muted">A beginner can recreate this app when they can explain each screen as: state variables, API call, returned data type, visual component, and user action that updates state or navigates.</p>
+    </div>
+    <div class="footer"><span>32. UI recreation order</span><span>Each screen is state + data + reusable visual components</span></div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">Function appendix</div>
+    <h2>Function map by layer</h2>
+    <div class="grid three">
+      <div class="card">
+        <h3>Frontend</h3>
+        <p class="tiny">`Sidebar`, `KpiCard`, `PulsePage`, `JobFeedPage`, `FitPage`, `FitInner`, `SelectedJobCard`, `ProfileRow`, `FitCard`, `ReasonBlock`, `statusBadge`, `getStatusKey`, `CompanyCard`, `CompanyListTable`, `sortSeniority`, `mapWorkModelLabels`, plus API methods in `api.ts`.</p>
+      </div>
+      <div class="card">
+        <h3>Backend API</h3>
+        <p class="tiny">`overview`, `companies`, `company_velocity`, `company_detail`, `sectors`, `departments`, `seniority`, `work_models`, `role_families`, `job_freshness`, `skills`, `jobs`, `job_filters`, `job_trends`, `job_detail`, `change_events`, `fastest_movers`, `sector_delta`, `scraper_health`, `_fit_error`, `fit_matches`, `fit_job`.</p>
+      </div>
+      <div class="card">
+        <h3>AI and data</h3>
+        <p class="tiny">`extract_resume_text`, `analyze_resume_matches`, `analyze_single_job`, `parse_resume_profile`, `shortlist_jobs`, `_candidate_filters`, `_evaluate_jobs`, `_request_fit_batch`, `_score_job`, `_chat_json`, `_normalize_fit`, `_merge_fit`, `init_db`, `get_connection`, `sync_jobs`, `get_active_jobs`, `get_jobs_for_fit_pool`, `save_resume_fit`.</p>
+      </div>
+    </div>
+    <div class="card yellow" style="margin-top:14px;">
+      <h3>How to read the codebase</h3>
+      <p class="muted">Pick one visible thing in a screenshot, find the component that renders it, find the API helper it calls, find the FastAPI route with the same path, then find the query function it calls. That trace is the app.</p>
+    </div>
+    <div class="footer"><span>33. Function appendix</span><span>This map keeps the full codebase approachable while you rebuild it</span></div>
+  </section>
+</body>
+</html>

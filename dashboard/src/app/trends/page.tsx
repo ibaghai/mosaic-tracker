@@ -6,7 +6,6 @@ import {
   BarChart, Bar,
 } from "recharts";
 import { api, TrendRow, CrossTabRow } from "@/lib/api";
-import { formatWorkModel } from "@/lib/format";
 
 const SECTOR_COLORS: Record<string, string> = {
   "AI & Machine Learning":       "#6366f1",
@@ -51,12 +50,10 @@ const DEPT_COLORS: Record<string, string> = {
 export default function TrendsPage() {
   const [raw, setRaw] = useState<TrendRow[]>([]);
   const [crossTab, setCrossTab] = useState<CrossTabRow[]>([]);
-  const [remoteMix, setRemoteMix] = useState<CrossTabRow[]>([]);
 
   useEffect(() => {
     api.jobTrends().then(setRaw);
     api.deptSectorCross().then(setCrossTab);
-    api.remoteSectorCross("startup").then(setRemoteMix);
   }, []);
 
   const hiringIndex = useMemo(() => {
@@ -101,24 +98,6 @@ export default function TrendsPage() {
       depts: Array.from(depts),
     };
   }, [crossTab]);
-
-  const remoteSectorData = useMemo(() => {
-    const bySector: Record<string, Record<string, number>> = {};
-    remoteMix.forEach((r) => {
-      if (!bySector[r.sector]) bySector[r.sector] = {};
-      if (r.work_model) bySector[r.sector][r.work_model] = r.job_count;
-    });
-    return Object.entries(bySector)
-      .map(([sector, counts]) => ({
-        sector,
-        remote: counts.remote || 0,
-        hybrid: counts.hybrid || 0,
-        onsite: counts.onsite || 0,
-        total: (counts.remote || 0) + (counts.hybrid || 0) + (counts.onsite || 0),
-      }))
-      .sort((a, b) => b.total - a.total)
-      .slice(0, 10);
-  }, [remoteMix]);
 
   if (!raw.length) return <div className="text-muted">Loading...</div>;
 
@@ -219,41 +198,6 @@ export default function TrendsPage() {
               <div key={d} className="flex items-center gap-1.5 text-xs text-muted">
                 <div className="w-2.5 h-2.5 rounded-full" style={{ background: DEPT_COLORS[d] || "#6b7280" }} />
                 {d}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {remoteSectorData.length > 0 && (
-        <div className="bg-card border border-card-border rounded-xl p-5">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h3 className="text-sm font-semibold text-muted">Remote Mix by Sector</h3>
-              <p className="text-xs text-muted mt-0.5">Where startup hiring is actually flexible</p>
-            </div>
-            <span className="text-xs px-2 py-1 rounded bg-accent/10 text-accent-light border border-accent/20">
-              Startups Only
-            </span>
-          </div>
-          <ResponsiveContainer width="100%" height={380}>
-            <BarChart data={remoteSectorData} layout="vertical" margin={{ left: 8, right: 16 }}>
-              <XAxis type="number" tick={{ fill: "#9ca3af", fontSize: 11 }} />
-              <YAxis type="category" dataKey="sector" width={168} tick={{ fill: "#9ca3af", fontSize: 11 }} />
-              <Tooltip {...TOOLTIP_STYLE} />
-              <Bar dataKey="remote" stackId="remoteMix" fill="#22c55e" name={formatWorkModel("remote")} />
-              <Bar dataKey="hybrid" stackId="remoteMix" fill="#f59e0b" name={formatWorkModel("hybrid")} />
-              <Bar dataKey="onsite" stackId="remoteMix" fill="#6366f1" name={formatWorkModel("onsite")} />
-            </BarChart>
-          </ResponsiveContainer>
-          <div className="flex flex-wrap gap-3 mt-4">
-            {["remote", "hybrid", "onsite"].map((mode) => (
-              <div key={mode} className="flex items-center gap-1.5 text-xs text-muted">
-                <div
-                  className="w-2.5 h-2.5 rounded-full"
-                  style={{ background: mode === "remote" ? "#22c55e" : mode === "hybrid" ? "#f59e0b" : "#6366f1" }}
-                />
-                {formatWorkModel(mode)}
               </div>
             ))}
           </div>

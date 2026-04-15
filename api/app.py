@@ -7,6 +7,7 @@ from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Optional
 import os
+from pydantic import BaseModel, Field
 
 from db.models import init_db
 from db import queries
@@ -38,6 +39,24 @@ app.add_middleware(
 init_db()
 queries.scrub_resume_profile_pii()
 queries.scrub_resume_fit_pii()
+
+
+class SavedViewCreate(BaseModel):
+    name: str
+    view_type: str
+    filters: dict = Field(default_factory=dict)
+    persona: Optional[str] = None
+
+
+class WatchlistCreate(BaseModel):
+    name: str
+    persona: Optional[str] = None
+
+
+class WatchlistItemCreate(BaseModel):
+    item_type: str
+    item_value: str
+    company_id: Optional[int] = None
 
 
 # ── Overview ─────────────────────────────────────────────────────────────────
@@ -133,6 +152,8 @@ def jobs(
     work_model: Optional[str] = None,
     company_type: Optional[str] = None,
     department: Optional[str] = None,
+    ats_type: Optional[str] = None,
+    funding_round: Optional[str] = None,
 ):
     return queries.get_active_jobs(
         company_id=company_id,
@@ -147,6 +168,8 @@ def jobs(
         work_model=work_model,
         company_type=company_type,
         department=department,
+        ats_type=ats_type,
+        funding_round=funding_round,
     )
 
 
@@ -217,6 +240,115 @@ def remote_sector_cross(company_type: Optional[str] = "startup"):
 @app.get("/api/health")
 def scraper_health():
     return queries.get_scraper_health()
+
+
+# ── Saved Views ───────────────────────────────────────────────────────────────
+
+@app.get("/api/saved-views")
+def saved_views(view_type: Optional[str] = None):
+    return queries.get_saved_views(view_type=view_type)
+
+
+@app.post("/api/saved-views")
+def create_saved_view(payload: SavedViewCreate):
+    view_type = payload.view_type.strip().lower()
+    if view_type not in {"jobs", "companies"}:
+        raise HTTPException(status_code=400, detail="view_type must be jobs or companies")
+    if not payload.name.strip():
+        raise HTTPException(status_code=400, detail="name is required")
+    return queries.create_saved_view(
+        name=payload.name,
+        view_type=view_type,
+        filters=payload.filters,
+        persona=payload.persona,
+    )
+
+
+@app.post("/api/saved-views/{view_id}/viewed")
+def mark_saved_view_viewed(view_id: int):
+    row = queries.mark_saved_view_viewed(view_id)
+    if not row:
+        raise HTTPException(status_code=404, detail="Saved view not found")
+    return row
+
+
+@app.delete("/api/saved-views/{view_id}")
+def delete_saved_view(view_id: int):
+    deleted = queries.delete_saved_view(view_id)
+    if not deleted:
+        raise HTTPException(status_code=404, detail="Saved view not found")
+    return {"ok": True}
+
+
+# ── Watchlists ────────────────────────────────────────────────────────────────
+
+@app.get("/api/watchlists")
+def watchlists(persona: Optional[str] = None):
+    return queries.get_watchlists(persona=persona)
+
+
+@app.post("/api/watchlists")
+def create_watchlist(payload: WatchlistCreate):
+    if not payload.name.strip():
+        raise HTTPException(status_code=400, detail="name is required")
+    return queries.create_watchlist(name=payload.name, persona=payload.persona)
+
+
+@app.delete("/api/watchlists/{watchlist_id}")
+def delete_watchlist(watchlist_id: int):
+    deleted = queries.delete_watchlist(watchlist_id)
+    if not deleted:
+        raise HTTPException(status_code=404, detail="Watchlist not found")
+    return {"ok": True}
+
+
+@app.get("/api/watchlists/{watchlist_id}/items")
+def watchlist_items(watchlist_id: int):
+    return queries.get_watchlist_items(watchlist_id)
+
+
+@app.post("/api/watchlists/{watchlist_id}/items")
+def add_watchlist_item(watchlist_id: int, payload: WatchlistItemCreate):
+    try:
+        return queries.add_watchlist_item(
+            watchlist_id=watchlist_id,
+            item_type=payload.item_type,
+            item_value=payload.item_value,
+            company_id=payload.company_id,
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+
+
+@app.delete("/api/watchlists/{watchlist_id}/items")
+def remove_watchlist_item(watchlist_id: int, item_type: str, item_value: str):
+    deleted = queries.remove_watchlist_item(
+        watchlist_id=watchlist_id,
+        item_type=item_type,
+        item_value=item_value,
+    )
+    if not deleted:
+        raise HTTPException(status_code=404, detail="Watchlist item not found")
+    return {"ok": True}
+
+
+# ── Analyst ───────────────────────────────────────────────────────────────────
+
+@app.get("/api/analyst/cohort")
+def analyst_cohort(
+    sector: Optional[str] = None,
+    funding_round: Optional[str] = None,
+    company_type: Optional[str] = None,
+    ats_type: Optional[str] = None,
+    weeks: int = 12,
+):
+    return queries.get_analyst_cohort_metrics(
+        sector=sector,
+        funding_round=funding_round,
+        company_type=company_type,
+        ats_type=ats_type,
+        weeks=max(4, min(weeks, 26)),
+    )
 
 
 # ── Resume Fit ────────────────────────────────────────────────────────────────

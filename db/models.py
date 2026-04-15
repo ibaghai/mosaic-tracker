@@ -120,6 +120,39 @@ def init_db():
             ) WITHOUT ROWID;
             CREATE INDEX IF NOT EXISTS idx_company_tags_tag ON company_tags(tag);
 
+            CREATE TABLE IF NOT EXISTS saved_views (
+                id            INTEGER PRIMARY KEY AUTOINCREMENT,
+                name          TEXT NOT NULL,
+                view_type     TEXT NOT NULL,
+                persona       TEXT,
+                filters_json  TEXT NOT NULL,
+                last_viewed_at DATETIME,
+                created_at    DATETIME DEFAULT (datetime('now')),
+                updated_at    DATETIME DEFAULT (datetime('now'))
+            );
+            CREATE INDEX IF NOT EXISTS idx_saved_views_type ON saved_views(view_type);
+            CREATE INDEX IF NOT EXISTS idx_saved_views_persona ON saved_views(persona);
+
+            CREATE TABLE IF NOT EXISTS watchlists (
+                id            INTEGER PRIMARY KEY AUTOINCREMENT,
+                name          TEXT NOT NULL,
+                persona       TEXT,
+                created_at    DATETIME DEFAULT (datetime('now')),
+                updated_at    DATETIME DEFAULT (datetime('now'))
+            );
+            CREATE INDEX IF NOT EXISTS idx_watchlists_persona ON watchlists(persona);
+
+            CREATE TABLE IF NOT EXISTS watchlist_items (
+                watchlist_id INTEGER NOT NULL REFERENCES watchlists(id) ON DELETE CASCADE,
+                item_type    TEXT NOT NULL,
+                item_value   TEXT NOT NULL,
+                company_id   INTEGER REFERENCES companies(id),
+                added_at     DATETIME DEFAULT (datetime('now')),
+                PRIMARY KEY (watchlist_id, item_type, item_value)
+            ) WITHOUT ROWID;
+            CREATE INDEX IF NOT EXISTS idx_watchlist_items_watchlist ON watchlist_items(watchlist_id);
+            CREATE INDEX IF NOT EXISTS idx_watchlist_items_type ON watchlist_items(item_type);
+
             CREATE TABLE IF NOT EXISTS job_skills (
                 job_id  INTEGER NOT NULL REFERENCES job_postings(id),
                 skill   TEXT NOT NULL,

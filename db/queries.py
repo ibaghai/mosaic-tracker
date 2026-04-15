@@ -348,6 +348,25 @@ def get_company_stats() -> list:
     return [dict(r) for r in rows]
 
 
+def _split_filter_values(value) -> list[str]:
+    if value is None:
+        return []
+    if isinstance(value, (list, tuple, set)):
+        raw_values = [str(item) for item in value]
+    else:
+        raw_values = str(value).split(",")
+    return [item.strip() for item in raw_values if str(item).strip()]
+
+
+def _append_in_filter(sql: str, params: list, column: str, values: list[str]) -> str:
+    if not values:
+        return sql
+    placeholders = ",".join("?" for _ in values)
+    sql += f" AND {column} IN ({placeholders})"
+    params.extend(values)
+    return sql
+
+
 def get_active_jobs(
     company_id: Optional[int] = None,
     exclude_company_ids: Optional[List[int]] = None,
@@ -362,21 +381,26 @@ def get_active_jobs(
     work_model: Optional[str] = None,
     company_type: Optional[str] = None,
     department: Optional[str] = None,
+    ats_type: Optional[str] = None,
+    funding_round: Optional[str] = None,
 ) -> list:
     """Active job postings with optional filters."""
     conn = get_connection()
-    if skill:
+    skill_values = _split_filter_values(skill)
+    if skill_values:
+        skill_placeholders = ",".join("?" for _ in skill_values)
         sql = """
-            SELECT jp.*, c.name AS company_name, c.sector
+            SELECT jp.*, c.name AS company_name, c.sector, c.ats_type, c.funding_round, c.company_type
             FROM job_postings jp
             JOIN companies c ON c.id = jp.company_id
             JOIN job_skills js ON js.job_id = jp.id
-            WHERE jp.is_active = 1 AND js.skill = ?
+            WHERE jp.is_active = 1 AND js.skill IN ({})
         """
-        params = [skill]
+        sql = sql.format(skill_placeholders)
+        params = list(skill_values)
     else:
         sql = """
-            SELECT jp.*, c.name AS company_name, c.sector
+            SELECT jp.*, c.name AS company_name, c.sector, c.ats_type, c.funding_round, c.company_type
             FROM job_postings jp
             JOIN companies c ON c.id = jp.company_id
             WHERE jp.is_active = 1
@@ -389,12 +413,10 @@ def get_active_jobs(
         placeholders = ",".join("?" for _ in exclude_company_ids)
         sql += f" AND jp.company_id NOT IN ({placeholders})"
         params.extend(exclude_company_ids)
-    if sector:
-        sql += " AND c.sector = ?"
-        params.append(sector)
-    if company_type:
-        sql += " AND c.company_type = ?"
-        params.append(company_type)
+    sql = _append_in_filter(sql, params, "c.sector", _split_filter_values(sector))
+    sql = _append_in_filter(sql, params, "c.company_type", _split_filter_values(company_type))
+    sql = _append_in_filter(sql, params, "c.ats_type", _split_filter_values(ats_type))
+    sql = _append_in_filter(sql, params, "c.funding_round", _split_filter_values(funding_round))
     if search:
         sql += " AND (jp.title LIKE ? OR jp.department LIKE ?)"
         params += [f"%{search}%", f"%{search}%"]
@@ -407,18 +429,10 @@ def get_active_jobs(
     if location:
         sql += " AND jp.location LIKE ?"
         params.append(f"%{location}%")
-    if employment_type:
-        sql += " AND jp.employment_type = ?"
-        params.append(employment_type)
-    if seniority:
-        sql += " AND jp.seniority = ?"
-        params.append(seniority)
-    if work_model:
-        sql += " AND jp.work_model = ?"
-        params.append(work_model)
-    if department:
-        sql += " AND jp.normalized_department = ?"
-        params.append(department)
+    sql = _append_in_filter(sql, params, "jp.employment_type", _split_filter_values(employment_type))
+    sql = _append_in_filter(sql, params, "jp.seniority", _split_filter_values(seniority))
+    sql = _append_in_filter(sql, params, "jp.work_model", _split_filter_values(work_model))
+    sql = _append_in_filter(sql, params, "jp.normalized_department", _split_filter_values(department))
     sql += " ORDER BY jp.first_seen_at DESC"
     rows = conn.execute(sql, params).fetchall()
     conn.close()
@@ -429,7 +443,7 @@ def get_active_job(job_id: int) -> Optional[dict]:
     """Single active job posting with company metadata for preview/detail views."""
     conn = get_connection()
     row = conn.execute("""
-        SELECT jp.*, c.name AS company_name, c.sector
+        SELECT jp.*, c.name AS company_name, c.sector, c.ats_type, c.funding_round, c.company_type
         FROM job_postings jp
         JOIN companies c ON c.id = jp.company_id
         WHERE jp.id = ? AND jp.is_active = 1
@@ -1290,3 +1304,489 @@ def get_seniority_sector_cross(top_sectors=10):
     """, top_sec).fetchall()
     conn.close()
     return [dict(r) for r in rows]
+
+
+# ── Saved Views / Watchlists ─────────────────────────────────────────────────
+
+def _normalize_filters(payload) -> dict:
+    if not isinstance(payload, dict):
+        return {}
+    return {str(k): v for k, v in payload.items()}
+
+
+def _count_jobs_for_filters(filters: dict, *, since: Optional[str] = None) -> int:
+    conn = get_connection()
+    skill_values = _split_filter_values(filters.get("skill"))
+    if skill_values:
+        skill_placeholders = ",".join("?" for _ in skill_values)
+        sql = """
+            SELECT COUNT(*) AS n
+            FROM job_postings jp
+            JOIN companies c ON c.id = jp.company_id
+            JOIN job_skills js ON js.job_id = jp.id
+            WHERE jp.is_active = 1 AND js.skill IN ({})
+        """
+        sql = sql.format(skill_placeholders)
+        params = list(skill_values)
+    else:
+        sql = """
+            SELECT COUNT(*) AS n
+            FROM job_postings jp
+            JOIN companies c ON c.id = jp.company_id
+            WHERE jp.is_active = 1
+        """
+        params = []
+
+    if filters.get("company_id"):
+        sql += " AND jp.company_id = ?"
+        params.append(int(filters["company_id"]))
+    sql = _append_in_filter(sql, params, "c.sector", _split_filter_values(filters.get("sector")))
+    sql = _append_in_filter(sql, params, "c.company_type", _split_filter_values(filters.get("company_type")))
+    sql = _append_in_filter(sql, params, "c.ats_type", _split_filter_values(filters.get("ats_type")))
+    sql = _append_in_filter(sql, params, "c.funding_round", _split_filter_values(filters.get("funding_round")))
+    if filters.get("search"):
+        sql += " AND (jp.title LIKE ? OR jp.department LIKE ?)"
+        q = f"%{filters['search']}%"
+        params.extend([q, q])
+    if filters.get("date_from"):
+        sql += " AND DATE(jp.first_seen_at) >= ?"
+        params.append(filters["date_from"])
+    if filters.get("date_to"):
+        sql += " AND DATE(jp.first_seen_at) <= ?"
+        params.append(filters["date_to"])
+    if filters.get("location"):
+        sql += " AND jp.location LIKE ?"
+        params.append(f"%{filters['location']}%")
+    sql = _append_in_filter(sql, params, "jp.employment_type", _split_filter_values(filters.get("employment_type")))
+    sql = _append_in_filter(sql, params, "jp.seniority", _split_filter_values(filters.get("seniority")))
+    sql = _append_in_filter(sql, params, "jp.work_model", _split_filter_values(filters.get("work_model")))
+    sql = _append_in_filter(sql, params, "jp.normalized_department", _split_filter_values(filters.get("department")))
+    if since:
+        sql += " AND datetime(jp.first_seen_at) > datetime(?)"
+        params.append(since)
+
+    row = conn.execute(sql, params).fetchone()
+    conn.close()
+    return int(row["n"] if row and row["n"] is not None else 0)
+
+
+def _company_rows_for_filters(filters: dict) -> list:
+    conn = get_connection()
+    sql = """
+        SELECT
+            c.id,
+            c.name,
+            c.sector,
+            c.company_type,
+            c.funding_round,
+            c.ats_type,
+            COALESCE(j.active_jobs, 0) AS active_jobs,
+            ev.last_event_at
+        FROM companies c
+        LEFT JOIN (
+            SELECT company_id, COUNT(*) AS active_jobs
+            FROM job_postings
+            WHERE is_active = 1
+            GROUP BY company_id
+        ) j ON j.company_id = c.id
+        LEFT JOIN (
+            SELECT jp.company_id, MAX(je.created_at) AS last_event_at
+            FROM job_events je
+            JOIN job_postings jp ON jp.id = je.job_id
+            GROUP BY jp.company_id
+        ) ev ON ev.company_id = c.id
+        WHERE 1=1
+    """
+    params = []
+    if filters.get("search"):
+        sql += " AND LOWER(c.name) LIKE ?"
+        params.append(f"%{str(filters['search']).lower()}%")
+    sql = _append_in_filter(sql, params, "c.sector", _split_filter_values(filters.get("sector")))
+    sql = _append_in_filter(sql, params, "c.company_type", _split_filter_values(filters.get("company_type")))
+    sql = _append_in_filter(sql, params, "c.funding_round", _split_filter_values(filters.get("funding_round")))
+    sql = _append_in_filter(sql, params, "c.ats_type", _split_filter_values(filters.get("ats_type")))
+    rows = conn.execute(sql, params).fetchall()
+    conn.close()
+    data = [dict(r) for r in rows]
+    if bool(filters.get("hide_zero_jobs", False)):
+        data = [row for row in data if int(row.get("active_jobs") or 0) > 0]
+    return data
+
+
+def _count_companies_for_filters(filters: dict, *, since: Optional[str] = None) -> tuple[int, int]:
+    rows = _company_rows_for_filters(filters)
+    total_count = len(rows)
+    if not since:
+        return total_count, 0
+    new_count = 0
+    for row in rows:
+        last_event_at = row.get("last_event_at")
+        if last_event_at and str(last_event_at) > str(since):
+            new_count += 1
+    return total_count, new_count
+
+
+def _saved_view_metrics(view_type: str, filters: dict, last_viewed_at: Optional[str]) -> tuple[int, int]:
+    if view_type == "jobs":
+        total = _count_jobs_for_filters(filters)
+        new = _count_jobs_for_filters(filters, since=last_viewed_at) if last_viewed_at else 0
+        return total, new
+    if view_type == "companies":
+        return _count_companies_for_filters(filters, since=last_viewed_at)
+    return 0, 0
+
+
+def create_saved_view(name: str, view_type: str, filters: dict, persona: Optional[str] = None) -> dict:
+    normalized = _normalize_filters(filters)
+    conn = get_connection()
+    with conn:
+        cur = conn.execute("""
+            INSERT INTO saved_views (name, view_type, persona, filters_json)
+            VALUES (?, ?, ?, ?)
+        """, (name.strip(), view_type.strip(), persona, json.dumps(normalized, sort_keys=True)))
+        view_id = cur.lastrowid
+        row = conn.execute("SELECT * FROM saved_views WHERE id = ?", (view_id,)).fetchone()
+    conn.close()
+    payload = dict(row)
+    payload["filters"] = normalized
+    payload["total_count"] = 0
+    payload["new_count"] = 0
+    return payload
+
+
+def get_saved_views(view_type: Optional[str] = None) -> list:
+    conn = get_connection()
+    sql = "SELECT * FROM saved_views"
+    params = []
+    if view_type:
+        sql += " WHERE view_type = ?"
+        params.append(view_type)
+    sql += " ORDER BY updated_at DESC, id DESC"
+    rows = conn.execute(sql, params).fetchall()
+    conn.close()
+
+    result = []
+    for row in rows:
+        payload = dict(row)
+        try:
+            filters = json.loads(payload.get("filters_json") or "{}")
+        except json.JSONDecodeError:
+            filters = {}
+        filters = _normalize_filters(filters)
+        total_count, new_count = _saved_view_metrics(payload["view_type"], filters, payload.get("last_viewed_at"))
+        payload["filters"] = filters
+        payload["total_count"] = total_count
+        payload["new_count"] = new_count
+        result.append(payload)
+    return result
+
+
+def delete_saved_view(view_id: int) -> bool:
+    conn = get_connection()
+    with conn:
+        cur = conn.execute("DELETE FROM saved_views WHERE id = ?", (view_id,))
+    conn.close()
+    return cur.rowcount > 0
+
+
+def mark_saved_view_viewed(view_id: int) -> Optional[dict]:
+    conn = get_connection()
+    with conn:
+        conn.execute(
+            "UPDATE saved_views SET last_viewed_at = datetime('now'), updated_at = datetime('now') WHERE id = ?",
+            (view_id,),
+        )
+        row = conn.execute("SELECT * FROM saved_views WHERE id = ?", (view_id,)).fetchone()
+    conn.close()
+    if not row:
+        return None
+    payload = dict(row)
+    try:
+        filters = json.loads(payload.get("filters_json") or "{}")
+    except json.JSONDecodeError:
+        filters = {}
+    filters = _normalize_filters(filters)
+    total_count, _ = _saved_view_metrics(payload["view_type"], filters, payload.get("last_viewed_at"))
+    payload["filters"] = filters
+    payload["total_count"] = total_count
+    payload["new_count"] = 0
+    return payload
+
+
+def create_watchlist(name: str, persona: Optional[str] = None) -> dict:
+    conn = get_connection()
+    with conn:
+        cur = conn.execute(
+            "INSERT INTO watchlists (name, persona) VALUES (?, ?)",
+            (name.strip(), persona),
+        )
+        watchlist_id = cur.lastrowid
+        row = conn.execute("SELECT * FROM watchlists WHERE id = ?", (watchlist_id,)).fetchone()
+    conn.close()
+    payload = dict(row)
+    payload["item_count"] = 0
+    return payload
+
+
+def get_watchlists(persona: Optional[str] = None) -> list:
+    conn = get_connection()
+    sql = """
+        SELECT
+            w.*,
+            COUNT(wi.item_value) AS item_count,
+            SUM(CASE WHEN wi.item_type = 'company' THEN 1 ELSE 0 END) AS company_count,
+            SUM(CASE WHEN wi.item_type = 'role_family' THEN 1 ELSE 0 END) AS role_family_count
+        FROM watchlists w
+        LEFT JOIN watchlist_items wi ON wi.watchlist_id = w.id
+    """
+    params = []
+    if persona:
+        sql += " WHERE w.persona = ?"
+        params.append(persona)
+    sql += " GROUP BY w.id ORDER BY w.updated_at DESC, w.id DESC"
+    rows = conn.execute(sql, params).fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+
+def delete_watchlist(watchlist_id: int) -> bool:
+    conn = get_connection()
+    with conn:
+        cur = conn.execute("DELETE FROM watchlists WHERE id = ?", (watchlist_id,))
+    conn.close()
+    return cur.rowcount > 0
+
+
+def get_watchlist_items(watchlist_id: int) -> list:
+    conn = get_connection()
+    rows = conn.execute("""
+        SELECT
+            wi.watchlist_id,
+            wi.item_type,
+            wi.item_value,
+            wi.company_id,
+            wi.added_at,
+            c.name AS company_name
+        FROM watchlist_items wi
+        LEFT JOIN companies c ON c.id = wi.company_id
+        WHERE wi.watchlist_id = ?
+        ORDER BY wi.added_at DESC
+    """, (watchlist_id,)).fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+
+def add_watchlist_item(
+    watchlist_id: int,
+    item_type: str,
+    item_value: str,
+    company_id: Optional[int] = None,
+) -> dict:
+    clean_type = (item_type or "").strip().lower()
+    if clean_type not in {"company", "role_family"}:
+        raise ValueError("item_type must be 'company' or 'role_family'")
+    clean_value = str(item_value or "").strip()
+    if not clean_value:
+        raise ValueError("item_value is required")
+
+    conn = get_connection()
+    with conn:
+        conn.execute("""
+            INSERT OR IGNORE INTO watchlist_items (watchlist_id, item_type, item_value, company_id)
+            VALUES (?, ?, ?, ?)
+        """, (watchlist_id, clean_type, clean_value, company_id))
+        conn.execute(
+            "UPDATE watchlists SET updated_at = datetime('now') WHERE id = ?",
+            (watchlist_id,),
+        )
+    conn.close()
+    return {
+        "watchlist_id": watchlist_id,
+        "item_type": clean_type,
+        "item_value": clean_value,
+        "company_id": company_id,
+    }
+
+
+def remove_watchlist_item(watchlist_id: int, item_type: str, item_value: str) -> bool:
+    conn = get_connection()
+    with conn:
+        cur = conn.execute("""
+            DELETE FROM watchlist_items
+            WHERE watchlist_id = ? AND item_type = ? AND item_value = ?
+        """, (watchlist_id, item_type, item_value))
+        conn.execute(
+            "UPDATE watchlists SET updated_at = datetime('now') WHERE id = ?",
+            (watchlist_id,),
+        )
+    conn.close()
+    return cur.rowcount > 0
+
+
+# ── Analyst ───────────────────────────────────────────────────────────────────
+
+def _cohort_where(
+    sector: Optional[str] = None,
+    funding_round: Optional[str] = None,
+    company_type: Optional[str] = None,
+    ats_type: Optional[str] = None,
+) -> tuple[str, list]:
+    where = "WHERE 1=1"
+    params = []
+    sector_values = _split_filter_values(sector)
+    if sector_values:
+        placeholders = ",".join("?" for _ in sector_values)
+        where += f" AND c.sector IN ({placeholders})"
+        params.extend(sector_values)
+    funding_values = _split_filter_values(funding_round)
+    if funding_values:
+        placeholders = ",".join("?" for _ in funding_values)
+        where += f" AND c.funding_round IN ({placeholders})"
+        params.extend(funding_values)
+    company_type_values = _split_filter_values(company_type)
+    if company_type_values:
+        placeholders = ",".join("?" for _ in company_type_values)
+        where += f" AND c.company_type IN ({placeholders})"
+        params.extend(company_type_values)
+    ats_values = _split_filter_values(ats_type)
+    if ats_values:
+        placeholders = ",".join("?" for _ in ats_values)
+        where += f" AND c.ats_type IN ({placeholders})"
+        params.extend(ats_values)
+    return where, params
+
+
+def get_analyst_cohort_companies(
+    sector: Optional[str] = None,
+    funding_round: Optional[str] = None,
+    company_type: Optional[str] = None,
+    ats_type: Optional[str] = None,
+) -> list:
+    conn = get_connection()
+    where, params = _cohort_where(
+        sector=sector,
+        funding_round=funding_round,
+        company_type=company_type,
+        ats_type=ats_type,
+    )
+    rows = conn.execute(f"""
+        SELECT
+            c.id,
+            c.name,
+            c.sector,
+            c.company_type,
+            c.funding_round,
+            c.ats_type,
+            COALESCE(j.active_jobs, 0) AS active_jobs,
+            COALESCE(v.added, 0) AS added_28d,
+            COALESCE(v.removed, 0) AS removed_28d,
+            COALESCE(v.net, 0) AS net_28d
+        FROM companies c
+        LEFT JOIN (
+            SELECT company_id, COUNT(*) AS active_jobs
+            FROM job_postings
+            WHERE is_active = 1
+            GROUP BY company_id
+        ) j ON j.company_id = c.id
+        LEFT JOIN (
+            SELECT
+                c2.id AS company_id,
+                SUM(CASE WHEN je.event_type = 'added' THEN 1 ELSE 0 END) AS added,
+                SUM(CASE WHEN je.event_type = 'removed' THEN 1 ELSE 0 END) AS removed,
+                SUM(CASE WHEN je.event_type = 'added' THEN 1 ELSE 0 END)
+                  - SUM(CASE WHEN je.event_type = 'removed' THEN 1 ELSE 0 END) AS net
+            FROM companies c2
+            LEFT JOIN job_postings jp ON jp.company_id = c2.id
+            LEFT JOIN job_events je ON je.job_id = jp.id AND je.created_at >= datetime('now', '-28 days')
+            GROUP BY c2.id
+        ) v ON v.company_id = c.id
+        {where}
+        ORDER BY active_jobs DESC, net_28d DESC, c.name
+    """, params).fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+
+def get_analyst_cohort_metrics(
+    sector: Optional[str] = None,
+    funding_round: Optional[str] = None,
+    company_type: Optional[str] = None,
+    ats_type: Optional[str] = None,
+    weeks: int = 12,
+) -> dict:
+    companies = get_analyst_cohort_companies(
+        sector=sector,
+        funding_round=funding_round,
+        company_type=company_type,
+        ats_type=ats_type,
+    )
+    if not companies:
+        return {
+            "cohort_company_count": 0,
+            "cohort_active_jobs": 0,
+            "weekly_index": [],
+            "role_mix_change": [],
+            "companies": [],
+        }
+
+    company_ids = [int(c["id"]) for c in companies]
+    placeholders = ",".join("?" for _ in company_ids)
+    conn = get_connection()
+    params = company_ids + [f"-{max(1, int(weeks)) * 7} days"]
+    weekly_rows = conn.execute(f"""
+        SELECT
+            date(je.created_at, 'weekday 1', '-7 days') AS week_start,
+            SUM(CASE WHEN je.event_type = 'added' THEN 1 ELSE 0 END) AS added,
+            SUM(CASE WHEN je.event_type = 'removed' THEN 1 ELSE 0 END) AS removed,
+            SUM(CASE WHEN je.event_type = 'added' THEN 1 ELSE 0 END)
+              - SUM(CASE WHEN je.event_type = 'removed' THEN 1 ELSE 0 END) AS net
+        FROM job_events je
+        JOIN job_postings jp ON jp.id = je.job_id
+        WHERE jp.company_id IN ({placeholders})
+          AND je.created_at >= datetime('now', ?)
+        GROUP BY week_start
+        ORDER BY week_start
+    """, params).fetchall()
+
+    current_rows = conn.execute(f"""
+        SELECT COALESCE(jp.role_family, 'unknown') AS role_family, COUNT(*) AS count
+        FROM job_postings jp
+        WHERE jp.is_active = 1
+          AND jp.company_id IN ({placeholders})
+          AND datetime(jp.first_seen_at) >= datetime('now', '-28 days')
+        GROUP BY COALESCE(jp.role_family, 'unknown')
+    """, company_ids).fetchall()
+    previous_rows = conn.execute(f"""
+        SELECT COALESCE(jp.role_family, 'unknown') AS role_family, COUNT(*) AS count
+        FROM job_postings jp
+        WHERE jp.is_active = 1
+          AND jp.company_id IN ({placeholders})
+          AND datetime(jp.first_seen_at) >= datetime('now', '-56 days')
+          AND datetime(jp.first_seen_at) < datetime('now', '-28 days')
+        GROUP BY COALESCE(jp.role_family, 'unknown')
+    """, company_ids).fetchall()
+    conn.close()
+
+    current_map = {r["role_family"]: int(r["count"]) for r in current_rows}
+    previous_map = {r["role_family"]: int(r["count"]) for r in previous_rows}
+    all_roles = sorted(set(current_map) | set(previous_map))
+    role_mix = []
+    for role in all_roles:
+        current = current_map.get(role, 0)
+        previous = previous_map.get(role, 0)
+        role_mix.append({
+            "role_family": role,
+            "current_count": current,
+            "previous_count": previous,
+            "delta": current - previous,
+        })
+    role_mix.sort(key=lambda row: (abs(row["delta"]), row["current_count"]), reverse=True)
+
+    return {
+        "cohort_company_count": len(companies),
+        "cohort_active_jobs": sum(int(c.get("active_jobs") or 0) for c in companies),
+        "weekly_index": [dict(r) for r in weekly_rows],
+        "role_mix_change": role_mix,
+        "companies": companies,
+    }
+

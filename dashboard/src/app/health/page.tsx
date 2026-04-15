@@ -35,8 +35,8 @@ export default function HealthPage() {
   const [rows, setRows] = useState<HealthRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState<StatusFilter>("");
-  const [atsFilter, setAtsFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState<StatusFilter[]>([]);
+  const [atsFilter, setAtsFilter] = useState<string[]>([]);
 
   useEffect(() => {
     api.health().then((data) => {
@@ -49,8 +49,8 @@ export default function HealthPage() {
 
   const filtered = rows.filter((r) => {
     if (search && !r.name.toLowerCase().includes(search.toLowerCase())) return false;
-    if (statusFilter && getStatusKey(r) !== statusFilter) return false;
-    if (atsFilter && r.ats_type !== atsFilter) return false;
+    if (statusFilter.length && !statusFilter.includes(getStatusKey(r))) return false;
+    if (atsFilter.length && !atsFilter.includes(r.ats_type || "")) return false;
     return true;
   });
 
@@ -80,22 +80,22 @@ export default function HealthPage() {
       {!loading && (
         <div className="grid grid-cols-3 gap-4">
           <div
-            className={`bg-card border rounded-xl p-4 cursor-pointer transition-colors ${statusFilter === "ok" ? "border-green/50" : "border-card-border hover:border-card-border/80"}`}
-            onClick={() => setStatusFilter(statusFilter === "ok" ? "" : "ok")}
+            className={`bg-card border rounded-xl p-4 cursor-pointer transition-colors ${statusFilter.includes("ok") ? "border-green/50" : "border-card-border hover:border-card-border/80"}`}
+            onClick={() => setStatusFilter((prev) => prev.includes("ok") ? prev.filter((entry) => entry !== "ok") : [...prev, "ok"])}
           >
             <p className="text-xs text-muted mb-1">Healthy</p>
             <p className="text-2xl font-bold font-mono text-green">{counts.ok}</p>
           </div>
           <div
-            className={`bg-card border rounded-xl p-4 cursor-pointer transition-colors ${statusFilter === "error" ? "border-red/50" : "border-card-border hover:border-card-border/80"}`}
-            onClick={() => setStatusFilter(statusFilter === "error" ? "" : "error")}
+            className={`bg-card border rounded-xl p-4 cursor-pointer transition-colors ${statusFilter.includes("error") ? "border-red/50" : "border-card-border hover:border-card-border/80"}`}
+            onClick={() => setStatusFilter((prev) => prev.includes("error") ? prev.filter((entry) => entry !== "error") : [...prev, "error"])}
           >
             <p className="text-xs text-muted mb-1">Errors</p>
             <p className="text-2xl font-bold font-mono text-red">{counts.error}</p>
           </div>
           <div
-            className={`bg-card border rounded-xl p-4 cursor-pointer transition-colors ${statusFilter === "stale" ? "border-yellow-400/50" : "border-card-border hover:border-card-border/80"}`}
-            onClick={() => setStatusFilter(statusFilter === "stale" ? "" : "stale")}
+            className={`bg-card border rounded-xl p-4 cursor-pointer transition-colors ${statusFilter.includes("stale") ? "border-yellow-400/50" : "border-card-border hover:border-card-border/80"}`}
+            onClick={() => setStatusFilter((prev) => prev.includes("stale") ? prev.filter((entry) => entry !== "stale") : [...prev, "stale"])}
           >
             <p className="text-xs text-muted mb-1">Stale (&gt;10 days)</p>
             <p className="text-2xl font-bold font-mono text-yellow-400">{counts.stale}</p>
@@ -111,9 +111,9 @@ export default function HealthPage() {
             {Object.entries(atsDist).sort((a, b) => b[1] - a[1]).map(([ats, count]) => (
               <button
                 key={ats}
-                onClick={() => setAtsFilter(atsFilter === ats ? "" : ats)}
+                onClick={() => setAtsFilter((prev) => prev.includes(ats) ? prev.filter((entry) => entry !== ats) : [...prev, ats])}
                 className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs border transition-colors ${
-                  atsFilter === ats
+                  atsFilter.includes(ats)
                     ? "bg-accent/20 border-accent/40 text-accent-light"
                     : "bg-background border-card-border text-muted hover:text-foreground"
                 }`}
@@ -135,9 +135,9 @@ export default function HealthPage() {
           onChange={(e) => setSearch(e.target.value)}
           className="bg-card border border-card-border rounded-lg px-3 py-2 text-sm text-foreground w-full sm:w-64"
         />
-        {(search || statusFilter || atsFilter) && (
+        {(search || statusFilter.length || atsFilter.length) && (
           <button
-            onClick={() => { setSearch(""); setStatusFilter(""); setAtsFilter(""); }}
+            onClick={() => { setSearch(""); setStatusFilter([]); setAtsFilter([]); }}
             className="px-3 py-2 text-xs text-red border border-red/30 rounded-lg hover:bg-red/10 transition-colors"
           >
             Clear filters

@@ -2,45 +2,118 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { api, JobRow, SkillRow, DepartmentRow, JobFilters, FreshnessRow } from "@/lib/api";
-import { formatRoleFamily, formatSeniority, formatWorkModel, SENIORITY_LABELS } from "@/lib/format";
+import {
+  api,
+  CompanyRow,
+  JobRow,
+  SkillRow,
+  DepartmentRow,
+  JobFilters,
+  FreshnessRow,
+  SavedView,
+  Watchlist,
+  RoleFamilyRow,
+} from "@/lib/api";
+import { formatRoleFamily, formatSeniority, formatWorkModel, FUNDING_ORDER, SENIORITY_LABELS } from "@/lib/format";
 import { downloadCSV } from "@/lib/export";
+import { MultiValuePicker } from "@/components/MultiValuePicker";
 
 const WORK_MODELS = ["remote", "hybrid", "onsite"];
+const COMPANY_TYPE_OPTIONS = [
+  { value: "startup", label: "Startups" },
+  { value: "bigco", label: "Big companies" },
+];
+
+function toMultiValues(value: unknown): string[] {
+  if (Array.isArray(value)) {
+    return value.map((entry) => String(entry).trim()).filter(Boolean);
+  }
+  if (typeof value === "string") {
+    return value.split(",").map((entry) => entry.trim()).filter(Boolean);
+  }
+  return [];
+}
 
 export default function JobFeedPage() {
   const [jobs, setJobs] = useState<JobRow[]>([]);
   const [skills, setSkills] = useState<SkillRow[]>([]);
   const [departments, setDepartments] = useState<DepartmentRow[]>([]);
   const [freshness, setFreshness] = useState<FreshnessRow[]>([]);
+  const [roleFamilies, setRoleFamilies] = useState<RoleFamilyRow[]>([]);
+  const [savedViews, setSavedViews] = useState<SavedView[]>([]);
+  const [watchlists, setWatchlists] = useState<Watchlist[]>([]);
   const [loading, setLoading] = useState(false);
+  const [sectorOptions, setSectorOptions] = useState<string[]>([]);
+  const [empTypeOptions, setEmpTypeOptions] = useState<string[]>([]);
+  const [atsTypeOptions, setAtsTypeOptions] = useState<string[]>([]);
+  const [fundingRoundOptions, setFundingRoundOptions] = useState<string[]>([]);
 
   // Filters
   const [search, setSearch] = useState("");
-  const [sector, setSector] = useState("");
-  const [empType, setEmpType] = useState("");
-  const [skill, setSkill] = useState("");
-  const [seniority, setSeniority] = useState("");
-  const [workModel, setWorkModel] = useState("");
-  const [companyType, setCompanyType] = useState("");
-  const [department, setDepartment] = useState("");
+  const [sector, setSector] = useState<string[]>([]);
+  const [empType, setEmpType] = useState<string[]>([]);
+  const [skill, setSkill] = useState<string[]>([]);
+  const [seniority, setSeniority] = useState<string[]>([]);
+  const [workModel, setWorkModel] = useState<string[]>([]);
+  const [companyType, setCompanyType] = useState<string[]>([]);
+  const [department, setDepartment] = useState<string[]>([]);
+  const [atsType, setAtsType] = useState<string[]>([]);
+  const [fundingRound, setFundingRound] = useState<string[]>([]);
+  const [viewName, setViewName] = useState("");
+  const [selectedWatchlistId, setSelectedWatchlistId] = useState<number | "">("");
+  const [watchRoleFamily, setWatchRoleFamily] = useState("");
+  const [actionError, setActionError] = useState("");
 
   useEffect(() => {
-    void api.skills(undefined, 95).then(setSkills);
-    void api.departments().then(setDepartments);
-    void api.jobFreshness().then(setFreshness);
+    void Promise.all([
+      api.skills(undefined, 95),
+      api.departments(),
+      api.jobFreshness(),
+      api.savedViews("jobs"),
+      api.watchlists(),
+      api.roleFamilies(),
+      api.companies(),
+      api.jobFilters(),
+    ]).then(([skillRows, deptRows, freshRows, views, lists, roles, companyRows, jobFilterOptions]) => {
+      setSkills(skillRows);
+      setDepartments(deptRows);
+      setFreshness(freshRows);
+      setSavedViews(views);
+      setWatchlists(lists);
+      setRoleFamilies(roles);
+      const companySectors = [...new Set(companyRows.map((company: CompanyRow) => company.sector).filter(Boolean))].sort();
+      const companyAtsTypes = [...new Set(companyRows.map((company: CompanyRow) => company.ats_type).filter((value): value is string => Boolean(value)))].sort();
+      const fundingSet = new Set(
+        companyRows
+          .map((company: CompanyRow) => company.funding_round)
+          .filter((value): value is string => Boolean(value))
+      );
+      const orderedFunding = [
+        ...FUNDING_ORDER.filter((round) => fundingSet.has(round)),
+        ...[...fundingSet].filter((round) => !FUNDING_ORDER.includes(round)).sort(),
+      ];
+      const employmentTypes = [...new Set(jobFilterOptions.employment_types.map((value) => value.trim()).filter(Boolean))].sort();
+      setSectorOptions(companySectors);
+      setAtsTypeOptions(companyAtsTypes);
+      setFundingRoundOptions(orderedFunding);
+      setEmpTypeOptions(employmentTypes);
+      if (lists.length > 0) setSelectedWatchlistId(lists[0].id);
+      if (roles.length > 0) setWatchRoleFamily(String(roles[0].role_family || ""));
+    });
   }, []);
 
   const filters = useMemo((): JobFilters => ({
     search: search || undefined,
-    sector: sector || undefined,
-    employment_type: empType || undefined,
-    skill: skill || undefined,
-    seniority: seniority || undefined,
-    work_model: workModel || undefined,
-    company_type: companyType || undefined,
-    department: department || undefined,
-  }), [search, sector, empType, skill, seniority, workModel, companyType, department]);
+    sector: sector.length ? sector : undefined,
+    employment_type: empType.length ? empType : undefined,
+    skill: skill.length ? skill : undefined,
+    seniority: seniority.length ? seniority : undefined,
+    work_model: workModel.length ? workModel : undefined,
+    company_type: companyType.length ? companyType : undefined,
+    department: department.length ? department : undefined,
+    ats_type: atsType.length ? atsType : undefined,
+    funding_round: fundingRound.length ? fundingRound : undefined,
+  }), [search, sector, empType, skill, seniority, workModel, companyType, department, atsType, fundingRound]);
 
   useEffect(() => {
     let cancelled = false;
@@ -60,17 +133,16 @@ export default function JobFeedPage() {
     };
   }, [filters]);
 
-  const sectors = useMemo(
-    () => [...new Set(jobs.map((j) => j.sector).filter(Boolean))].sort(),
-    [jobs]
-  );
-
-  const empTypes = useMemo(
-    () => [...new Set(jobs.map((j) => j.employment_type).filter((t): t is string => Boolean(t)))].sort(),
-    [jobs]
-  );
-
-  const activeFilters = [search, sector, empType, skill, seniority, workModel, companyType, department].filter(Boolean).length;
+  const activeFilters = Number(Boolean(search))
+    + sector.length
+    + empType.length
+    + skill.length
+    + seniority.length
+    + workModel.length
+    + companyType.length
+    + department.length
+    + atsType.length
+    + fundingRound.length;
 
   const freshnessLookup = useMemo(
     () => freshness.reduce<Record<string, number>>((acc, row) => {
@@ -96,6 +168,72 @@ export default function JobFeedPage() {
     downloadCSV(rows as Record<string, unknown>[], "mosaic-jobs.csv");
   };
 
+  const refreshSavedViews = () => {
+    void api.savedViews("jobs").then(setSavedViews);
+  };
+
+  const handleSaveView = async () => {
+    if (!viewName.trim()) return;
+    try {
+      setActionError("");
+      await api.createSavedView({
+        name: viewName.trim(),
+        view_type: "jobs",
+        persona: "job_seeker",
+        filters: {
+          search,
+          sector,
+          employment_type: empType,
+          skill,
+          seniority,
+          work_model: workModel,
+          company_type: companyType,
+          department,
+          ats_type: atsType,
+          funding_round: fundingRound,
+        },
+      });
+      setViewName("");
+      refreshSavedViews();
+    } catch (err) {
+      setActionError(err instanceof Error ? err.message : "Could not save view");
+    }
+  };
+
+  const applySavedView = async (view: SavedView) => {
+    const f = view.filters || {};
+    setSearch(String(f.search || ""));
+    setSector(toMultiValues(f.sector));
+    setEmpType(toMultiValues(f.employment_type));
+    setSkill(toMultiValues(f.skill));
+    setSeniority(toMultiValues(f.seniority));
+    setWorkModel(toMultiValues(f.work_model));
+    setCompanyType(toMultiValues(f.company_type));
+    setDepartment(toMultiValues(f.department));
+    setAtsType(toMultiValues(f.ats_type));
+    setFundingRound(toMultiValues(f.funding_round));
+    try {
+      setActionError("");
+      await api.markSavedViewViewed(view.id);
+      refreshSavedViews();
+    } catch (err) {
+      setActionError(err instanceof Error ? err.message : "Could not apply view");
+    }
+  };
+
+  const addRoleFamilyToWatchlist = async () => {
+    if (!selectedWatchlistId || !watchRoleFamily) return;
+    try {
+      setActionError("");
+      await api.addWatchlistItem(Number(selectedWatchlistId), {
+        item_type: "role_family",
+        item_value: watchRoleFamily,
+      });
+    } catch (err) {
+      setActionError(err instanceof Error ? err.message : "Could not update watchlist");
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-start justify-between">
@@ -116,6 +254,54 @@ export default function JobFeedPage() {
         </button>
       </div>
 
+      <div className="bg-card border border-card-border rounded-xl p-4 space-y-3">
+        <div className="flex flex-wrap gap-3 items-center">
+          <input
+            type="text"
+            placeholder="Name this view..."
+            value={viewName}
+            onChange={(e) => setViewName(e.target.value)}
+            className="bg-background border border-card-border rounded-lg px-3 py-2 text-sm text-foreground w-full sm:w-56"
+          />
+          <button
+            onClick={handleSaveView}
+            className="px-3 py-2 text-xs bg-accent text-white rounded-lg hover:bg-accent/90 transition-colors"
+          >
+            Save current view
+          </button>
+        </div>
+        {savedViews.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {savedViews.map((view) => (
+              <div key={view.id} className="inline-flex items-center gap-1 bg-background border border-card-border rounded-lg px-2 py-1">
+                <button
+                  onClick={() => applySavedView(view)}
+                  className="text-xs text-muted hover:text-foreground"
+                >
+                  {view.name}
+                  <span className="ml-1 opacity-70">({view.total_count})</span>
+                  {view.new_count > 0 && (
+                    <span className="ml-1 text-green">+{view.new_count} new</span>
+                  )}
+                </button>
+                <button
+                  onClick={() => {
+                    void api.deleteSavedView(view.id)
+                      .then(refreshSavedViews)
+                      .catch((err) => setActionError(err instanceof Error ? err.message : "Could not delete view"));
+                  }}
+                  className="text-xs text-muted hover:text-red px-1"
+                  title="Delete view"
+                >
+                  x
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+        {actionError && <p className="text-xs text-red">{actionError}</p>}
+      </div>
+
       {/* Filter bar */}
       <div className="bg-card border border-card-border rounded-xl p-4 space-y-3">
         <div className="flex flex-wrap gap-3">
@@ -126,72 +312,79 @@ export default function JobFeedPage() {
             onChange={(e) => setSearch(e.target.value)}
             className="bg-background border border-card-border rounded-lg px-3 py-2 text-sm text-foreground w-full sm:w-64"
           />
-          <select
-            value={sector}
-            onChange={(e) => setSector(e.target.value)}
-            className="bg-background border border-card-border rounded-lg px-3 py-2 text-sm text-foreground"
-          >
-            <option value="">All Sectors</option>
-            {sectors.map((s) => <option key={s} value={s}>{s}</option>)}
-          </select>
-          <select
-            value={companyType}
-            onChange={(e) => setCompanyType(e.target.value)}
-            className="bg-background border border-card-border rounded-lg px-3 py-2 text-sm text-foreground"
-          >
-            <option value="">Both</option>
-            <option value="startup">Startups</option>
-            <option value="bigco">Big companies</option>
-          </select>
+          <MultiValuePicker
+            placeholder="Add sector"
+            options={sectorOptions.map((item) => ({ value: item, label: item }))}
+            values={sector}
+            onChange={setSector}
+          />
+          <MultiValuePicker
+            placeholder="Add company type"
+            options={COMPANY_TYPE_OPTIONS}
+            values={companyType}
+            onChange={setCompanyType}
+          />
+          <MultiValuePicker
+            placeholder="Add ATS"
+            options={atsTypeOptions.map((item) => ({ value: item, label: item }))}
+            values={atsType}
+            onChange={setAtsType}
+          />
+          <MultiValuePicker
+            placeholder="Add funding stage"
+            options={fundingRoundOptions.map((item) => ({ value: item, label: item }))}
+            values={fundingRound}
+            onChange={setFundingRound}
+          />
         </div>
         <div className="flex flex-wrap gap-3">
-          <select
-            value={department}
-            onChange={(e) => setDepartment(e.target.value)}
-            className="bg-background border border-card-border rounded-lg px-3 py-2 text-sm text-foreground"
-          >
-            <option value="">All Departments</option>
-            {departments.map((d) => <option key={d.category} value={d.category}>{d.category} ({d.job_count.toLocaleString()})</option>)}
-          </select>
-          <select
-            value={skill}
-            onChange={(e) => setSkill(e.target.value)}
-            className="bg-background border border-card-border rounded-lg px-3 py-2 text-sm text-foreground"
-          >
-            <option value="">Any Skill</option>
-            {skills.map((s) => <option key={s.skill} value={s.skill}>{s.skill} ({s.count})</option>)}
-          </select>
-          <select
-            value={seniority}
-            onChange={(e) => setSeniority(e.target.value)}
-            className="bg-background border border-card-border rounded-lg px-3 py-2 text-sm text-foreground"
-          >
-            <option value="">Any Seniority</option>
-            {Object.entries(SENIORITY_LABELS).map(([val, label]) => (
-              <option key={val} value={val}>{label}</option>
-            ))}
-          </select>
-          <select
-            value={workModel}
-            onChange={(e) => setWorkModel(e.target.value)}
-            className="bg-background border border-card-border rounded-lg px-3 py-2 text-sm text-foreground"
-          >
-            <option value="">Any Work Model</option>
-            {WORK_MODELS.map((m) => (
-              <option key={m} value={m}>{formatWorkModel(m)}</option>
-            ))}
-          </select>
-          <select
-            value={empType}
-            onChange={(e) => setEmpType(e.target.value)}
-            className="bg-background border border-card-border rounded-lg px-3 py-2 text-sm text-foreground"
-          >
-            <option value="">All Employment Types</option>
-            {empTypes.map((t) => <option key={t} value={t}>{t}</option>)}
-          </select>
+          <MultiValuePicker
+            placeholder="Add department"
+            options={departments.map((item) => ({
+              value: item.category,
+              label: `${item.category} (${item.job_count.toLocaleString()})`,
+            }))}
+            values={department}
+            onChange={setDepartment}
+          />
+          <MultiValuePicker
+            placeholder="Add skill"
+            options={skills.map((item) => ({ value: item.skill, label: `${item.skill} (${item.count})` }))}
+            values={skill}
+            onChange={setSkill}
+          />
+          <MultiValuePicker
+            placeholder="Add seniority"
+            options={Object.entries(SENIORITY_LABELS).map(([value, label]) => ({ value, label }))}
+            values={seniority}
+            onChange={setSeniority}
+          />
+          <MultiValuePicker
+            placeholder="Add work model"
+            options={WORK_MODELS.map((item) => ({ value: item, label: formatWorkModel(item) }))}
+            values={workModel}
+            onChange={setWorkModel}
+          />
+          <MultiValuePicker
+            placeholder="Add employment type"
+            options={empTypeOptions.map((item) => ({ value: item, label: item }))}
+            values={empType}
+            onChange={setEmpType}
+          />
           {activeFilters > 0 && (
             <button
-              onClick={() => { setSearch(""); setSector(""); setEmpType(""); setSkill(""); setSeniority(""); setWorkModel(""); setCompanyType(""); setDepartment(""); }}
+              onClick={() => {
+                setSearch("");
+                setSector([]);
+                setEmpType([]);
+                setSkill([]);
+                setSeniority([]);
+                setWorkModel([]);
+                setCompanyType([]);
+                setDepartment([]);
+                setAtsType([]);
+                setFundingRound([]);
+              }}
               className="px-3 py-2 text-xs text-red border border-red/30 rounded-lg hover:bg-red/10 transition-colors"
             >
               Clear all
@@ -204,6 +397,35 @@ export default function JobFeedPage() {
               {bucket}: {(freshnessLookup[bucket] || 0).toLocaleString()}
             </span>
           ))}
+        </div>
+        <div className="flex flex-wrap gap-3 items-center">
+          <select
+            value={selectedWatchlistId}
+            onChange={(e) => setSelectedWatchlistId(e.target.value ? Number(e.target.value) : "")}
+            className="bg-background border border-card-border rounded-lg px-3 py-2 text-sm text-foreground"
+          >
+            <option value="">Select watchlist</option>
+            {watchlists.map((w) => (
+              <option key={w.id} value={w.id}>{w.name}</option>
+            ))}
+          </select>
+          <select
+            value={watchRoleFamily}
+            onChange={(e) => setWatchRoleFamily(e.target.value)}
+            className="bg-background border border-card-border rounded-lg px-3 py-2 text-sm text-foreground"
+          >
+            <option value="">Role family</option>
+            {roleFamilies.map((r) => (
+              <option key={r.role_family} value={r.role_family}>{formatRoleFamily(r.role_family)}</option>
+            ))}
+          </select>
+          <button
+            onClick={() => { void addRoleFamilyToWatchlist(); }}
+            disabled={!selectedWatchlistId || !watchRoleFamily}
+            className="px-3 py-2 text-xs bg-card border border-card-border rounded-lg text-muted hover:text-foreground disabled:opacity-40 transition-colors"
+          >
+            Add role family to watchlist
+          </button>
         </div>
       </div>
 

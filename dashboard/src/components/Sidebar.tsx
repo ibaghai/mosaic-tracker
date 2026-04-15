@@ -14,6 +14,7 @@ import {
   Wrench,
   Globe2,
   Sparkles,
+  LineChart,
   Menu,
   X,
 } from "lucide-react";
@@ -25,6 +26,7 @@ const NAV = [
   { href: "/trends", label: "Trends", icon: TrendingUp },
   { href: "/companies", label: "Companies", icon: Building2 },
   { href: "/coverage", label: "Coverage", icon: Globe2 },
+  { href: "/analyst", label: "Analyst", icon: LineChart },
   { href: "/fit", label: "Resume Fit", icon: Sparkles },
   { href: "/skills", label: "Skills", icon: Code2 },
   { href: "/roles", label: "Roles", icon: Users },

@@ -1,0 +1,143 @@
+1Password
+Abnormal Security
+Acumatica
+Alation
+Algolia
+Amplitude
+Anduril
+Anyscale
+Apollo GraphQL
+Aqara
+Armis
+Asana
+Astronomer
+Attentive
+Aurora Solar
+Benchling
+BigID
+Bitwarden
+BlackLine
+BlueVoyant
+Braze
+C3 AI
+Calm
+Canva
+Celonis
+Chainalysis
+Chronosphere
+CircleCI
+ClickHouse
+Cockroach Labs
+Codeium
+Cohere
+Contentful
+Confluent
+Copado
+Coralogix
+Couchbase
+Cribl
+CrowdStrike
+Dataiku
+DataRobot
+Dataminr
+dbt Labs
+Deel
+Disco
+Docusign
+Dream11
+Drata
+Elastic
+Figma
+Fireblocks
+Fivetran
+Flexport
+Freshworks
+G2
+Gainsight
+GitBook
+GitLab
+Grafana Labs
+Grammarly
+Gusto
+Harness
+Heap
+Hex
+Highspot
+Hopin
+HubSpot
+Hugging Face
+Icertis
+Immuta
+Intercom
+Iterable
+JumpCloud
+Klarna
+Kong
+Lacework
+Lambda
+LaunchDarkly
+Linear
+Lob
+Lookout
+Loom
+Lucid Software
+Mambu
+Miro
+Mixpanel
+Monday.com
+MongoDB
+Motive
+Neo4j
+New Relic
+Notion
+Nylas
+Odoo
+Okta
+Omada Health
+OpenWeb
+Outreach
+PagerDuty
+Palo Alto Networks
+Patreon
+Personio
+Pleo
+Postman
+Prisma
+Procore
+Rappi
+Redpanda
+Relativity Space
+Retool
+Rippling
+Robinhood
+Rubrik
+SailPoint
+Scale AI
+Semgrep
+ServiceTitan
+Sigma Computing
+Snyk
+Snowflake
+Socure
+Sonar
+Spendesk
+Sprinklr
+Starburst
+Stripe
+Sumo Logic
+Talkdesk
+Temporal
+ThoughtSpot
+Tines
+TripActions
+Uptake
+Vanta
+Vercel
+Via
+Wiz
+Workato
+Zapier
+Zeotap
+Zip
+ZoomInfo
+Zscaler

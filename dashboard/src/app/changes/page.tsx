@@ -6,6 +6,7 @@ import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell,
 } from "recharts";
 import { api, JobEvent, Mover, SectorDelta } from "@/lib/api";
+import { MultiValuePicker } from "@/components/MultiValuePicker";
 
 const TOOLTIP_STYLE = {
   contentStyle: { background: "#1a1d27", border: "1px solid #2a2d3a", borderRadius: 8 },
@@ -20,13 +21,13 @@ export default function ChangesPage() {
   const [movers, setMovers] = useState<Mover[]>([]);
   const [sectorDelta, setSectorDelta] = useState<SectorDelta[]>([]);
   const [searchFilter, setSearchFilter] = useState("");
-  const [typeFilter, setTypeFilter] = useState("");
-  const [companyType, setCompanyType] = useState<CompanyTypeFilter>("");
+  const [typeFilter, setTypeFilter] = useState<string[]>([]);
+  const [companyType, setCompanyType] = useState<CompanyTypeFilter[]>([]);
   const [days, setDays] = useState(7);
 
   useEffect(() => {
-    api.changeEvents({ limit: 500, event_type: typeFilter || undefined }).then(setEvents);
-  }, [typeFilter]);
+    api.changeEvents({ limit: 500 }).then(setEvents);
+  }, []);
 
   useEffect(() => {
     api.movers(days).then(setMovers);
@@ -37,7 +38,8 @@ export default function ChangesPage() {
   }, []);
 
   const filteredEvents = events.filter((e) => {
-    if (companyType && e.company_type !== companyType) return false;
+    if (companyType.length && !companyType.includes(e.company_type as CompanyTypeFilter)) return false;
+    if (typeFilter.length && !typeFilter.includes(e.event_type)) return false;
     if (searchFilter) {
       const q = searchFilter.toLowerCase();
       return e.company.toLowerCase().includes(q) || e.title.toLowerCase().includes(q);
@@ -45,8 +47,8 @@ export default function ChangesPage() {
     return true;
   });
 
-  const filteredMovers = companyType
-    ? movers.filter((m) => m.company_type === companyType)
+  const filteredMovers = companyType.length
+    ? movers.filter((m) => companyType.includes(m.company_type as CompanyTypeFilter))
     : movers;
 
   const added = filteredEvents.filter((e) => e.event_type === "added").length;
@@ -63,9 +65,19 @@ export default function ChangesPage() {
           {([["", "All"], ["startup", "Startups"], ["bigco", "Big Tech"]] as [CompanyTypeFilter, string][]).map(([val, label]) => (
             <button
               key={val}
-              onClick={() => setCompanyType(val)}
+              onClick={() => {
+                if (!val) {
+                  setCompanyType([]);
+                  return;
+                }
+                setCompanyType((prev) =>
+                  prev.includes(val) ? prev.filter((entry) => entry !== val) : [...prev, val]
+                );
+              }}
               className={`px-3 py-1 text-xs rounded transition-colors ${
-                companyType === val ? "bg-accent text-white" : "text-muted hover:text-foreground"
+                (val ? companyType.includes(val) : companyType.length === 0)
+                  ? "bg-accent text-white"
+                  : "text-muted hover:text-foreground"
               }`}
             >
               {label}
@@ -162,15 +174,16 @@ export default function ChangesPage() {
             onChange={(e) => setSearchFilter(e.target.value)}
             className="bg-background border border-card-border rounded-lg px-3 py-1.5 text-sm text-foreground flex-1 max-w-sm"
           />
-          <select
-            value={typeFilter}
-            onChange={(e) => setTypeFilter(e.target.value)}
+          <MultiValuePicker
+            placeholder="Add activity type"
+            options={[
+              { value: "added", label: "Opened" },
+              { value: "removed", label: "Closed" },
+            ]}
+            values={typeFilter}
+            onChange={setTypeFilter}
             className="bg-background border border-card-border rounded-lg px-3 py-1.5 text-sm text-foreground"
-          >
-            <option value="">All Activity</option>
-            <option value="added">Opened</option>
-            <option value="removed">Closed</option>
-          </select>
+          />
         </div>
         <div className="max-h-96 overflow-y-auto overflow-x-auto">
           <table className="w-full text-sm min-w-[640px]">
