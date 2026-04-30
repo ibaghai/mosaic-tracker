@@ -1,0 +1,66 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  dashboard:
+    name: Dashboard build + lint
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: dashboard
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: dashboard/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: ESLint
+        run: npm run lint
+
+      # The real safety net — Next.js build runs `tsc --noEmit` against the
+      # whole app, catching TS errors that local `npm run dev` (Turbopack)
+      # silently lets through. This is the check that would have caught the
+      # /analyst + /radar orphan-import failures before they reached Vercel.
+      - name: Production build
+        env:
+          # Build-time placeholder so `process.env.NEXT_PUBLIC_API_URL` typing
+          # doesn't blow up on a fresh CI checkout.
+          NEXT_PUBLIC_API_URL: http://localhost:8001
+        run: npm run build
+
+  python:
+    name: Python syntax + import check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      # Cheap, no third-party deps required: byte-compile every .py file in
+      # the repo. Catches syntax errors and indentation bugs (e.g. the
+      # outreach generation indentation bug we hit earlier) without needing
+      # to install aiohttp / playwright / etc.
+      - name: Compile every Python file
+        run: |
+          set -e
+          py_files=$(git ls-files '*.py')
+          if [ -z "$py_files" ]; then
+            echo "No Python files to check."
+            exit 0
+          fi
+          echo "Checking $(echo "$py_files" | wc -l) Python files…"
+          python -m py_compile $py_files

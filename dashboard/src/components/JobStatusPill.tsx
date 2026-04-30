@@ -48,24 +48,13 @@ export function JobStatusPill({
   onChange?: (next: JobStatus | null) => void;
 }) {
   const { user, requireLogin } = useAuth();
+  // All hooks declared up front so the call order is stable across renders
+  // (react-hooks/rules-of-hooks). Anonymous-state branch is a render-time
+  // conditional below, NOT an early return that skips hook calls.
   const [status, setStatus] = useState<JobStatus | null>(initialStatus ?? null);
   const [open, setOpen] = useState(false);
   const [pending, setPending] = useState(false);
-
-  // Anonymous: render a tiny "Sign in to track" link — preserves layout, no
-  // dropdown menu, click bumps to login.
-  if (!user) {
-    return (
-      <button
-        type="button"
-        onClick={() => requireLogin()}
-        className="text-[10px] uppercase tracking-wide text-muted hover:text-accent-light"
-        title="Sign in to track jobs"
-      >
-        Sign in to track
-      </button>
-    );
-  }
+  const triggerRef = useRef<HTMLButtonElement | null>(null);
 
   const apply = async (next: JobStatus | null) => {
     if (pending) return;
@@ -87,7 +76,20 @@ export function JobStatusPill({
     }
   };
 
-  const triggerRef = useRef<HTMLButtonElement | null>(null);
+  // Anonymous: render a tiny "Sign in to track" link — preserves layout, no
+  // dropdown menu, click bumps to login.
+  if (!user) {
+    return (
+      <button
+        type="button"
+        onClick={() => requireLogin()}
+        className="text-[10px] uppercase tracking-wide text-muted hover:text-accent-light"
+        title="Sign in to track jobs"
+      >
+        Sign in to track
+      </button>
+    );
+  }
 
   if (status) {
     return (

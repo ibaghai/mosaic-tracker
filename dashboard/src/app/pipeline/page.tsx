@@ -74,7 +74,7 @@ export default function PipelinePage() {
         <div>
           <h2 className="text-2xl font-bold">My Pipeline</h2>
           <p className="text-muted text-sm mt-1">
-            Jobs you've saved, applied to, or are progressing through. Set status from any job
+            Jobs you&apos;ve saved, applied to, or are progressing through. Set status from any job
             row in <Link href="/jobs" className="text-accent-light hover:underline">/jobs</Link>,{" "}
             <Link href="/fit" className="text-accent-light hover:underline">/fit</Link>, or a company page.
           </p>
