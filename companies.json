@@ -30,12 +30,46 @@
     "funding_date": "2023-03-01"
   },
   {
+    "name": "Adyen",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "adyen",
+    "sector": "",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "source_type": "file_import"
+  },
+  {
     "name": "Affirm",
     "website": "https://affirm.com",
     "ats_type": "greenhouse",
     "ats_identifier": "affirm",
     "sector": "Fintech & Payments",
     "company_type": "bigco"
+  },
+  {
+    "name": "AfterShip",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "aftership",
+    "sector": "commerce_logistics",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "careers_url": "https://job-boards.greenhouse.io/aftership",
+    "source_type": "sector_grind"
+  },
+  {
+    "name": "Agency",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "agency",
+    "sector": "",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "source_type": "file_import"
   },
   {
     "name": "Agility Robotics",
@@ -84,6 +118,18 @@
     "sector": "Fintech & Payments"
   },
   {
+    "name": "Aledade",
+    "website": "",
+    "ats_type": "lever",
+    "ats_identifier": "aledade",
+    "sector": "health_bio",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "careers_url": "https://jobs.lever.co/aledade",
+    "source_type": "sector_grind"
+  },
+  {
     "name": "Algolia",
     "website": "https://www.algolia.com",
     "ats_type": "greenhouse",
@@ -106,11 +152,45 @@
     "sector": "Health & Wellness"
   },
   {
+    "name": "Altana",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "altanaai",
+    "sector": "cloud_data",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "careers_url": "https://job-boards.greenhouse.io/altanaai",
+    "source_type": "sector_grind"
+  },
+  {
+    "name": "Altruist",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "altruist",
+    "sector": "",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "source_type": "file_import"
+  },
+  {
     "name": "Amplitude",
     "ats_type": "greenhouse",
     "ats_identifier": "amplitude",
     "sector": "Data & Analytics",
     "company_type": "bigco"
+  },
+  {
+    "name": "Anduril Industries",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "andurilindustries",
+    "sector": "",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "source_type": "file_import"
   },
   {
     "name": "Anthropic",
@@ -123,6 +203,29 @@
     "sector": "AI & Machine Learning"
   },
   {
+    "name": "Anybotics",
+    "website": "",
+    "ats_type": "lever",
+    "ats_identifier": "anybotics",
+    "sector": "robotics_round2",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "careers_url": "https://jobs.lever.co/anybotics",
+    "source_type": "sector_grind"
+  },
+  {
+    "name": "Anyscale",
+    "website": "",
+    "ats_type": "lever",
+    "ats_identifier": "anyscale",
+    "sector": "",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "source_type": "file_import"
+  },
+  {
     "name": "Anysphere (Cursor)",
     "website": "https://www.cursor.com",
     "ats_type": "ashby",
@@ -131,6 +234,17 @@
     "funding_amount_m": 900,
     "funding_date": "2025-08-01",
     "sector": "AI & Machine Learning"
+  },
+  {
+    "name": "Apollo.io",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "apolloio",
+    "sector": "",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "source_type": "file_import"
   },
   {
     "name": "Applied Intuition",
@@ -227,6 +341,17 @@
     "sector": "Security"
   },
   {
+    "name": "AutogenAI",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "autogenai",
+    "sector": "",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "source_type": "file_import"
+  },
+  {
     "name": "Automox",
     "ats_type": "greenhouse",
     "ats_identifier": "automox",
@@ -257,6 +382,29 @@
     "ats_type": "greenhouse",
     "ats_identifier": "beam",
     "sector": "Fintech & Payments"
+  },
+  {
+    "name": "BigID",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "bigid",
+    "sector": "",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "careers_url": "https://job-boards.greenhouse.io/bigid",
+    "source_type": "midmarket_batch"
+  },
+  {
+    "name": "BitGo",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "bitgo",
+    "sector": "",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "source_type": "file_import"
   },
   {
     "name": "Bitpanda",
@@ -401,6 +549,18 @@
     "sector": "Data & Analytics"
   },
   {
+    "name": "Censys",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "censys",
+    "sector": "cybersecurity_round2",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "careers_url": "https://job-boards.greenhouse.io/censys",
+    "source_type": "sector_grind"
+  },
+  {
     "name": "Chainguard",
     "website": "https://www.chainguard.dev",
     "ats_type": "greenhouse",
@@ -447,6 +607,18 @@
     "funding_amount_m": 750,
     "funding_date": "2021-08-13",
     "sector": "Fintech & Payments"
+  },
+  {
+    "name": "CircleCI",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "circleci",
+    "sector": "",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "careers_url": "https://job-boards.greenhouse.io/circleci",
+    "source_type": "midmarket_batch"
   },
   {
     "name": "Clara",
@@ -510,6 +682,18 @@
     "sector": "Dev Tools & Infrastructure"
   },
   {
+    "name": "Coder",
+    "website": "",
+    "ats_type": "lever",
+    "ats_identifier": "coderio",
+    "sector": "devtools_round2",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "careers_url": "https://jobs.lever.co/coderio",
+    "source_type": "sector_grind"
+  },
+  {
     "name": "Cognition",
     "website": "https://cognition.ai",
     "ats_type": "ashby",
@@ -538,6 +722,18 @@
     "funding_amount_m": 500,
     "funding_date": "2024-07-22",
     "sector": "AI & Machine Learning"
+  },
+  {
+    "name": "Cohere Health",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "coherehealth",
+    "sector": "health_ai",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "careers_url": "https://job-boards.greenhouse.io/coherehealth",
+    "source_type": "sector_grind"
   },
   {
     "name": "Coinbase",
@@ -623,12 +819,47 @@
     "sector": "Dev Tools & Infrastructure"
   },
   {
+    "name": "Couchbase",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "couchbaseinc",
+    "sector": "",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "careers_url": "https://job-boards.greenhouse.io/couchbaseinc",
+    "source_type": "midmarket_batch"
+  },
+  {
+    "name": "Coupa",
+    "website": "",
+    "ats_type": "lever",
+    "ats_identifier": "coupa",
+    "sector": "",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "source_type": "file_import"
+  },
+  {
     "name": "Coursera",
     "website": "https://coursera.com",
     "ats_type": "greenhouse",
     "ats_identifier": "coursera",
     "sector": "Consumer & Marketplace",
     "company_type": "bigco"
+  },
+  {
+    "name": "Cresta",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "cresta",
+    "sector": "ai_apps",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "careers_url": "https://job-boards.greenhouse.io/cresta",
+    "source_type": "sector_grind"
   },
   {
     "name": "Cribl",
@@ -641,6 +872,18 @@
     "ats_type": "greenhouse",
     "ats_identifier": "crossbeam",
     "sector": "Enterprise Software"
+  },
+  {
+    "name": "CrossFit",
+    "website": "",
+    "ats_type": "lever",
+    "ats_identifier": "crossfit",
+    "sector": "",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "careers_url": "https://jobs.lever.co/crossfit",
+    "source_type": "candidate_batch"
   },
   {
     "name": "CrowdStrike",
@@ -805,10 +1048,34 @@
     "sector": "AI & Machine Learning"
   },
   {
+    "name": "Dexterity",
+    "website": "",
+    "ats_type": "lever",
+    "ats_identifier": "dexterity",
+    "sector": "robotics_round2",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "careers_url": "https://jobs.lever.co/dexterity",
+    "source_type": "sector_grind"
+  },
+  {
     "name": "Dialpad",
     "ats_type": "greenhouse",
     "ats_identifier": "dialpad",
     "sector": "Communications & Identity"
+  },
+  {
+    "name": "Disco",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "disco",
+    "sector": "",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "careers_url": "https://job-boards.greenhouse.io/disco",
+    "source_type": "midmarket_batch"
   },
   {
     "name": "Discord",
@@ -829,6 +1096,18 @@
     "funding_amount_m": 10,
     "funding_date": "2021-04-01",
     "sector": "AI & Machine Learning"
+  },
+  {
+    "name": "Dollar Shave Club",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "dollarshaveclub",
+    "sector": "",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "careers_url": "https://job-boards.greenhouse.io/dollarshaveclub",
+    "source_type": "candidate_batch"
   },
   {
     "name": "DoorDash",
@@ -920,6 +1199,30 @@
     "sector": "Dev Tools & Infrastructure"
   },
   {
+    "name": "Emerge",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "emerge",
+    "sector": "",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "careers_url": "https://job-boards.greenhouse.io/emerge",
+    "source_type": "candidate_batch"
+  },
+  {
+    "name": "Encore",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "encore",
+    "sector": "devtools_round2",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "careers_url": "https://job-boards.greenhouse.io/encore",
+    "source_type": "sector_grind"
+  },
+  {
     "name": "Endor Labs",
     "website": "https://www.endorlabs.com",
     "ats_type": "greenhouse",
@@ -928,6 +1231,29 @@
     "funding_amount_m": 70,
     "funding_date": "2023-10-01",
     "sector": "Dev Tools & Infrastructure"
+  },
+  {
+    "name": "EnergyHub",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "energyhub",
+    "sector": "climate_round2",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "careers_url": "https://job-boards.greenhouse.io/energyhub",
+    "source_type": "sector_grind"
+  },
+  {
+    "name": "Etched",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "etchedai",
+    "sector": "",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "source_type": "file_import"
   },
   {
     "name": "Etsy",
@@ -943,6 +1269,18 @@
     "ats_type": "ashby",
     "ats_identifier": "exa",
     "sector": "AI & Machine Learning"
+  },
+  {
+    "name": "Expel",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "expel",
+    "sector": "cybersecurity_round2",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "careers_url": "https://job-boards.greenhouse.io/expel",
+    "source_type": "sector_grind"
   },
   {
     "name": "Extend",
@@ -977,6 +1315,18 @@
     "sector": "Consumer & Marketplace"
   },
   {
+    "name": "Fastly",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "fastly",
+    "sector": "",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "careers_url": "https://job-boards.greenhouse.io/fastly",
+    "source_type": "candidate_batch"
+  },
+  {
     "name": "Fathom",
     "website": "https://www.fathom.video",
     "ats_type": "ashby",
@@ -1004,6 +1354,18 @@
     "ats_type": "greenhouse",
     "ats_identifier": "figment",
     "sector": "Fintech & Payments"
+  },
+  {
+    "name": "Figure",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "figure",
+    "sector": "robotics_defense",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "careers_url": "https://job-boards.greenhouse.io/figure",
+    "source_type": "sector_grind"
   },
   {
     "name": "Figure AI",
@@ -1114,6 +1476,18 @@
     "sector": "Security"
   },
   {
+    "name": "Freenome",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "freenome",
+    "sector": "health_bio",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "careers_url": "https://job-boards.greenhouse.io/freenome",
+    "source_type": "sector_grind"
+  },
+  {
     "name": "Fulfil",
     "ats_type": "greenhouse",
     "ats_identifier": "fulfil",
@@ -1140,6 +1514,17 @@
     "ats_type": "greenhouse",
     "ats_identifier": "gatherai",
     "sector": "Consumer & Marketplace"
+  },
+  {
+    "name": "Gemini",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "gemini",
+    "sector": "",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "source_type": "file_import"
   },
   {
     "name": "Ginkgo Bioworks",
@@ -1205,6 +1590,17 @@
     "sector": "Enterprise Software"
   },
   {
+    "name": "goPuff",
+    "website": "https://www.gopuff.com",
+    "ats_type": "lever",
+    "ats_identifier": "gopuff",
+    "sector": "Consumer & Marketplace",
+    "funding_round": "Series H",
+    "funding_amount_m": 1500,
+    "funding_date": "2022-01-01",
+    "source_type": "config"
+  },
+  {
     "name": "Grafana Labs",
     "ats_type": "greenhouse",
     "ats_identifier": "grafanalabs",
@@ -1225,6 +1621,18 @@
     "funding_amount_m": 50,
     "funding_date": "2021-06-03",
     "sector": "HR & Workforce"
+  },
+  {
+    "name": "Gridmatic",
+    "website": "",
+    "ats_type": "lever",
+    "ats_identifier": "gridmatic",
+    "sector": "climate_round2",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "careers_url": "https://jobs.lever.co/gridmatic",
+    "source_type": "sector_grind"
   },
   {
     "name": "Groq",
@@ -1434,6 +1842,17 @@
     "sector": "AI & Machine Learning"
   },
   {
+    "name": "Imbue",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "imbue",
+    "sector": "",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "source_type": "file_import"
+  },
+  {
     "name": "Immuta",
     "ats_type": "lever",
     "ats_identifier": "immuta",
@@ -1462,6 +1881,18 @@
     "ats_type": "greenhouse",
     "ats_identifier": "inflectionai",
     "sector": "AI & Machine Learning"
+  },
+  {
+    "name": "InMobi",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "inmobi",
+    "sector": "",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "careers_url": "https://job-boards.greenhouse.io/inmobi",
+    "source_type": "candidate_batch"
   },
   {
     "name": "Instabase",
@@ -1513,6 +1944,30 @@
     "ats_type": "greenhouse",
     "ats_identifier": "ivalua",
     "sector": "Enterprise Software"
+  },
+  {
+    "name": "JFrog",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "jfrog",
+    "sector": "",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "careers_url": "https://job-boards.greenhouse.io/jfrog",
+    "source_type": "candidate_batch"
+  },
+  {
+    "name": "JumpCloud",
+    "website": "",
+    "ats_type": "lever",
+    "ats_identifier": "jumpcloud",
+    "sector": "",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "careers_url": "https://jobs.lever.co/jumpcloud",
+    "source_type": "midmarket_batch"
   },
   {
     "name": "Justworks",
@@ -1581,6 +2036,18 @@
     "sector": "AI & Machine Learning"
   },
   {
+    "name": "LatchBio",
+    "website": "latchbio.com",
+    "ats_type": "lever",
+    "ats_identifier": "latch",
+    "sector": "",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "careers_url": "https://jobs.lever.co/latch",
+    "source_type": "candidate_batch"
+  },
+  {
     "name": "Lattice",
     "website": "https://www.lattice.com",
     "ats_type": "greenhouse",
@@ -1635,10 +2102,32 @@
     "sector": "Enterprise Software"
   },
   {
+    "name": "LinkedIn",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "linkedin",
+    "sector": "",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "source_type": "file_import"
+  },
+  {
     "name": "LinkSquares",
     "ats_type": "greenhouse",
     "ats_identifier": "linksquaresinc",
     "sector": "Enterprise Software"
+  },
+  {
+    "name": "Liquid Death",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "liquiddeath",
+    "sector": "",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "source_type": "file_import"
   },
   {
     "name": "Lithic",
@@ -1679,6 +2168,30 @@
     "sector": "Enterprise Software"
   },
   {
+    "name": "Lookout",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "lookout",
+    "sector": "",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "careers_url": "https://job-boards.greenhouse.io/lookout",
+    "source_type": "midmarket_batch"
+  },
+  {
+    "name": "Loop",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "loop",
+    "sector": "commerce_logistics",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "careers_url": "https://job-boards.greenhouse.io/loop",
+    "source_type": "sector_grind"
+  },
+  {
     "name": "Loop Returns",
     "ats_type": "lever",
     "ats_identifier": "loopreturns",
@@ -1693,6 +2206,18 @@
     "funding_amount_m": 25,
     "funding_date": "2024-06-01",
     "sector": "AI & Machine Learning"
+  },
+  {
+    "name": "Lucid Software",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "lucidsoftware",
+    "sector": "",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "careers_url": "https://job-boards.greenhouse.io/lucidsoftware",
+    "source_type": "midmarket_batch"
   },
   {
     "name": "Lucidworks",
@@ -1745,6 +2270,18 @@
     "company_type": "bigco"
   },
   {
+    "name": "MasterClass",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "masterclass",
+    "sector": "",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "careers_url": "https://job-boards.greenhouse.io/masterclass",
+    "source_type": "candidate_batch"
+  },
+  {
     "name": "MasterControl",
     "ats_type": "greenhouse",
     "ats_identifier": "mastercontrol",
@@ -1781,6 +2318,17 @@
     "sector": "Health & Wellness"
   },
   {
+    "name": "Meesho",
+    "website": "",
+    "ats_type": "lever",
+    "ats_identifier": "meesho",
+    "sector": "",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "source_type": "file_import"
+  },
+  {
     "name": "Melio",
     "website": "https://www.melio.com",
     "ats_type": "greenhouse",
@@ -1809,6 +2357,17 @@
     "funding_amount_m": 55,
     "funding_date": "2022-10-05",
     "sector": "Dev Tools & Infrastructure"
+  },
+  {
+    "name": "Meta",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "meta",
+    "sector": "AI & Machine Learning",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "source_type": "config"
   },
   {
     "name": "Metabase",
@@ -1946,6 +2505,18 @@
     "sector": "Robotics & Hardware"
   },
   {
+    "name": "Motive",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "motive",
+    "sector": "",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "careers_url": "https://job-boards.greenhouse.io/motive",
+    "source_type": "midmarket_batch"
+  },
+  {
     "name": "Moveworks",
     "ats_type": "greenhouse",
     "ats_identifier": "moveworks",
@@ -1974,6 +2545,18 @@
     "sector": "Dev Tools & Infrastructure"
   },
   {
+    "name": "Neo4j",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "neo4j",
+    "sector": "",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "careers_url": "https://job-boards.greenhouse.io/neo4j",
+    "source_type": "midmarket_batch"
+  },
+  {
     "name": "Neon",
     "website": "https://neon.tech",
     "ats_type": "lever",
@@ -1984,10 +2567,32 @@
     "sector": "Dev Tools & Infrastructure"
   },
   {
+    "name": "Netflix",
+    "website": "",
+    "ats_type": "lever",
+    "ats_identifier": "netflix",
+    "sector": "Consumer & Marketplace",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "source_type": "config"
+  },
+  {
     "name": "Netlify",
     "ats_type": "greenhouse",
     "ats_identifier": "netlify",
     "sector": "Dev Tools & Infrastructure"
+  },
+  {
+    "name": "Netskope",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "netskope",
+    "sector": "",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "source_type": "file_import"
   },
   {
     "name": "New Relic",
@@ -1996,6 +2601,18 @@
     "ats_identifier": "newrelic",
     "sector": "Dev Tools & Infrastructure",
     "company_type": "bigco"
+  },
+  {
+    "name": "Nimble Robotics",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "nimblerobotics",
+    "sector": "robotics_round2",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "careers_url": "https://job-boards.greenhouse.io/nimblerobotics",
+    "source_type": "sector_grind"
   },
   {
     "name": "Notion",
@@ -2012,6 +2629,18 @@
     "ats_type": "greenhouse",
     "ats_identifier": "novacredit",
     "sector": "Fintech & Payments"
+  },
+  {
+    "name": "NuBank",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "nubank",
+    "sector": "",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "careers_url": "https://job-boards.greenhouse.io/nubank",
+    "source_type": "candidate_batch"
   },
   {
     "name": "Nuro",
@@ -2077,6 +2706,18 @@
     "sector": "Consumer & Marketplace"
   },
   {
+    "name": "OpenWeb",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "openweb",
+    "sector": "",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "careers_url": "https://job-boards.greenhouse.io/openweb",
+    "source_type": "midmarket_batch"
+  },
+  {
     "name": "Orca Security",
     "website": "https://orca.security",
     "ats_type": "greenhouse",
@@ -2118,6 +2759,18 @@
     "company_type": "bigco"
   },
   {
+    "name": "Outrider",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "outrider",
+    "sector": "robotics_round2",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "careers_url": "https://job-boards.greenhouse.io/outrider",
+    "source_type": "sector_grind"
+  },
+  {
     "name": "PagerDuty",
     "website": "https://pagerduty.com",
     "ats_type": "greenhouse",
@@ -2131,6 +2784,29 @@
     "ats_identifier": "palantir",
     "sector": "Data & Analytics",
     "company_type": "bigco"
+  },
+  {
+    "name": "Palmetto",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "palmetto",
+    "sector": "climate_energy",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "careers_url": "https://job-boards.greenhouse.io/palmetto",
+    "source_type": "sector_grind"
+  },
+  {
+    "name": "Palo Alto Networks",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "paloaltonetworks",
+    "sector": "Security",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "source_type": "config"
   },
   {
     "name": "PandaDoc",
@@ -2166,6 +2842,18 @@
     "ats_type": "ashby",
     "ats_identifier": "parallel",
     "sector": "AI & Machine Learning"
+  },
+  {
+    "name": "PathAI",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "pathai",
+    "sector": "health_bio",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "careers_url": "https://job-boards.greenhouse.io/pathai",
+    "source_type": "sector_grind"
   },
   {
     "name": "Peloton",
@@ -2236,6 +2924,18 @@
     "sector": "Fintech & Payments"
   },
   {
+    "name": "Pinterest",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "pinterest",
+    "sector": "consumer_media",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "careers_url": "https://job-boards.greenhouse.io/pinterest",
+    "source_type": "sector_grind"
+  },
+  {
     "name": "Pipedrive",
     "ats_type": "lever",
     "ats_identifier": "pipedrive",
@@ -2250,6 +2950,18 @@
     "funding_amount_m": 425,
     "funding_date": "2021-04-07",
     "sector": "Fintech & Payments"
+  },
+  {
+    "name": "Planet",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "planetlabs",
+    "sector": "climate_energy",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "careers_url": "https://job-boards.greenhouse.io/planetlabs",
+    "source_type": "sector_grind"
   },
   {
     "name": "PlanetScale",
@@ -2324,10 +3036,33 @@
     "sector": "AI & Machine Learning"
   },
   {
+    "name": "Project44",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "project44",
+    "sector": "commerce_logistics",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "careers_url": "https://job-boards.greenhouse.io/project44",
+    "source_type": "sector_grind"
+  },
+  {
     "name": "Proton",
     "ats_type": "greenhouse",
     "ats_identifier": "proton",
     "sector": "Security"
+  },
+  {
+    "name": "PsiQuantum",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "psiquantum",
+    "sector": "",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "source_type": "file_import"
   },
   {
     "name": "Pulley",
@@ -2503,6 +3238,29 @@
     "company_type": "bigco"
   },
   {
+    "name": "Roblox",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "roblox",
+    "sector": "",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "source_type": "file_import"
+  },
+  {
+    "name": "Rondo Energy",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "rondoenergy",
+    "sector": "climate_round2",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "careers_url": "https://job-boards.greenhouse.io/rondoenergy",
+    "source_type": "sector_grind"
+  },
+  {
     "name": "Roo",
     "ats_type": "greenhouse",
     "ats_identifier": "roo",
@@ -2519,6 +3277,30 @@
     "sector": "Dev Tools & Infrastructure"
   },
   {
+    "name": "Rubrik",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "rubrik",
+    "sector": "",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "careers_url": "https://job-boards.greenhouse.io/rubrik",
+    "source_type": "midmarket_batch"
+  },
+  {
+    "name": "RunPod",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "runpod",
+    "sector": "ai_infra_round2",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "careers_url": "https://job-boards.greenhouse.io/runpod",
+    "source_type": "sector_grind"
+  },
+  {
     "name": "Runway",
     "website": "https://www.runwayml.com",
     "ats_type": "ashby",
@@ -2527,6 +3309,17 @@
     "funding_amount_m": 141,
     "funding_date": "2024-06-17",
     "sector": "AI & Machine Learning"
+  },
+  {
+    "name": "Salesforce",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "salesforce",
+    "sector": "Enterprise Software",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "source_type": "config"
   },
   {
     "name": "Salesloft",
@@ -2545,6 +3338,17 @@
     "ats_identifier": "samsara",
     "sector": "Dev Tools & Infrastructure",
     "company_type": "bigco"
+  },
+  {
+    "name": "Saronic",
+    "website": "",
+    "ats_type": "lever",
+    "ats_identifier": "saronic",
+    "sector": "",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "source_type": "file_import"
   },
   {
     "name": "Sauce Labs",
@@ -2599,6 +3403,28 @@
     "company_type": "bigco"
   },
   {
+    "name": "ServiceNow",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "servicenow",
+    "sector": "Enterprise Software",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "source_type": "config"
+  },
+  {
+    "name": "Shein",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "shein",
+    "sector": "",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "source_type": "file_import"
+  },
+  {
     "name": "Shield AI",
     "ats_type": "lever",
     "ats_identifier": "shieldai",
@@ -2609,6 +3435,17 @@
     "ats_type": "greenhouse",
     "ats_identifier": "shipbobinc",
     "sector": "Consumer & Marketplace"
+  },
+  {
+    "name": "Shopify",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "shopify",
+    "sector": "Enterprise Software",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "source_type": "config"
   },
   {
     "name": "Sierra",
@@ -2655,6 +3492,18 @@
     "ats_type": "greenhouse",
     "ats_identifier": "smartbear",
     "sector": "Dev Tools & Infrastructure"
+  },
+  {
+    "name": "SmartSheet",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "smartsheet",
+    "sector": "",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "careers_url": "https://job-boards.greenhouse.io/smartsheet",
+    "source_type": "candidate_batch"
   },
   {
     "name": "SnapLogic",
@@ -2710,6 +3559,17 @@
     "sector": "AI & Machine Learning"
   },
   {
+    "name": "Splunk",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "splunk",
+    "sector": "Data & Analytics",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "source_type": "config"
+  },
+  {
     "name": "Spot AI",
     "website": "https://www.spot.ai",
     "ats_type": "teamtailor",
@@ -2752,6 +3612,18 @@
     "sector": "Dev Tools & Infrastructure"
   },
   {
+    "name": "Starburst",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "starburst",
+    "sector": "",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "careers_url": "https://job-boards.greenhouse.io/starburst",
+    "source_type": "midmarket_batch"
+  },
+  {
     "name": "Stardog",
     "ats_type": "lever",
     "ats_identifier": "stardog",
@@ -2762,6 +3634,18 @@
     "ats_type": "greenhouse",
     "ats_identifier": "startree",
     "sector": "Dev Tools & Infrastructure"
+  },
+  {
+    "name": "Stitch Fix",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "stitchfix",
+    "sector": "",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "careers_url": "https://job-boards.greenhouse.io/stitchfix",
+    "source_type": "candidate_batch"
   },
   {
     "name": "Storyblok",
@@ -2789,6 +3673,18 @@
     "funding_round": "Series B",
     "funding_amount_m": 90,
     "funding_date": "2022-01-01"
+  },
+  {
+    "name": "Suki",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "suki",
+    "sector": "health_bio",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "careers_url": "https://job-boards.greenhouse.io/suki",
+    "source_type": "sector_grind"
   },
   {
     "name": "Sumo Logic",
@@ -2840,6 +3736,18 @@
     "company_type": "bigco"
   },
   {
+    "name": "Sword Health",
+    "website": "",
+    "ats_type": "lever",
+    "ats_identifier": "swordhealth",
+    "sector": "health_bio",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "careers_url": "https://jobs.lever.co/swordhealth",
+    "source_type": "sector_grind"
+  },
+  {
     "name": "Synthesia",
     "website": "https://www.synthesia.io",
     "ats_type": "ashby",
@@ -2860,6 +3768,18 @@
     "ats_type": "greenhouse",
     "ats_identifier": "tabapay",
     "sector": "Fintech & Payments"
+  },
+  {
+    "name": "Taboola",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "taboola",
+    "sector": "",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "careers_url": "https://job-boards.greenhouse.io/taboola",
+    "source_type": "candidate_batch"
   },
   {
     "name": "Tailscale",
@@ -2904,6 +3824,18 @@
     "funding_date": "2023-02-01"
   },
   {
+    "name": "Tenable",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "tenableinc",
+    "sector": "",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "careers_url": "https://job-boards.greenhouse.io/tenableinc",
+    "source_type": "candidate_batch"
+  },
+  {
     "name": "Tenstorrent",
     "website": "https://tenstorrent.com",
     "ats_type": "greenhouse",
@@ -2918,6 +3850,17 @@
     "ats_type": "lever",
     "ats_identifier": "terrahq",
     "sector": "Climate & Energy"
+  },
+  {
+    "name": "Thinkific",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "thinkific",
+    "sector": "",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "source_type": "file_import"
   },
   {
     "name": "Thoropass",
@@ -3005,6 +3948,18 @@
     "sector": "Consumer & Marketplace"
   },
   {
+    "name": "TrueLayer",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "truelayer",
+    "sector": "fintech",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "careers_url": "https://job-boards.greenhouse.io/truelayer",
+    "source_type": "sector_grind"
+  },
+  {
     "name": "Truework",
     "ats_type": "greenhouse",
     "ats_identifier": "truework",
@@ -3030,10 +3985,33 @@
     "sector": "Security"
   },
   {
+    "name": "Typeface",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "typeface",
+    "sector": "",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "source_type": "file_import"
+  },
+  {
     "name": "TypeForm",
     "ats_type": "greenhouse",
     "ats_identifier": "typeform",
     "sector": "Enterprise Software"
+  },
+  {
+    "name": "Udacity",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "udacity",
+    "sector": "",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "careers_url": "https://job-boards.greenhouse.io/udacity",
+    "source_type": "candidate_batch"
   },
   {
     "name": "Udemy",
@@ -3048,6 +4026,17 @@
     "ats_type": "greenhouse",
     "ats_identifier": "ujet",
     "sector": "Communications & Identity"
+  },
+  {
+    "name": "Unify",
+    "website": "",
+    "ats_type": "lever",
+    "ats_identifier": "unify",
+    "sector": "",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "source_type": "file_import"
   },
   {
     "name": "Upbound",
@@ -3068,10 +4057,46 @@
     "sector": "Enterprise Software"
   },
   {
+    "name": "Upstart",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "upstart",
+    "sector": "",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "careers_url": "https://job-boards.greenhouse.io/upstart",
+    "source_type": "candidate_batch"
+  },
+  {
+    "name": "Upwork",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "upwork",
+    "sector": "",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "careers_url": "https://job-boards.greenhouse.io/upwork",
+    "source_type": "candidate_batch"
+  },
+  {
     "name": "Valimail",
     "ats_type": "greenhouse",
     "ats_identifier": "valimail",
     "sector": "Security"
+  },
+  {
+    "name": "Vannevar Labs",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "vannevarlabs",
+    "sector": "robotics_defense",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "careers_url": "https://job-boards.greenhouse.io/vannevarlabs",
+    "source_type": "sector_grind"
   },
   {
     "name": "Vanta",
@@ -3256,6 +4281,18 @@
     "sector": "Enterprise Software"
   },
   {
+    "name": "Wrike",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "wrike",
+    "sector": "",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "careers_url": "https://job-boards.greenhouse.io/wrike",
+    "source_type": "candidate_batch"
+  },
+  {
     "name": "Writer",
     "website": "https://www.writer.com",
     "ats_type": "ashby",
@@ -3272,10 +4309,33 @@
     "sector": "AI & Machine Learning"
   },
   {
+    "name": "Yext",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "yext",
+    "sector": "",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "careers_url": "https://job-boards.greenhouse.io/yext",
+    "source_type": "candidate_batch"
+  },
+  {
     "name": "Yotpo",
     "ats_type": "greenhouse",
     "ats_identifier": "yotpo",
     "sector": "Enterprise Software"
+  },
+  {
+    "name": "You.com",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "youcom",
+    "sector": "",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "source_type": "file_import"
   },
   {
     "name": "YugabyteDB",
@@ -3308,6 +4368,17 @@
     "company_type": "bigco"
   },
   {
+    "name": "Zeta Global",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "zetaglobal",
+    "sector": "",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "source_type": "file_import"
+  },
+  {
     "name": "Zilliz",
     "website": "https://zilliz.com",
     "ats_type": "lever",
@@ -3328,10 +4399,34 @@
     "sector": "Robotics & Hardware"
   },
   {
+    "name": "ZoomInfo",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "zoominfo",
+    "sector": "",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "careers_url": "https://job-boards.greenhouse.io/zoominfo",
+    "source_type": "midmarket_batch"
+  },
+  {
     "name": "Zscaler",
     "ats_type": "greenhouse",
     "ats_identifier": "zscaler",
     "sector": "Security",
     "company_type": "bigco"
+  },
+  {
+    "name": "Zuora",
+    "website": "",
+    "ats_type": "greenhouse",
+    "ats_identifier": "zuora",
+    "sector": "",
+    "funding_round": "",
+    "funding_amount_m": 0,
+    "funding_date": "",
+    "careers_url": "https://job-boards.greenhouse.io/zuora",
+    "source_type": "candidate_batch"
   }
 ]
