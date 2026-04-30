@@ -1,0 +1,106 @@
+[
+  {
+    "name": "Rubrik",
+    "ats_type": "greenhouse",
+    "ats_identifier": "rubrik",
+    "jobs": 178,
+    "source_type": "midmarket_batch",
+    "confidence": 0.85
+  },
+  {
+    "name": "ZoomInfo",
+    "ats_type": "greenhouse",
+    "ats_identifier": "zoominfo",
+    "jobs": 99,
+    "source_type": "midmarket_batch",
+    "confidence": 0.85
+  },
+  {
+    "name": "Lucid Software",
+    "ats_type": "greenhouse",
+    "ats_identifier": "lucidsoftware",
+    "jobs": 49,
+    "source_type": "midmarket_batch",
+    "confidence": 0.85
+  },
+  {
+    "name": "Couchbase",
+    "ats_type": "greenhouse",
+    "ats_identifier": "couchbaseinc",
+    "jobs": 35,
+    "source_type": "midmarket_batch",
+    "confidence": 0.85
+  },
+  {
+    "name": "Disco",
+    "ats_type": "greenhouse",
+    "ats_identifier": "disco",
+    "jobs": 34,
+    "source_type": "midmarket_batch",
+    "confidence": 0.85
+  },
+  {
+    "name": "BigID",
+    "ats_type": "greenhouse",
+    "ats_identifier": "bigid",
+    "jobs": 32,
+    "source_type": "midmarket_batch",
+    "confidence": 0.85
+  },
+  {
+    "name": "Neo4j",
+    "ats_type": "greenhouse",
+    "ats_identifier": "neo4j",
+    "jobs": 31,
+    "source_type": "midmarket_batch",
+    "confidence": 0.85
+  },
+  {
+    "name": "Starburst",
+    "ats_type": "greenhouse",
+    "ats_identifier": "starburst",
+    "jobs": 26,
+    "source_type": "midmarket_batch",
+    "confidence": 0.85
+  },
+  {
+    "name": "JumpCloud",
+    "ats_type": "lever",
+    "ats_identifier": "jumpcloud",
+    "jobs": 21,
+    "source_type": "midmarket_batch",
+    "confidence": 0.85
+  },
+  {
+    "name": "CircleCI",
+    "ats_type": "greenhouse",
+    "ats_identifier": "circleci",
+    "jobs": 12,
+    "source_type": "midmarket_batch",
+    "confidence": 0.85
+  },
+  {
+    "name": "Lookout",
+    "ats_type": "greenhouse",
+    "ats_identifier": "lookout",
+    "jobs": 7,
+    "source_type": "midmarket_batch",
+    "confidence": 0.85
+  },
+  {
+    "name": "Motive",
+    "ats_type": "greenhouse",
+    "ats_identifier": "motive",
+    "jobs": 5,
+    "source_type": "midmarket_batch",
+    "confidence": 0.85
+  },
+  {
+    "name": "OpenWeb",
+    "ats_type": "greenhouse",
+    "ats_identifier": "openweb",
+    "jobs": 4,
+    "source_type": "midmarket_batch",
+    "confidence": 0.85
+  }
+]

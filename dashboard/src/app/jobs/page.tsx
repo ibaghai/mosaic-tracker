@@ -6,6 +6,11 @@ import { api, CompanyRow, JobRow, SkillRow, DepartmentRow, JobFilters, Freshness
 import { formatRoleFamily, formatSeniority, formatWorkModel, FUNDING_ORDER, SENIORITY_LABELS } from "@/lib/format";
 import { downloadCSV } from "@/lib/export";
 import { MultiValuePicker } from "@/components/MultiValuePicker";
+import { ReachOutPanel } from "@/components/outreach/ReachOutPanel";
+import { JobStatusPill } from "@/components/JobStatusPill";
+import { JobStatus, UserJobStatus } from "@/lib/api";
+import { SaveSearchControls } from "@/components/SaveSearchControls";
+import { ScoreFilteredJobsPanel } from "@/components/fit/ScoreFilteredJobsPanel";
 
 const WORK_MODELS = ["remote", "hybrid", "onsite"];
 const COMPANY_TYPE_OPTIONS = [
@@ -35,6 +40,17 @@ export default function JobFeedPage() {
   const [department, setDepartment] = useState<string[]>([]);
   const [atsType, setAtsType] = useState<string[]>([]);
   const [fundingRound, setFundingRound] = useState<string[]>([]);
+  const [reachOutOpen, setReachOutOpen] = useState<Set<number>>(new Set());
+  const [jobStatuses, setJobStatuses] = useState<Record<number, JobStatus | null>>({});
+
+  const toggleReachOut = (jobId: number) => {
+    setReachOutOpen((prev) => {
+      const next = new Set(prev);
+      if (next.has(jobId)) next.delete(jobId);
+      else next.add(jobId);
+      return next;
+    });
+  };
 
   useEffect(() => {
     void Promise.all([
@@ -81,6 +97,38 @@ export default function JobFeedPage() {
     funding_round: fundingRound.length ? fundingRound : undefined,
   }), [search, sector, empType, skill, seniority, workModel, companyType, department, atsType, fundingRound]);
 
+  // Snapshot for /api/saved-searches: just the raw filter inputs as we keep
+  // them in React state (so loading round-trips cleanly back into setState).
+  type JobsSearchSnapshot = {
+    search: string;
+    sector: string[];
+    empType: string[];
+    skill: string[];
+    seniority: string[];
+    workModel: string[];
+    companyType: string[];
+    department: string[];
+    atsType: string[];
+    fundingRound: string[];
+  };
+  const snapshot: JobsSearchSnapshot = useMemo(() => ({
+    search, sector, empType, skill, seniority, workModel,
+    companyType, department, atsType, fundingRound,
+  }), [search, sector, empType, skill, seniority, workModel, companyType, department, atsType, fundingRound]);
+
+  const applySnapshot = (s: JobsSearchSnapshot) => {
+    setSearch(s.search ?? "");
+    setSector(s.sector ?? []);
+    setEmpType(s.empType ?? []);
+    setSkill(s.skill ?? []);
+    setSeniority(s.seniority ?? []);
+    setWorkModel(s.workModel ?? []);
+    setCompanyType(s.companyType ?? []);
+    setDepartment(s.department ?? []);
+    setAtsType(s.atsType ?? []);
+    setFundingRound(s.fundingRound ?? []);
+  };
+
   useEffect(() => {
     let cancelled = false;
     void Promise.resolve()
@@ -93,6 +141,18 @@ export default function JobFeedPage() {
           setJobs(data);
           setLoading(false);
         }
+        // Batch-fetch user statuses for the visible rows so we can render pills.
+        const ids = data.slice(0, 500).map((j) => j.id);
+        if (ids.length === 0) return null;
+        return api.jobStatusBatch(ids);
+      })
+      .then((statusMap) => {
+        if (!statusMap || cancelled) return;
+        const next: Record<number, JobStatus | null> = {};
+        for (const [k, v] of Object.entries(statusMap as Record<string, UserJobStatus>)) {
+          next[Number(k)] = (v?.status ?? null) as JobStatus | null;
+        }
+        setJobStatuses(next);
       });
     return () => {
       cancelled = true;
@@ -153,6 +213,16 @@ export default function JobFeedPage() {
           Export CSV
         </button>
       </div>
+
+      <div className="bg-card border border-card-border rounded-xl p-3">
+        <SaveSearchControls
+          surface="jobs"
+          currentParams={snapshot}
+          onLoad={applySnapshot}
+        />
+      </div>
+
+      <ScoreFilteredJobsPanel jobs={jobs} />
 
       {/* Filter bar */}
       <div className="bg-card border border-card-border rounded-xl p-4 space-y-3">
@@ -274,7 +344,7 @@ export default function JobFeedPage() {
                 <tr>
                   <td colSpan={10} className="px-4 py-8 text-center text-muted">Loading...</td>
                 </tr>
-              ) : jobs.slice(0, 500).map((j) => (
+              ) : jobs.slice(0, 500).flatMap((j) => [
                 <tr key={j.id} className="border-b border-card-border/50 hover:bg-white/5">
                   <td className="px-4 py-2.5 font-medium max-w-xs truncate">{j.title}</td>
                   <td className="px-4 py-2.5 text-muted">
@@ -292,9 +362,25 @@ export default function JobFeedPage() {
                     <span className="block text-[10px] text-accent-light">{j.posting_status || "active"}</span>
                   </td>
                   <td className="px-4 py-2.5">
-                    <Link href={`/fit?jobId=${j.id}`} className="text-accent-light hover:underline text-xs">
-                      Compare
-                    </Link>
+                    <div className="flex flex-col gap-1">
+                      <Link href={`/fit?jobId=${j.id}`} className="text-accent-light hover:underline text-xs">
+                        Score
+                      </Link>
+                      <button
+                        type="button"
+                        onClick={() => toggleReachOut(j.id)}
+                        className="text-accent-light hover:underline text-xs text-left"
+                      >
+                        {reachOutOpen.has(j.id) ? "▾ Reach out" : "▸ Reach out"}
+                      </button>
+                      <JobStatusPill
+                        jobId={j.id}
+                        initialStatus={jobStatuses[j.id] ?? null}
+                        onChange={(next) =>
+                          setJobStatuses((prev) => ({ ...prev, [j.id]: next }))
+                        }
+                      />
+                    </div>
                   </td>
                   <td className="px-4 py-2.5">
                     {j.url ? (
@@ -303,8 +389,15 @@ export default function JobFeedPage() {
                       </a>
                     ) : "—"}
                   </td>
-                </tr>
-              ))}
+                </tr>,
+                reachOutOpen.has(j.id) && (
+                  <tr key={`${j.id}-reach`} className="border-b border-card-border/50 bg-background/50">
+                    <td colSpan={10} className="px-4 py-3">
+                      <ReachOutPanel jobId={j.id} resumeFile={null} embedded />
+                    </td>
+                  </tr>
+                ),
+              ])}
             </tbody>
           </table>
           {!loading && jobs.length > 500 && (

@@ -2,7 +2,7 @@ const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 async function fetchApi<T>(
   path: string,
-  params?: Record<string, string | number | string[] | number[] | undefined>
+  params?: Record<string, string | number | boolean | string[] | number[] | undefined>
 ): Promise<T> {
   const url = new URL(`${API_BASE}${path}`);
   if (params) {
@@ -18,13 +18,13 @@ async function fetchApi<T>(
       url.searchParams.set(k, String(v));
     });
   }
-  const res = await fetch(url.toString());
+  const res = await fetch(url.toString(), { credentials: "include" });
   if (!res.ok) throw new Error(`API error: ${res.status}`);
   return res.json();
 }
 
 async function postFormApi<T>(path: string, formData: FormData): Promise<T> {
-  const res = await fetch(`${API_BASE}${path}`, { method: "POST", body: formData });
+  const res = await fetch(`${API_BASE}${path}`, { method: "POST", body: formData, credentials: "include" });
   if (!res.ok) {
     let message = `API error: ${res.status}`;
     try {
@@ -32,6 +32,26 @@ async function postFormApi<T>(path: string, formData: FormData): Promise<T> {
       if (body.detail) message = body.detail;
     } catch {
       // Keep default message.
+    }
+    throw new Error(message);
+  }
+  return res.json();
+}
+
+async function postJsonApi<T>(path: string, body: object | undefined = undefined): Promise<T> {
+  const res = await fetch(`${API_BASE}${path}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: body === undefined ? undefined : JSON.stringify(body),
+    credentials: "include",
+  });
+  if (!res.ok) {
+    let message = `API error: ${res.status}`;
+    try {
+      const b = await res.json();
+      if (b.detail) message = b.detail;
+    } catch {
+      // ignore
     }
     throw new Error(message);
   }
@@ -252,6 +272,222 @@ export interface FitMatchesResponse {
   matches: JobFitMatch[];
 }
 
+export interface OutreachPerson {
+  id?: number;
+  apollo_id?: string | null;
+  name?: string;
+  title?: string | null;
+  linkedin_url?: string | null;
+  email?: string | null;
+  email_status?: string | null;
+  bio_summary?: string | null;
+  seniority?: string | null;
+  archetype?: string | null;
+  hm_score?: number | null;
+  hm_evidence?: string[] | null;
+  _error?: string;
+  _enrich_error?: string;
+}
+
+export type OutreachStatus = "draft" | "sent" | "replied" | "no_reply" | "bounced";
+
+export interface OutreachDraft {
+  id?: number | null;
+  job_id?: number | null;
+  person_id?: number | null;
+  person_name?: string | null;
+  person_title?: string | null;
+  person_linkedin_url?: string | null;
+  person_email?: string | null;
+  archetype?: string | null;
+  subject?: string;
+  message?: string;
+  rationale?: {
+    person_artifacts_referenced?: string[];
+    company_artifacts_referenced?: string[];
+    matched_skills?: string[];
+  };
+  tone?: string;
+  provider?: string;
+  model?: string;
+  prompt_version?: string;
+  status?: OutreachStatus;
+  sent_at?: string | null;
+  sent_via?: string | null;
+  replied_at?: string | null;
+  reply_text?: string | null;
+  reply_category?: string | null;
+  follow_up_due_at?: string | null;
+  // Listing-page extras (joined from people + job + company)
+  job_title?: string;
+  job_url?: string | null;
+  company_id?: number;
+  company_name?: string;
+  _error?: string;
+}
+
+export interface OutreachListResponse {
+  drafts: OutreachDraft[];
+  counts: {
+    by_status: Partial<Record<OutreachStatus, number>>;
+    overdue: number;
+  };
+}
+
+export type JobStatus =
+  | "saved"
+  | "applied"
+  | "interviewing"
+  | "rejected"
+  | "offered"
+  | "dismissed";
+
+export interface UserJobStatus {
+  id?: number;
+  job_id: number;
+  status: JobStatus | null;
+  notes?: string | null;
+  action_at?: string;
+  outcome?: string | null;
+  outcome_at?: string | null;
+}
+
+export interface OutreachJobSummary {
+  total?: number;
+  draft?: number;
+  sent?: number;
+  replied?: number;
+  no_reply?: number;
+  bounced?: number;
+  positive?: number;
+  neutral?: number;
+  negative?: number;
+  interview?: number;
+}
+
+export interface PipelineJob {
+  status: JobStatus;
+  notes?: string | null;
+  action_at: string;
+  outcome?: string | null;
+  outcome_at?: string | null;
+  job_id: number;
+  job_title: string;
+  job_url?: string | null;
+  location?: string | null;
+  location_city?: string | null;
+  seniority?: string | null;
+  work_model?: string | null;
+  role_family?: string | null;
+  normalized_department?: string | null;
+  first_seen_at?: string | null;
+  posting_status?: string | null;
+  is_active?: number | boolean;
+  company_id: number;
+  company_name: string;
+  sector?: string | null;
+  outreach?: OutreachJobSummary;
+}
+
+export interface SavedSearch {
+  id: number;
+  user_id: number;
+  surface: string;
+  name: string;
+  params_json: string;
+  created_at: string;
+  last_run_at?: string | null;
+}
+
+export interface ReplyBreakdown {
+  by_category: { positive?: number; neutral?: number; negative?: number; interview?: number };
+  totals: {
+    draft: number;
+    sent: number;
+    replied: number;
+    no_reply: number;
+    bounced: number;
+    awaiting_reply: number;
+    reply_rate: number;
+  };
+}
+
+export interface PipelineResponse {
+  jobs: PipelineJob[];
+  counts: Partial<Record<JobStatus, number>>;
+}
+
+export interface TailoredResume {
+  tailored_text?: string;
+  diff_summary?: {
+    sections_changed?: string[];
+    keywords_added?: string[];
+    bullets_emphasized?: string[];
+    bullets_rephrased?: { before: string; after: string }[];
+    warnings?: string[];
+  };
+  provider?: string;
+  model?: string;
+  prompt_version?: string;
+  _error?: string;
+}
+
+export interface SimilarJobMatch {
+  id: number;
+  title: string;
+  company_id: number;
+  company_name?: string;
+  sector?: string | null;
+  location?: string | null;
+  url?: string | null;
+  role_family?: string | null;
+  seniority?: string | null;
+  work_model?: string | null;
+  deterministic_score: number;
+  matched_skills?: string[];
+}
+
+export interface SimilarJobsResponse {
+  parsed_jd: {
+    role_title?: string | null;
+    level?: string | null;
+    function?: string | null;
+    sub_function?: string | null;
+    must_have_skills?: string[];
+    team_or_org?: string | null;
+  };
+  shortlist_count: number;
+  matches: SimilarJobMatch[];
+  fetched?: {
+    title?: string;
+    company?: string;
+    location?: string;
+    url?: string;
+    source?: "greenhouse" | "lever" | "ashby" | "html";
+    char_count?: number;
+  };
+}
+
+export interface OutreachResponse {
+  job: { id: number; title: string; company_name: string; url?: string | null };
+  parsed_jd: {
+    level?: string | null;
+    function?: string | null;
+    reports_to_phrase?: string | null;
+    reports_to_target?: { title?: string; team_or_org?: string | null; level?: string | null; function?: string | null } | null;
+    team_or_org?: string | null;
+    must_have_skills?: string[];
+  };
+  people_by_archetype: Record<string, OutreachPerson[]>;
+  drafts: OutreachDraft[];
+  tailored_resume: TailoredResume | null;
+  apollo_usage: {
+    caps: { calls_daily: number; calls_monthly: number; credits_daily: number; credits_monthly: number };
+    used: { calls_today: number; calls_month: number; credits_today: number; credits_month: number };
+    mock_mode: boolean;
+  };
+}
+
 export interface FitJobResponse {
   resume_id: number;
   resume_hash: string;
@@ -318,6 +554,141 @@ export const api = {
     form.set("resume", file);
     return postFormApi<FitJobResponse>(`/api/fit/jobs/${jobId}`, form);
   },
+  similarJobsFromJd: (
+    input: { jdText?: string; url?: string; limit?: number; companyType?: string },
+  ) => {
+    const body = JSON.stringify({
+      jd_text: input.jdText || null,
+      url: input.url || null,
+      limit: input.limit ?? 20,
+      company_type: input.companyType ?? null,
+    });
+    return fetch(`${API_BASE}/api/jobs/similar-to-jd`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body,
+      credentials: "include",
+    }).then(async (res) => {
+      if (!res.ok) {
+        let msg = `API error: ${res.status}`;
+        try {
+          const b = await res.json();
+          if (b.detail) msg = b.detail;
+        } catch {}
+        throw new Error(msg);
+      }
+      return res.json() as Promise<SimilarJobsResponse>;
+    });
+  },
+  outreachGenerate: (
+    jobId: number,
+    options?: {
+      file?: File | null;
+      archetypes?: string[];
+      enrichTop?: number;
+      includeTailoredResume?: boolean;
+    }
+  ) => {
+    const form = new FormData();
+    if (options?.file) form.set("resume", options.file);
+    form.set(
+      "archetypes",
+      (options?.archetypes ?? ["recruiter", "hiring_manager", "recent_joiner"]).join(","),
+    );
+    form.set("enrich_top", String(options?.enrichTop ?? 1));
+    form.set("include_tailored_resume", String(options?.includeTailoredResume ?? true));
+    return postFormApi<OutreachResponse>(`/api/outreach/jobs/${jobId}/generate`, form);
+  },
+  // Outreach lifecycle
+  outreachListDrafts: (filters?: {
+    status?: OutreachStatus;
+    archetype?: string;
+    overdue_only?: boolean;
+    company_ids?: number[];
+    job_id?: number;
+  }) =>
+    fetchApi<OutreachListResponse>("/api/outreach/drafts", {
+      status: filters?.status,
+      archetype: filters?.archetype,
+      overdue_only: filters?.overdue_only,
+      company_ids: filters?.company_ids?.length
+        ? filters.company_ids.join(",")
+        : undefined,
+      job_id: filters?.job_id,
+    }),
+  outreachCompanies: () =>
+    fetchApi<{ companies: { company_id: number; company_name: string; n: number }[] }>(
+      "/api/outreach/companies",
+    ),
+  outreachCounts: () =>
+    fetchApi<{ by_status: Partial<Record<OutreachStatus, number>>; overdue: number }>(
+      "/api/outreach/counts",
+    ),
+  outreachCreateDraft: (
+    payload: Partial<OutreachDraft> & {
+      job_id: number;
+      person_id: number;
+      message: string;
+      status?: "draft" | "sent";
+      sent_via?: string;
+      user_edits?: string;
+      provider?: string;
+      model?: string;
+      prompt_version?: string;
+    },
+  ) => postJsonApi<OutreachDraft>("/api/outreach/drafts", payload),
+  outreachMarkSent: (draftId: number, body?: { sent_via?: string; user_edits?: string; follow_up_days?: number }) =>
+    postJsonApi<OutreachDraft>(`/api/outreach/drafts/${draftId}/sent`, body ?? {}),
+  outreachLogReply: (draftId: number, body?: { reply_text?: string; reply_category?: string }) =>
+    postJsonApi<OutreachDraft>(`/api/outreach/drafts/${draftId}/reply`, body ?? {}),
+  outreachSetStatus: (draftId: number, status: OutreachStatus) =>
+    postJsonApi<OutreachDraft>(`/api/outreach/drafts/${draftId}/status`, { status }),
+  // User job pipeline (saved / applied / dismissed)
+  jobSetStatus: (jobId: number, status: JobStatus, notes?: string) =>
+    postJsonApi<UserJobStatus>(`/api/jobs/${jobId}/status`, { status, notes }),
+  jobClearStatus: async (jobId: number) => {
+    const res = await fetch(`${API_BASE}/api/jobs/${jobId}/status`, { method: "DELETE", credentials: "include" });
+    if (!res.ok) throw new Error(`API error: ${res.status}`);
+    return res.json();
+  },
+  jobStatusBatch: (jobIds: number[]) =>
+    postJsonApi<Record<string, UserJobStatus>>("/api/jobs/status/batch", { job_ids: jobIds }),
+  pipeline: (status?: JobStatus) =>
+    fetchApi<PipelineResponse>("/api/pipeline", { status }),
+  pipelineCounts: () => fetchApi<Partial<Record<JobStatus, number>>>("/api/pipeline/counts"),
+  // Auth
+  authMe: () =>
+    fetchApi<{ user: { id: number; email: string } | null; signups_allowed: boolean }>(
+      "/api/auth/me",
+    ),
+  authSignup: (email: string, password: string) =>
+    postJsonApi<{ id: number; email: string }>("/api/auth/signup", { email, password }),
+  authLogin: (email: string, password: string) =>
+    postJsonApi<{ id: number; email: string }>("/api/auth/login", { email, password }),
+  authLogout: () => postJsonApi<{ ok: true }>("/api/auth/logout"),
+  // Saved searches
+  savedSearchesList: (surface?: string) =>
+    fetchApi<{ searches: SavedSearch[] }>("/api/saved-searches", { surface }),
+  savedSearchesCreate: (surface: string, name: string, params: Record<string, unknown>) =>
+    postJsonApi<SavedSearch>("/api/saved-searches", { surface, name, params }),
+  savedSearchesDelete: async (id: number) => {
+    const res = await fetch(`${API_BASE}/api/saved-searches/${id}`, {
+      method: "DELETE",
+      credentials: "include",
+    });
+    if (!res.ok) throw new Error(`API error: ${res.status}`);
+    return res.json();
+  },
+  fitFromJobs: (file: File, jobIds: number[], limit = 20) => {
+    const form = new FormData();
+    form.set("resume", file);
+    form.set("job_ids", jobIds.join(","));
+    form.set("limit", String(limit));
+    return postFormApi<FitMatchesResponse>("/api/fit/from-jobs", form);
+  },
+  outreachReplyBreakdown: () => fetchApi<ReplyBreakdown>("/api/outreach/reply-breakdown"),
+  outreachSummaryBatch: (jobIds: number[]) =>
+    postJsonApi<Record<string, OutreachJobSummary>>("/api/outreach/summary/batch", { job_ids: jobIds }),
   deptSectorCross: () => fetchApi<CrossTabRow[]>("/api/cross/dept-sector"),
   senioritySectorCross: () => fetchApi<CrossTabRow[]>("/api/cross/seniority-sector"),
   remoteSectorCross: (companyType?: string) =>

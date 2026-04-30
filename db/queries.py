@@ -673,6 +673,46 @@ def get_jobs_for_fit_pool(
     return [dict(r) for r in rows]
 
 
+def get_jobs_for_fit_by_ids(job_ids: List[int]) -> list:
+    """Return jobs in the same shape as `get_jobs_for_fit_pool` but restricted
+    to a specific set of ids. Used by the "score my resume against these
+    filtered jobs" flow on /jobs.
+
+    Inactive jobs in the input set are silently dropped.
+    """
+    if not job_ids:
+        return []
+    placeholders = ",".join("?" for _ in job_ids)
+    conn = get_connection()
+    rows = conn.execute(f"""
+        SELECT
+            jp.id,
+            jp.company_id,
+            jp.title,
+            jp.department,
+            jp.normalized_department,
+            jp.location,
+            jp.employment_type,
+            jp.url,
+            jp.first_seen_at,
+            jp.last_seen_at,
+            jp.seniority,
+            jp.work_model,
+            jp.role_family,
+            c.name AS company_name,
+            c.sector,
+            c.company_type,
+            GROUP_CONCAT(DISTINCT js.skill) AS skills
+        FROM job_postings jp
+        JOIN companies c ON c.id = jp.company_id
+        LEFT JOIN job_skills js ON js.job_id = jp.id
+        WHERE jp.id IN ({placeholders}) AND jp.is_active = 1
+        GROUP BY jp.id
+    """, list(job_ids)).fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+
 def get_job_for_fit(job_id: int) -> Optional[dict]:
     conn = get_connection()
     row = conn.execute("""
@@ -1304,3 +1344,658 @@ def get_seniority_sector_cross(top_sectors=10):
     """, top_sec).fetchall()
     conn.close()
     return [dict(r) for r in rows]
+
+
+# ── People (v1 job-search assistant) ──────────────────────────────────────────
+
+_PEOPLE_FIELDS = (
+    "apollo_id", "name", "title", "company_id", "company_name",
+    "linkedin_url", "email", "email_status", "phone", "bio_summary",
+    "seniority", "departments_json", "tenure_start_date", "archetype",
+    "last_verified_at", "source", "raw_payload_json",
+)
+
+
+def upsert_person(person: dict) -> int:
+    """Insert a person, or update if `apollo_id` already exists. Returns row id."""
+    payload = {k: person.get(k) for k in _PEOPLE_FIELDS}
+    if not payload["name"]:
+        raise ValueError("person.name is required")
+    payload["last_verified_at"] = payload.get("last_verified_at") or datetime.utcnow().isoformat()
+
+    conn = get_connection()
+    try:
+        with conn:
+            if payload.get("apollo_id"):
+                existing = conn.execute(
+                    "SELECT id FROM people WHERE apollo_id = ?", (payload["apollo_id"],)
+                ).fetchone()
+                if existing:
+                    payload["id"] = existing["id"]
+                    conn.execute("""
+                        UPDATE people SET
+                            name = :name,
+                            title = COALESCE(:title, title),
+                            company_id = COALESCE(:company_id, company_id),
+                            company_name = COALESCE(:company_name, company_name),
+                            linkedin_url = COALESCE(:linkedin_url, linkedin_url),
+                            email = COALESCE(:email, email),
+                            email_status = COALESCE(:email_status, email_status),
+                            phone = COALESCE(:phone, phone),
+                            bio_summary = COALESCE(:bio_summary, bio_summary),
+                            seniority = COALESCE(:seniority, seniority),
+                            departments_json = COALESCE(:departments_json, departments_json),
+                            tenure_start_date = COALESCE(:tenure_start_date, tenure_start_date),
+                            archetype = COALESCE(:archetype, archetype),
+                            source = COALESCE(:source, source),
+                            raw_payload_json = COALESCE(:raw_payload_json, raw_payload_json),
+                            last_verified_at = :last_verified_at,
+                            updated_at = datetime('now')
+                        WHERE id = :id
+                    """, payload)
+                    return existing["id"]
+            cursor = conn.execute(f"""
+                INSERT INTO people ({", ".join(_PEOPLE_FIELDS)})
+                VALUES ({", ".join(":" + f for f in _PEOPLE_FIELDS)})
+            """, payload)
+            return cursor.lastrowid
+    finally:
+        conn.close()
+
+
+def get_person(person_id: int) -> Optional[dict]:
+    conn = get_connection()
+    row = conn.execute("SELECT * FROM people WHERE id = ?", (person_id,)).fetchone()
+    conn.close()
+    return dict(row) if row else None
+
+
+def get_people_for_company(
+    company_id: int,
+    archetype: Optional[str] = None,
+    fresh_within_days: Optional[int] = None,
+) -> List[dict]:
+    sql = "SELECT * FROM people WHERE company_id = ?"
+    params: list = [company_id]
+    if archetype:
+        sql += " AND archetype = ?"
+        params.append(archetype)
+    if fresh_within_days is not None:
+        sql += f" AND last_verified_at >= datetime('now', '-{int(fresh_within_days)} days')"
+    sql += " ORDER BY archetype, name"
+    conn = get_connection()
+    rows = conn.execute(sql, params).fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+
+def set_person_archetype(person_id: int, archetype: str) -> None:
+    conn = get_connection()
+    with conn:
+        conn.execute(
+            "UPDATE people SET archetype = ?, updated_at = datetime('now') WHERE id = ?",
+            (archetype, person_id),
+        )
+    conn.close()
+
+
+# ── Outreach drafts ───────────────────────────────────────────────────────────
+
+def insert_outreach_draft(draft: dict, *, user_id: int) -> int:
+    fields = (
+        "person_id", "job_id", "resume_id", "archetype", "subject", "message",
+        "rationale_json", "tone", "provider", "model", "prompt_version", "user_edits",
+    )
+    payload = {k: draft.get(k) for k in fields}
+    if not payload["person_id"] or not payload["job_id"] or not payload["message"]:
+        raise ValueError("person_id, job_id, and message are required")
+    payload["user_id"] = user_id
+    conn = get_connection()
+    with conn:
+        cursor = conn.execute(f"""
+            INSERT INTO outreach_drafts ({", ".join(fields)}, user_id)
+            VALUES ({", ".join(":" + f for f in fields)}, :user_id)
+        """, payload)
+        draft_id = cursor.lastrowid
+    conn.close()
+    return draft_id
+
+
+def get_outreach_drafts_for_job(job_id: int, *, user_id: int) -> List[dict]:
+    conn = get_connection()
+    rows = conn.execute("""
+        SELECT od.*, p.name AS person_name, p.title AS person_title,
+               p.linkedin_url AS person_linkedin_url, p.email AS person_email
+        FROM outreach_drafts od
+        JOIN people p ON p.id = od.person_id
+        WHERE od.job_id = ? AND od.user_id = ?
+        ORDER BY od.created_at DESC
+    """, (job_id, user_id)).fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+
+def list_outreach_drafts(
+    *,
+    user_id: int,
+    status: Optional[str] = None,
+    archetype: Optional[str] = None,
+    overdue_only: bool = False,
+    company_ids: Optional[List[int]] = None,
+    job_id: Optional[int] = None,
+    limit: int = 200,
+) -> List[dict]:
+    """Cross-job listing of outreach drafts for the /outreach page.
+
+    Joins person + job + company so the UI can render full context without
+    follow-up requests. Newest-first by status priority, then created_at desc.
+
+    Filters: status, archetype, overdue_only, company_ids (one or many), job_id
+    (single — used by the OutreachSummaryBadge deep-link).
+    """
+    sql = """
+        SELECT od.*,
+               p.name AS person_name, p.title AS person_title,
+               p.linkedin_url AS person_linkedin_url, p.email AS person_email,
+               j.title AS job_title, j.url AS job_url,
+               c.id AS company_id, c.name AS company_name
+        FROM outreach_drafts od
+        JOIN people p ON p.id = od.person_id
+        JOIN job_postings j ON j.id = od.job_id
+        JOIN companies c ON c.id = j.company_id
+        WHERE od.user_id = ?
+    """
+    params: list = [user_id]
+    if status:
+        sql += " AND COALESCE(od.status, 'draft') = ?"
+        params.append(status)
+    if archetype:
+        sql += " AND od.archetype = ?"
+        params.append(archetype)
+    if overdue_only:
+        sql += (
+            " AND od.follow_up_due_at IS NOT NULL"
+            " AND od.follow_up_due_at < datetime('now')"
+            " AND COALESCE(od.status, 'draft') = 'sent'"
+        )
+    if company_ids:
+        placeholders = ",".join("?" for _ in company_ids)
+        sql += f" AND c.id IN ({placeholders})"
+        params.extend(company_ids)
+    if job_id:
+        sql += " AND od.job_id = ?"
+        params.append(job_id)
+    sql += " ORDER BY od.created_at DESC LIMIT ?"
+    params.append(int(limit))
+    conn = get_connection()
+    rows = conn.execute(sql, params).fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+
+def list_outreach_companies(*, user_id: int) -> List[dict]:
+    """Distinct companies that have at least one outreach draft, with counts.
+    Used to populate the company multi-select on /outreach.
+    """
+    conn = get_connection()
+    rows = conn.execute("""
+        SELECT c.id AS company_id, c.name AS company_name, COUNT(od.id) AS n
+        FROM outreach_drafts od
+        JOIN job_postings j ON j.id = od.job_id
+        JOIN companies c ON c.id = j.company_id
+        WHERE od.user_id = ?
+        GROUP BY c.id, c.name
+        ORDER BY n DESC, c.name ASC
+    """, (user_id,)).fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+
+def outreach_summary_for_jobs(job_ids: List[int], *, user_id: int) -> dict[int, dict]:
+    """Per-job outreach roll-up — used by /pipeline rows and the
+    cross-feature link from a job to its conversations.
+
+    Returns: { job_id: {total, draft, sent, replied, positive, neutral,
+                        negative, interview, no_reply, bounced} }
+    """
+    if not job_ids:
+        return {}
+    placeholders = ",".join("?" for _ in job_ids)
+    sql = f"""
+        SELECT
+            job_id,
+            COUNT(*) AS total,
+            SUM(CASE WHEN COALESCE(status,'draft')='draft' THEN 1 ELSE 0 END) AS draft,
+            SUM(CASE WHEN COALESCE(status,'draft')='sent' THEN 1 ELSE 0 END) AS sent,
+            SUM(CASE WHEN COALESCE(status,'draft')='replied' THEN 1 ELSE 0 END) AS replied,
+            SUM(CASE WHEN COALESCE(status,'draft')='no_reply' THEN 1 ELSE 0 END) AS no_reply,
+            SUM(CASE WHEN COALESCE(status,'draft')='bounced' THEN 1 ELSE 0 END) AS bounced,
+            SUM(CASE WHEN reply_category='positive' THEN 1 ELSE 0 END) AS positive,
+            SUM(CASE WHEN reply_category='neutral' THEN 1 ELSE 0 END) AS neutral,
+            SUM(CASE WHEN reply_category='negative' THEN 1 ELSE 0 END) AS negative,
+            SUM(CASE WHEN reply_category='interview' THEN 1 ELSE 0 END) AS interview
+        FROM outreach_drafts
+        WHERE user_id = ? AND job_id IN ({placeholders})
+        GROUP BY job_id
+    """
+    conn = get_connection()
+    rows = conn.execute(sql, [user_id, *job_ids]).fetchall()
+    conn.close()
+    return {r["job_id"]: dict(r) for r in rows}
+
+
+def outreach_reply_breakdown(*, user_id: int) -> dict:
+    """Aggregate counts by reply_category, for the /outreach response panel.
+
+    Returns: {
+      "by_category": {positive, neutral, negative, interview},
+      "totals": {sent, replied, draft, no_reply, bounced, awaiting_reply,
+                 reply_rate}    # reply_rate = replied / (sent + replied + no_reply)
+    }
+    awaiting_reply = sent (still waiting for a response).
+    """
+    conn = get_connection()
+    cat_rows = conn.execute("""
+        SELECT reply_category, COUNT(*) AS n
+        FROM outreach_drafts
+        WHERE reply_category IS NOT NULL AND user_id = ?
+        GROUP BY reply_category
+    """, (user_id,)).fetchall()
+    status_rows = conn.execute("""
+        SELECT COALESCE(status, 'draft') AS status, COUNT(*) AS n
+        FROM outreach_drafts
+        WHERE user_id = ?
+        GROUP BY COALESCE(status, 'draft')
+    """, (user_id,)).fetchall()
+    conn.close()
+    by_status = {r["status"]: r["n"] for r in status_rows}
+    sent = by_status.get("sent", 0)
+    replied = by_status.get("replied", 0)
+    no_reply = by_status.get("no_reply", 0)
+    decided_universe = sent + replied + no_reply
+    reply_rate = (replied / decided_universe) if decided_universe else 0.0
+    return {
+        "by_category": {r["reply_category"]: r["n"] for r in cat_rows},
+        "totals": {
+            "draft": by_status.get("draft", 0),
+            "sent": sent,
+            "replied": replied,
+            "no_reply": no_reply,
+            "bounced": by_status.get("bounced", 0),
+            "awaiting_reply": sent,
+            "reply_rate": round(reply_rate, 3),
+        },
+    }
+
+
+def outreach_status_counts(*, user_id: int) -> dict:
+    """Aggregate counts by status, for the sidebar / dashboard badges."""
+    conn = get_connection()
+    rows = conn.execute("""
+        SELECT COALESCE(status, 'draft') AS status, COUNT(*) AS n
+        FROM outreach_drafts
+        WHERE user_id = ?
+        GROUP BY COALESCE(status, 'draft')
+    """, (user_id,)).fetchall()
+    overdue_row = conn.execute("""
+        SELECT COUNT(*) AS n
+        FROM outreach_drafts
+        WHERE user_id = ?
+          AND COALESCE(status, 'draft') = 'sent'
+          AND follow_up_due_at IS NOT NULL
+          AND follow_up_due_at < datetime('now')
+    """, (user_id,)).fetchone()
+    conn.close()
+    return {
+        "by_status": {r["status"]: r["n"] for r in rows},
+        "overdue": overdue_row["n"] if overdue_row else 0,
+    }
+
+
+def mark_outreach_sent(
+    draft_id: int,
+    *,
+    user_id: int,
+    sent_via: Optional[str] = None,
+    follow_up_days: int = 5,
+    user_edits: Optional[str] = None,
+) -> Optional[dict]:
+    """Mark a draft as sent. Stamps sent_at, sets follow_up_due_at, optionally
+    persists the user-edited body. Idempotent — re-calling on a sent draft
+    just refreshes sent_at. No-op if the draft doesn't belong to the caller.
+    """
+    conn = get_connection()
+    with conn:
+        conn.execute("""
+            UPDATE outreach_drafts SET
+                status = 'sent',
+                sent_at = datetime('now'),
+                sent_via = COALESCE(?, sent_via),
+                user_edits = COALESCE(?, user_edits),
+                follow_up_due_at = datetime('now', ? || ' days')
+            WHERE id = ? AND user_id = ?
+        """, (sent_via, user_edits, f"+{int(follow_up_days)}", draft_id, user_id))
+        row = conn.execute(
+            "SELECT * FROM outreach_drafts WHERE id = ? AND user_id = ?",
+            (draft_id, user_id),
+        ).fetchone()
+    conn.close()
+    return dict(row) if row else None
+
+
+def log_outreach_reply(
+    draft_id: int,
+    *,
+    user_id: int,
+    reply_text: Optional[str] = None,
+    reply_category: Optional[str] = None,
+) -> Optional[dict]:
+    """Record that a reply came in. Sets status='replied' and clears the
+    follow-up due-date so the overdue badge stops counting it.
+    """
+    conn = get_connection()
+    with conn:
+        conn.execute("""
+            UPDATE outreach_drafts SET
+                status = 'replied',
+                replied_at = datetime('now'),
+                reply_text = COALESCE(?, reply_text),
+                reply_category = COALESCE(?, reply_category),
+                follow_up_due_at = NULL
+            WHERE id = ? AND user_id = ?
+        """, (reply_text, reply_category, draft_id, user_id))
+        row = conn.execute(
+            "SELECT * FROM outreach_drafts WHERE id = ? AND user_id = ?",
+            (draft_id, user_id),
+        ).fetchone()
+    conn.close()
+    return dict(row) if row else None
+
+
+# ── User job status (saved / applied / dismissed pipeline) ───────────────────
+
+VALID_JOB_STATUSES = {"saved", "applied", "interviewing", "rejected", "offered", "dismissed"}
+
+
+def set_user_job_status(
+    job_id: int,
+    *,
+    user_id: int,
+    status: str,
+    notes: Optional[str] = None,
+) -> dict:
+    """Upsert a user-applied status on a job.
+
+    One status per (user, job). Re-calling with a new status overwrites;
+    status='dismissed' is the terminal "hide forever" state.
+    """
+    if status not in VALID_JOB_STATUSES:
+        raise ValueError(f"invalid status {status!r}; expected one of {VALID_JOB_STATUSES}")
+    conn = get_connection()
+    with conn:
+        conn.execute("""
+            INSERT INTO user_job_status (job_id, user_id, status, notes, action_at, updated_at)
+            VALUES (?, ?, ?, ?, datetime('now'), datetime('now'))
+            ON CONFLICT(user_id, job_id) DO UPDATE SET
+                status = excluded.status,
+                notes = COALESCE(excluded.notes, notes),
+                action_at = datetime('now'),
+                updated_at = datetime('now')
+        """, (job_id, user_id, status, notes))
+        row = conn.execute(
+            "SELECT * FROM user_job_status WHERE job_id = ? AND user_id = ?",
+            (job_id, user_id),
+        ).fetchone()
+    conn.close()
+    return dict(row)
+
+
+def clear_user_job_status(job_id: int, *, user_id: int) -> None:
+    """Remove the status row for a job (e.g., user un-saves)."""
+    conn = get_connection()
+    with conn:
+        conn.execute(
+            "DELETE FROM user_job_status WHERE job_id = ? AND user_id = ?",
+            (job_id, user_id),
+        )
+    conn.close()
+
+
+def get_user_job_status(job_id: int, *, user_id: int) -> Optional[dict]:
+    conn = get_connection()
+    row = conn.execute(
+        "SELECT * FROM user_job_status WHERE job_id = ? AND user_id = ?",
+        (job_id, user_id),
+    ).fetchone()
+    conn.close()
+    return dict(row) if row else None
+
+
+def get_user_job_statuses_map(job_ids: List[int], *, user_id: int) -> dict[int, dict]:
+    """Bulk lookup — map job_id → status row. Used to decorate /jobs and
+    fit-result lists without N+1 queries.
+    """
+    if not job_ids:
+        return {}
+    placeholders = ",".join("?" for _ in job_ids)
+    conn = get_connection()
+    rows = conn.execute(
+        f"SELECT * FROM user_job_status WHERE user_id = ? AND job_id IN ({placeholders})",
+        [user_id, *job_ids],
+    ).fetchall()
+    conn.close()
+    return {r["job_id"]: dict(r) for r in rows}
+
+
+def list_pipeline_jobs(*, user_id: int, status: Optional[str] = None, limit: int = 500) -> List[dict]:
+    """Return jobs with a user-set status, joined with company info, for the
+    /pipeline page. Newest-action-first. Each row also includes a small
+    `outreach` roll-up (sent / replied / positive / etc.) so the UI can show
+    conversation activity per job.
+    """
+    sql = """
+        SELECT
+            ujs.status, ujs.notes, ujs.action_at, ujs.outcome, ujs.outcome_at,
+            j.id AS job_id, j.title AS job_title, j.url AS job_url,
+            j.location, j.location_city, j.seniority, j.work_model,
+            j.role_family, j.normalized_department, j.first_seen_at,
+            j.posting_status, j.is_active,
+            c.id AS company_id, c.name AS company_name, c.sector
+        FROM user_job_status ujs
+        JOIN job_postings j ON j.id = ujs.job_id
+        JOIN companies c ON c.id = j.company_id
+        WHERE ujs.user_id = ?
+    """
+    params: list = [user_id]
+    if status:
+        sql += " AND ujs.status = ?"
+        params.append(status)
+    sql += " ORDER BY ujs.action_at DESC LIMIT ?"
+    params.append(int(limit))
+    conn = get_connection()
+    rows = [dict(r) for r in conn.execute(sql, params).fetchall()]
+    conn.close()
+    # Decorate with per-job outreach summary in one extra round-trip.
+    summary = outreach_summary_for_jobs([r["job_id"] for r in rows], user_id=user_id)
+    for r in rows:
+        r["outreach"] = summary.get(r["job_id"]) or {}
+    return rows
+
+
+def list_saved_searches(*, user_id: int, surface: Optional[str] = None) -> List[dict]:
+    """Saved-search rows for a user. Optional `surface` filter (e.g. 'jobs')."""
+    sql = "SELECT * FROM saved_searches WHERE user_id = ?"
+    params: list = [user_id]
+    if surface:
+        sql += " AND surface = ?"
+        params.append(surface)
+    sql += " ORDER BY created_at DESC"
+    conn = get_connection()
+    rows = conn.execute(sql, params).fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+
+def create_saved_search(
+    *,
+    user_id: int,
+    surface: str,
+    name: str,
+    params_json: str,
+) -> dict:
+    name = (name or "").strip()
+    if not name:
+        raise ValueError("name is required")
+    if not surface:
+        raise ValueError("surface is required")
+    conn = get_connection()
+    try:
+        with conn:
+            cur = conn.execute("""
+                INSERT INTO saved_searches (user_id, surface, name, params_json)
+                VALUES (?, ?, ?, ?)
+            """, (user_id, surface, name, params_json))
+            row = conn.execute(
+                "SELECT * FROM saved_searches WHERE id = ?", (cur.lastrowid,)
+            ).fetchone()
+        return dict(row)
+    except Exception as exc:
+        if "UNIQUE" in str(exc).upper():
+            raise ValueError(f"You already have a saved search named {name!r} on {surface}.") from exc
+        raise
+    finally:
+        conn.close()
+
+
+def delete_saved_search(*, user_id: int, search_id: int) -> bool:
+    conn = get_connection()
+    with conn:
+        cur = conn.execute(
+            "DELETE FROM saved_searches WHERE id = ? AND user_id = ?",
+            (search_id, user_id),
+        )
+    conn.close()
+    return (cur.rowcount or 0) > 0
+
+
+def pipeline_status_counts(*, user_id: int) -> dict:
+    """Aggregate counts by pipeline status, for /pipeline tabs and the sidebar."""
+    conn = get_connection()
+    rows = conn.execute("""
+        SELECT status, COUNT(*) AS n
+        FROM user_job_status
+        WHERE user_id = ?
+        GROUP BY status
+    """, (user_id,)).fetchall()
+    conn.close()
+    return {r["status"]: r["n"] for r in rows}
+
+
+# ── (back to outreach) ───────────────────────────────────────────────────────
+
+
+def set_outreach_status(draft_id: int, status: str, *, user_id: int) -> Optional[dict]:
+    """Generic status setter. Used for: 'no_reply' (give up), 'bounced',
+    or rolling back to 'draft' (un-send).
+    """
+    valid = {"draft", "sent", "replied", "no_reply", "bounced"}
+    if status not in valid:
+        raise ValueError(f"invalid status {status!r}; expected one of {valid}")
+    conn = get_connection()
+    with conn:
+        conn.execute(
+            "UPDATE outreach_drafts SET status = ? WHERE id = ? AND user_id = ?",
+            (status, draft_id, user_id),
+        )
+        row = conn.execute(
+            "SELECT * FROM outreach_drafts WHERE id = ? AND user_id = ?",
+            (draft_id, user_id),
+        ).fetchone()
+    conn.close()
+    return dict(row) if row else None
+
+
+# ── Tailored resumes ──────────────────────────────────────────────────────────
+
+def upsert_tailored_resume(record: dict) -> int:
+    fields = (
+        "resume_id", "job_id", "tailored_text", "diff_summary_json",
+        "provider", "model", "prompt_version",
+    )
+    payload = {k: record.get(k) for k in fields}
+    for required in ("resume_id", "job_id", "tailored_text", "provider", "model", "prompt_version"):
+        if payload.get(required) is None:
+            raise ValueError(f"{required} is required")
+    conn = get_connection()
+    with conn:
+        conn.execute(f"""
+            INSERT INTO tailored_resumes ({", ".join(fields)})
+            VALUES ({", ".join(":" + f for f in fields)})
+            ON CONFLICT(resume_id, job_id, prompt_version) DO UPDATE SET
+                tailored_text = excluded.tailored_text,
+                diff_summary_json = excluded.diff_summary_json,
+                provider = excluded.provider,
+                model = excluded.model
+        """, payload)
+        row = conn.execute("""
+            SELECT id FROM tailored_resumes
+            WHERE resume_id = ? AND job_id = ? AND prompt_version = ?
+        """, (payload["resume_id"], payload["job_id"], payload["prompt_version"])).fetchone()
+    conn.close()
+    return row["id"]
+
+
+def get_tailored_resume(resume_id: int, job_id: int, prompt_version: str) -> Optional[dict]:
+    conn = get_connection()
+    row = conn.execute("""
+        SELECT * FROM tailored_resumes
+        WHERE resume_id = ? AND job_id = ? AND prompt_version = ?
+    """, (resume_id, job_id, prompt_version)).fetchone()
+    conn.close()
+    return dict(row) if row else None
+
+
+# ── Apollo audit + cost guard ─────────────────────────────────────────────────
+
+def log_apollo_call(
+    endpoint: str,
+    *,
+    request_summary: Optional[str] = None,
+    credits_used: Optional[int] = None,
+    status_code: Optional[int] = None,
+    error_msg: Optional[str] = None,
+) -> int:
+    conn = get_connection()
+    with conn:
+        cursor = conn.execute("""
+            INSERT INTO apollo_api_calls
+                (endpoint, request_summary, credits_used, status_code, error_msg)
+            VALUES (?, ?, ?, ?, ?)
+        """, (endpoint, request_summary, credits_used, status_code, error_msg))
+        call_id = cursor.lastrowid
+    conn.close()
+    return call_id
+
+
+def apollo_usage_summary() -> dict:
+    """Return today's and this-month's call count + credit sum (UTC)."""
+    conn = get_connection()
+    row = conn.execute("""
+        SELECT
+            SUM(CASE WHEN date(called_at) = date('now')
+                     AND (error_msg IS NULL) THEN 1 ELSE 0 END) AS calls_today,
+            SUM(CASE WHEN strftime('%Y-%m', called_at) = strftime('%Y-%m', 'now')
+                     AND (error_msg IS NULL) THEN 1 ELSE 0 END) AS calls_month,
+            SUM(CASE WHEN date(called_at) = date('now')
+                     THEN COALESCE(credits_used, 0) ELSE 0 END) AS credits_today,
+            SUM(CASE WHEN strftime('%Y-%m', called_at) = strftime('%Y-%m', 'now')
+                     THEN COALESCE(credits_used, 0) ELSE 0 END) AS credits_month
+        FROM apollo_api_calls
+    """).fetchone()
+    conn.close()
+    return {
+        "calls_today": row["calls_today"] or 0,
+        "calls_month": row["calls_month"] or 0,
+        "credits_today": row["credits_today"] or 0,
+        "credits_month": row["credits_month"] or 0,
+    }

@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Startup Tracker — Audit + PRD (Dream Job & Networking)</title>
+<style>
+  :root {
+    --bg: #fafaf7;
+    --ink: #1a1a1a;
+    --muted: #6b6b6b;
+    --line: #e4e4dc;
+    --card: #ffffff;
+    --accent: #d4582c;
+    --accent-soft: #fce8de;
+    --good: #2f7a3f;
+    --good-soft: #e3f2e6;
+    --bad: #b03030;
+    --bad-soft: #fbe5e3;
+    --warn: #b87a00;
+    --warn-soft: #fbf0d0;
+    --code: #2a2a2a;
+    --code-bg: #f1ede4;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  .layout {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+  nav.toc {
+    position: sticky;
+    top: 0;
+    align-self: start;
+    height: 100vh;
+    overflow-y: auto;
+    padding: 32px 20px;
+    border-right: 1px solid var(--line);
+    font-size: 13px;
+  }
+  nav.toc h2 {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin: 0 0 8px;
+  }
+  nav.toc ol {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 20px;
+  }
+  nav.toc li { margin: 4px 0; }
+  nav.toc a {
+    color: var(--ink);
+    text-decoration: none;
+    display: block;
+    padding: 4px 8px;
+    border-radius: 4px;
+    border-left: 2px solid transparent;
+  }
+  nav.toc a:hover {
+    background: var(--accent-soft);
+    border-left-color: var(--accent);
+  }
+  nav.toc .sub a {
+    padding-left: 20px;
+    color: var(--muted);
+    font-size: 12px;
+  }
+  main {
+    padding: 48px 56px 96px;
+    max-width: 920px;
+  }
+  h1 {
+    font-size: 32px;
+    margin: 0 0 4px;
+    letter-spacing: -0.02em;
+  }
+  .tagline {
+    color: var(--muted);
+    margin: 0 0 32px;
+  }
+  h2 {
+    font-size: 22px;
+    margin: 56px 0 12px;
+    letter-spacing: -0.01em;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 6px;
+  }
+  h3 {
+    font-size: 16px;
+    margin: 28px 0 8px;
+  }
+  h4 {
+    font-size: 14px;
+    margin: 18px 0 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+  }
+  p { margin: 8px 0; }
+  code, .mono {
+    font-family: "SF Mono", "Monaco", "Menlo", monospace;
+    font-size: 0.88em;
+    background: var(--code-bg);
+    color: var(--code);
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+  .callout {
+    background: var(--bad-soft);
+    border-left: 4px solid var(--bad);
+    padding: 14px 18px;
+    border-radius: 4px;
+    margin: 16px 0;
+  }
+  .callout.warn { background: var(--warn-soft); border-left-color: var(--warn); }
+  .callout.good { background: var(--good-soft); border-left-color: var(--good); }
+  .callout strong { display: block; margin-bottom: 4px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 16px 0;
+  }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 16px 20px;
+  }
+  .card h4 { margin-top: 0; }
+  .pill {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 99px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    margin-right: 4px;
+  }
+  .pill.bad { background: var(--bad-soft); color: var(--bad); }
+  .pill.warn { background: var(--warn-soft); color: var(--warn); }
+  .pill.good { background: var(--good-soft); color: var(--good); }
+  .pill.neutral { background: var(--code-bg); color: var(--code); }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 13px;
+  }
+  th, td {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+  th {
+    background: var(--code-bg);
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+  }
+  .sev-h { background: var(--bad-soft); color: var(--bad); font-weight: 700; padding: 2px 8px; border-radius: 99px; font-size: 11px; }
+  .sev-m { background: var(--warn-soft); color: var(--warn); font-weight: 700; padding: 2px 8px; border-radius: 99px; font-size: 11px; }
+  .sev-l { background: var(--good-soft); color: var(--good); font-weight: 700; padding: 2px 8px; border-radius: 99px; font-size: 11px; }
+  .svg-wrap {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 20px;
+    margin: 16px 0;
+    overflow-x: auto;
+  }
+  .svg-wrap svg { display: block; max-width: 100%; height: auto; }
+  .prd {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-left: 4px solid var(--accent);
+    border-radius: 6px;
+    padding: 22px 26px;
+    margin: 24px 0;
+  }
+  .prd-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .prd-head h3 { margin: 0; font-size: 18px; }
+  .prd-meta { font-size: 12px; color: var(--muted); }
+  .prd dt { font-weight: 600; margin-top: 12px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
+  .prd dd { margin: 4px 0 0 0; }
+  .prd ul { margin: 4px 0 0 0; padding-left: 20px; }
+  .prd ul li { margin: 3px 0; }
+  .quote {
+    font-style: italic;
+    color: var(--ink);
+    background: var(--accent-soft);
+    border-left: 3px solid var(--accent);
+    padding: 10px 14px;
+    border-radius: 4px;
+    margin: 8px 0;
+  }
+  .legend {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    font-size: 12px;
+    color: var(--muted);
+    margin: 8px 0;
+  }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .legend i {
+    width: 12px; height: 12px; display: inline-block; border-radius: 2px;
+  }
+  .footer {
+    margin-top: 64px;
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+    font-size: 12px;
+    color: var(--muted);
+  }
+  @media print {
+    body { background: white; }
+    nav.toc { display: none; }
+    .layout { grid-template-columns: 1fr; max-width: none; }
+    main { padding: 24px; max-width: none; }
+    .prd, .card, .svg-wrap { page-break-inside: avoid; }
+    h2 { page-break-before: auto; page-break-after: avoid; }
+    a { color: var(--ink); text-decoration: none; }
+  }
+  @media (max-width: 800px) {
+    .layout { grid-template-columns: 1fr; }
+    nav.toc { position: static; height: auto; border-right: none; border-bottom: 1px solid var(--line); }
+    main { padding: 24px; }
+    .grid-2 { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="toc" aria-label="Table of contents">
+  <h2>Audit</h2>
+  <ol>
+    <li><a href="#summary">Executive summary</a></li>
+    <li><a href="#system-map">System map</a></li>
+    <li><a href="#journeys">Two journeys</a></li>
+    <li><a href="#gap-matrix">Gap matrix</a></li>
+    <li><a href="#orphans">Orphans & duplication</a></li>
+  </ol>
+  <h2>PRD — Top 5</h2>
+  <ol>
+    <li><a href="#prd-1">1. Outreach lifecycle</a></li>
+    <li><a href="#prd-2">2. One-click send</a></li>
+    <li><a href="#prd-3">3. Job pipeline state</a></li>
+    <li><a href="#prd-4">4. Shared components</a></li>
+    <li><a href="#prd-5">5. Job → resume link</a></li>
+  </ol>
+  <h2>Plan</h2>
+  <ol>
+    <li><a href="#sequencing">Sequencing</a></li>
+    <li><a href="#rollout">Rollout</a></li>
+    <li><a href="#oos">Out of scope</a></li>
+  </ol>
+</nav>
+
+<main>
+<h1>Startup Tracker — Audit + PRD</h1>
+<p class="tagline">Hybrid design / product doc focused on the dream-job finder and networking workflow. Generated 2026-04-27.</p>
+
+<!-- =========================================================== -->
+<h2 id="summary">1. Executive summary</h2>
+<p>
+The app is a strong <strong>market-intelligence tool</strong> — it scrapes startups, indexes jobs, and scores resume fit well.
+It is a weak <strong>job-hunting tool</strong> — once you've found a great job and drafted outreach, the app forgets you ever did,
+and the gap between "I see this opportunity" and "I'm in a conversation about it" is filled with manual copy-paste.
+</p>
+
+<div class="callout">
+  <strong>Biggest single hole</strong>
+  <code>outreach_drafts</code> has <code>created_at</code> but no <code>sent_at</code> / <code>replied_at</code> / <code>status</code>
+  (<a href="db/models.py">db/models.py:197</a>). The entire networking feature is fire-and-forget; the app cannot tell you who you've messaged,
+  who replied, or what's overdue. Everything else in this doc is downstream of that.
+</div>
+
+<div class="grid-2">
+  <div class="card">
+    <h4>What's working well</h4>
+    <ul>
+      <li>Deterministic + LLM scoring pipeline (<code>shortlist_jobs</code> + Groq)</li>
+      <li>Resume PII handling — only de-identified profile + hash stored</li>
+      <li>Apollo caching layer with 30-day freshness</li>
+      <li>Strong analyst surfaces: Pulse, Trends, Coverage, Roles, Skills</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h4>What's weak</h4>
+    <ul>
+      <li>No application/outreach lifecycle tracking</li>
+      <li>No <code>mailto:</code> / Gmail integration — copy-only outreach</li>
+      <li>No saved/applied/dismissed state per job</li>
+      <li>Two parallel front doors (<code>/fit</code>, <code>/jd-match</code>) with forked components</li>
+      <li>Three orphan pages not in the sidebar (<code>/radar</code>, <code>/analyst</code>, <code>/compare</code>)</li>
+    </ul>
+  </div>
+</div>
+
+<!-- =========================================================== -->
+<h2 id="system-map">2. System map</h2>
+<p>Pages → API → DB. Solid arrows = links that exist. Dashed red arrows = links the user expects but that don't exist.</p>
+
+<div class="svg-wrap">
+<svg viewBox="0 0 880 480" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system, system-ui, sans-serif" font-size="11">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#1a1a1a"/>
+    </marker>
+    <marker id="arrowred" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#b03030"/>
+    </marker>
+  </defs>
+
+  <!-- columns -->
+  <text x="120" y="20" font-weight="700" fill="#6b6b6b" font-size="10" letter-spacing="1">DASHBOARD</text>
+  <text x="430" y="20" font-weight="700" fill="#6b6b6b" font-size="10" letter-spacing="1">BACKEND</text>
+  <text x="720" y="20" font-weight="700" fill="#6b6b6b" font-size="10" letter-spacing="1">DATA</text>
+
+  <!-- pages (left) -->
+  <g>
+    <rect x="20" y="40" width="200" height="34" rx="4" fill="#fff" stroke="#e4e4dc"/>
+    <text x="30" y="61">/companies + /companies/[id]</text>
+
+    <rect x="20" y="84" width="200" height="34" rx="4" fill="#fff" stroke="#e4e4dc"/>
+    <text x="30" y="105">/jobs (500-row cap)</text>
+
+    <rect x="20" y="128" width="200" height="34" rx="4" fill="#fce8de" stroke="#d4582c"/>
+    <text x="30" y="149">/fit — Resume Fit</text>
+
+    <rect x="20" y="172" width="200" height="34" rx="4" fill="#fce8de" stroke="#d4582c"/>
+    <text x="30" y="193">/jd-match — JD Match</text>
+
+    <rect x="20" y="216" width="200" height="34" rx="4" fill="#fff" stroke="#e4e4dc" stroke-dasharray="3,3"/>
+    <text x="30" y="237">/radar (orphan)</text>
+
+    <rect x="20" y="260" width="200" height="34" rx="4" fill="#fff" stroke="#e4e4dc" stroke-dasharray="3,3"/>
+    <text x="30" y="281">/analyst (orphan)</text>
+
+    <rect x="20" y="304" width="200" height="34" rx="4" fill="#fff" stroke="#e4e4dc" stroke-dasharray="3,3"/>
+    <text x="30" y="325">/compare (orphan)</text>
+
+    <rect x="20" y="360" width="200" height="34" rx="4" fill="#fbe5e3" stroke="#b03030" stroke-dasharray="4,3"/>
+    <text x="30" y="381" fill="#b03030">/pipeline (MISSING)</text>
+
+    <rect x="20" y="404" width="200" height="34" rx="4" fill="#fbe5e3" stroke="#b03030" stroke-dasharray="4,3"/>
+    <text x="30" y="425" fill="#b03030">/outreach (MISSING)</text>
+  </g>
+
+  <!-- backend (middle) -->
+  <g>
+    <rect x="320" y="40" width="200" height="34" rx="4" fill="#fff" stroke="#e4e4dc"/>
+    <text x="330" y="61">api/app.py — FastAPI</text>
+
+    <rect x="320" y="100" width="200" height="34" rx="4" fill="#fff" stroke="#e4e4dc"/>
+    <text x="330" y="121">analysis/resume_fit.py</text>
+
+    <rect x="320" y="144" width="200" height="34" rx="4" fill="#fff" stroke="#e4e4dc"/>
+    <text x="330" y="165">analysis/jd_parse.py</text>
+
+    <rect x="320" y="188" width="200" height="34" rx="4" fill="#fff" stroke="#e4e4dc"/>
+    <text x="330" y="209">analysis/people.py + Apollo</text>
+
+    <rect x="320" y="232" width="200" height="34" rx="4" fill="#fff" stroke="#e4e4dc"/>
+    <text x="330" y="253">analysis/outreach.py + Groq</text>
+
+    <rect x="320" y="276" width="200" height="34" rx="4" fill="#fff" stroke="#e4e4dc"/>
+    <text x="330" y="297">analysis/resume_tailor.py</text>
+  </g>
+
+  <!-- data (right) -->
+  <g>
+    <rect x="620" y="40" width="220" height="28" rx="4" fill="#fff" stroke="#e4e4dc"/>
+    <text x="630" y="58">companies / job_postings</text>
+
+    <rect x="620" y="78" width="220" height="28" rx="4" fill="#fff" stroke="#e4e4dc"/>
+    <text x="630" y="96">job_skills / job_events</text>
+
+    <rect x="620" y="116" width="220" height="28" rx="4" fill="#fff" stroke="#e4e4dc"/>
+    <text x="630" y="134">resume_profiles / resume_job_fits</text>
+
+    <rect x="620" y="154" width="220" height="28" rx="4" fill="#fff" stroke="#e4e4dc"/>
+    <text x="630" y="172">people (apollo cache)</text>
+
+    <rect x="620" y="192" width="220" height="28" rx="4" fill="#fce8de" stroke="#d4582c"/>
+    <text x="630" y="210">outreach_drafts (no lifecycle)</text>
+
+    <rect x="620" y="230" width="220" height="28" rx="4" fill="#fff" stroke="#e4e4dc"/>
+    <text x="630" y="248">tailored_resumes</text>
+
+    <rect x="620" y="290" width="220" height="28" rx="4" fill="#fbe5e3" stroke="#b03030" stroke-dasharray="4,3"/>
+    <text x="630" y="308" fill="#b03030">user_job_status (MISSING)</text>
+
+    <rect x="620" y="328" width="220" height="28" rx="4" fill="#fbe5e3" stroke="#b03030" stroke-dasharray="4,3"/>
+    <text x="630" y="346" fill="#b03030">outreach_attempts (MISSING)</text>
+
+    <rect x="620" y="366" width="220" height="28" rx="4" fill="#fbe5e3" stroke="#b03030" stroke-dasharray="4,3"/>
+    <text x="630" y="384" fill="#b03030">person_role / notes (MISSING)</text>
+  </g>
+
+  <!-- existing arrows -->
+  <line x1="220" y1="57" x2="320" y2="57" stroke="#1a1a1a" marker-end="url(#arrow)"/>
+  <line x1="220" y1="101" x2="320" y2="101" stroke="#1a1a1a" marker-end="url(#arrow)"/>
+  <line x1="220" y1="145" x2="320" y2="117" stroke="#1a1a1a" marker-end="url(#arrow)"/>
+  <line x1="220" y1="189" x2="320" y2="161" stroke="#1a1a1a" marker-end="url(#arrow)"/>
+  <line x1="520" y1="120" x2="620" y2="130" stroke="#1a1a1a" marker-end="url(#arrow)"/>
+  <line x1="520" y1="205" x2="620" y2="170" stroke="#1a1a1a" marker-end="url(#arrow)"/>
+  <line x1="520" y1="249" x2="620" y2="210" stroke="#1a1a1a" marker-end="url(#arrow)"/>
+  <line x1="520" y1="293" x2="620" y2="246" stroke="#1a1a1a" marker-end="url(#arrow)"/>
+
+  <!-- missing arrows (red, dashed) -->
+  <path d="M 220 65 C 280 65, 280 308, 620 308" stroke="#b03030" stroke-dasharray="5,4" fill="none" marker-end="url(#arrowred)"/>
+  <path d="M 220 109 C 280 109, 280 308, 620 308" stroke="#b03030" stroke-dasharray="5,4" fill="none" marker-end="url(#arrowred)"/>
+  <path d="M 220 192 C 270 192, 270 346, 620 346" stroke="#b03030" stroke-dasharray="5,4" fill="none" marker-end="url(#arrowred)"/>
+
+  <!-- legend -->
+  <g transform="translate(20, 460)">
+    <rect x="0" y="-10" width="14" height="3" fill="#1a1a1a"/>
+    <text x="20" y="-6">existing link</text>
+    <rect x="120" y="-10" width="14" height="3" fill="#b03030"/>
+    <text x="140" y="-6">missing link</text>
+    <rect x="240" y="-13" width="12" height="10" fill="#fce8de" stroke="#d4582c"/>
+    <text x="258" y="-6">in-scope today</text>
+    <rect x="370" y="-13" width="12" height="10" fill="#fbe5e3" stroke="#b03030" stroke-dasharray="3,2"/>
+    <text x="388" y="-6">missing entity / page</text>
+  </g>
+</svg>
+</div>
+
+<!-- =========================================================== -->
+<h2 id="journeys">3. Two journeys, side by side</h2>
+
+<div class="legend">
+  <span><i style="background:#fbe5e3;border:1px solid #b03030"></i> dead-end</span>
+  <span><i style="background:#fbf0d0;border:1px solid #b87a00"></i> friction</span>
+  <span><i style="background:#e3f2e6;border:1px solid #2f7a3f"></i> proposed surface</span>
+</div>
+
+<div class="grid-2">
+<div class="card">
+  <h4>Today</h4>
+  <div class="svg-wrap" style="padding:8px;border:none;background:transparent">
+  <svg viewBox="0 0 380 540" xmlns="http://www.w3.org/2000/svg" font-family="system-ui" font-size="11">
+    <defs>
+      <marker id="a1" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#1a1a1a"/></marker>
+    </defs>
+    <rect x="80" y="10" width="220" height="34" rx="4" fill="#fff" stroke="#e4e4dc"/>
+    <text x="190" y="32" text-anchor="middle">Find startup on /companies</text>
+    <line x1="190" y1="44" x2="190" y2="62" stroke="#1a1a1a" marker-end="url(#a1)"/>
+
+    <rect x="80" y="68" width="220" height="34" rx="4" fill="#fff" stroke="#e4e4dc"/>
+    <text x="190" y="90" text-anchor="middle">View /companies/[id] jobs</text>
+    <line x1="190" y1="102" x2="190" y2="120" stroke="#1a1a1a" marker-end="url(#a1)"/>
+
+    <rect x="80" y="126" width="220" height="46" rx="4" fill="#fbf0d0" stroke="#b87a00"/>
+    <text x="190" y="146" text-anchor="middle">Click "Apply →" — opens new tab</text>
+    <text x="190" y="162" text-anchor="middle" fill="#b87a00">no save / no track</text>
+    <line x1="190" y1="172" x2="190" y2="190" stroke="#1a1a1a" marker-end="url(#a1)"/>
+
+    <rect x="80" y="196" width="220" height="46" rx="4" fill="#fbf0d0" stroke="#b87a00"/>
+    <text x="190" y="216" text-anchor="middle">Navigate away → /fit</text>
+    <text x="190" y="232" text-anchor="middle" fill="#b87a00">memorise job ID first</text>
+    <line x1="190" y1="242" x2="190" y2="260" stroke="#1a1a1a" marker-end="url(#a1)"/>
+
+    <rect x="80" y="266" width="220" height="34" rx="4" fill="#fff" stroke="#e4e4dc"/>
+    <text x="190" y="287" text-anchor="middle">Re-upload resume + score</text>
+    <line x1="190" y1="300" x2="190" y2="318" stroke="#1a1a1a" marker-end="url(#a1)"/>
+
+    <rect x="80" y="324" width="220" height="34" rx="4" fill="#fff" stroke="#e4e4dc"/>
+    <text x="190" y="345" text-anchor="middle">Click "Reach out" → drafts appear</text>
+    <line x1="190" y1="358" x2="190" y2="376" stroke="#1a1a1a" marker-end="url(#a1)"/>
+
+    <rect x="80" y="382" width="220" height="46" rx="4" fill="#fbe5e3" stroke="#b03030"/>
+    <text x="190" y="402" text-anchor="middle" fill="#b03030">Copy message</text>
+    <text x="190" y="418" text-anchor="middle" fill="#b03030">Copy email · Copy subject</text>
+    <line x1="190" y1="428" x2="190" y2="446" stroke="#1a1a1a" marker-end="url(#a1)"/>
+
+    <rect x="80" y="452" width="220" height="46" rx="4" fill="#fbe5e3" stroke="#b03030"/>
+    <text x="190" y="472" text-anchor="middle" fill="#b03030">Open Gmail manually, paste 3x</text>
+    <text x="190" y="488" text-anchor="middle" fill="#b03030">Hope you remember to follow up</text>
+
+    <rect x="80" y="510" width="220" height="22" rx="4" fill="#fbe5e3" stroke="#b03030"/>
+    <text x="190" y="525" text-anchor="middle" fill="#b03030">Next session: app forgot everything</text>
+  </svg>
+  </div>
+</div>
+
+<div class="card">
+  <h4>Intended</h4>
+  <div class="svg-wrap" style="padding:8px;border:none;background:transparent">
+  <svg viewBox="0 0 380 540" xmlns="http://www.w3.org/2000/svg" font-family="system-ui" font-size="11">
+    <defs>
+      <marker id="a2" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#1a1a1a"/></marker>
+    </defs>
+    <rect x="80" y="10" width="220" height="34" rx="4" fill="#fff" stroke="#e4e4dc"/>
+    <text x="190" y="32" text-anchor="middle">Find startup on /companies</text>
+    <line x1="190" y1="44" x2="190" y2="62" stroke="#1a1a1a" marker-end="url(#a2)"/>
+
+    <rect x="80" y="68" width="220" height="46" rx="4" fill="#e3f2e6" stroke="#2f7a3f"/>
+    <text x="190" y="88" text-anchor="middle">View jobs · per-row buttons:</text>
+    <text x="190" y="104" text-anchor="middle" fill="#2f7a3f">[Score] [Save] [Apply]</text>
+    <line x1="190" y1="114" x2="190" y2="132" stroke="#1a1a1a" marker-end="url(#a2)"/>
+
+    <rect x="80" y="138" width="220" height="34" rx="4" fill="#fff" stroke="#e4e4dc"/>
+    <text x="190" y="159" text-anchor="middle">Score uses session resume</text>
+    <line x1="190" y1="172" x2="190" y2="190" stroke="#1a1a1a" marker-end="url(#a2)"/>
+
+    <rect x="80" y="196" width="220" height="34" rx="4" fill="#fff" stroke="#e4e4dc"/>
+    <text x="190" y="217" text-anchor="middle">Reach out → drafts appear</text>
+    <line x1="190" y1="230" x2="190" y2="248" stroke="#1a1a1a" marker-end="url(#a2)"/>
+
+    <rect x="80" y="254" width="220" height="46" rx="4" fill="#e3f2e6" stroke="#2f7a3f"/>
+    <text x="190" y="274" text-anchor="middle" fill="#2f7a3f">[Edit] [Send via Gmail]</text>
+    <text x="190" y="290" text-anchor="middle">one click — pre-filled mailto</text>
+    <line x1="190" y1="300" x2="190" y2="318" stroke="#1a1a1a" marker-end="url(#a2)"/>
+
+    <rect x="80" y="324" width="220" height="46" rx="4" fill="#e3f2e6" stroke="#2f7a3f"/>
+    <text x="190" y="344" text-anchor="middle" fill="#2f7a3f">Marked "sent" automatically</text>
+    <text x="190" y="360" text-anchor="middle">follow-up reminder in 5d</text>
+    <line x1="190" y1="370" x2="190" y2="388" stroke="#1a1a1a" marker-end="url(#a2)"/>
+
+    <rect x="80" y="394" width="220" height="46" rx="4" fill="#e3f2e6" stroke="#2f7a3f"/>
+    <text x="190" y="414" text-anchor="middle" fill="#2f7a3f">Log reply (yes / no / interview)</text>
+    <text x="190" y="430" text-anchor="middle">linked to the job</text>
+    <line x1="190" y1="440" x2="190" y2="458" stroke="#1a1a1a" marker-end="url(#a2)"/>
+
+    <rect x="80" y="464" width="220" height="60" rx="4" fill="#e3f2e6" stroke="#2f7a3f"/>
+    <text x="190" y="484" text-anchor="middle" fill="#2f7a3f">/pipeline + /outreach pages</text>
+    <text x="190" y="500" text-anchor="middle">"6 saved · 3 sent · 1 reply"</text>
+    <text x="190" y="516" text-anchor="middle">survives sessions</text>
+  </svg>
+  </div>
+</div>
+</div>
+
+<!-- =========================================================== -->
+<h2 id="gap-matrix">4. Gap matrix</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Area</th>
+      <th>Gap</th>
+      <th>Type</th>
+      <th>Severity</th>
+      <th>File reference</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td rowspan="3"><strong>Outreach</strong></td>
+      <td>No <code>sent_at</code> / <code>replied_at</code> / <code>status</code> columns</td>
+      <td>Architectural</td>
+      <td><span class="sev-h">High</span></td>
+      <td>db/models.py:197</td>
+    </tr>
+    <tr>
+      <td>Copy-only — no <code>mailto:</code> / Gmail integration</td>
+      <td>Usability</td>
+      <td><span class="sev-h">High</span></td>
+      <td>fit/page.tsx:539</td>
+    </tr>
+    <tr>
+      <td><code>user_edits</code> column never written</td>
+      <td>Architectural</td>
+      <td><span class="sev-m">Med</span></td>
+      <td>db/queries.py:1407</td>
+    </tr>
+    <tr>
+      <td rowspan="2"><strong>Job state</strong></td>
+      <td>No saved / applied / dismissed per job</td>
+      <td>Architectural</td>
+      <td><span class="sev-h">High</span></td>
+      <td>db/models.py:50</td>
+    </tr>
+    <tr>
+      <td>"Apply" link opens new tab, no record kept</td>
+      <td>Usability</td>
+      <td><span class="sev-h">High</span></td>
+      <td>companies/[id]/page.tsx:321</td>
+    </tr>
+    <tr>
+      <td rowspan="3"><strong>Resume Fit</strong></td>
+      <td>Parsed profile not editable</td>
+      <td>Usability</td>
+      <td><span class="sev-m">Med</span></td>
+      <td>fit/page.tsx:232</td>
+    </tr>
+    <tr>
+      <td>must-have vs nice-to-have skills extracted but not scored</td>
+      <td>Architectural</td>
+      <td><span class="sev-m">Med</span></td>
+      <td>jd_parse.py:80 → resume_fit.py</td>
+    </tr>
+    <tr>
+      <td>Shortlist pool size / criteria opaque</td>
+      <td>Usability</td>
+      <td><span class="sev-l">Low</span></td>
+      <td>fit/page.tsx:251</td>
+    </tr>
+    <tr>
+      <td rowspan="2"><strong>JD Match</strong></td>
+      <td>Parsed JD not reviewable / correctable</td>
+      <td>Usability</td>
+      <td><span class="sev-m">Med</span></td>
+      <td>jd-match/page.tsx</td>
+    </tr>
+    <tr>
+      <td>Resume input duplicated (page + panel)</td>
+      <td>Usability</td>
+      <td><span class="sev-l">Low</span></td>
+      <td>jd-match/page.tsx:251</td>
+    </tr>
+    <tr>
+      <td rowspan="2"><strong>People model</strong></td>
+      <td>No person ↔ job link; archetype overwritten across jobs</td>
+      <td>Architectural</td>
+      <td><span class="sev-m">Med</span></td>
+      <td>db/models.py:184</td>
+    </tr>
+    <tr>
+      <td>No notes / tags per person</td>
+      <td>Architectural</td>
+      <td><span class="sev-l">Low</span></td>
+      <td>db/models.py:169</td>
+    </tr>
+    <tr>
+      <td rowspan="3"><strong>Navigation</strong></td>
+      <td>Orphan pages: /radar, /analyst, /compare</td>
+      <td>Usability</td>
+      <td><span class="sev-m">Med</span></td>
+      <td>Sidebar.tsx:23-34</td>
+    </tr>
+    <tr>
+      <td>Filters not URL-persisted on /jobs, /companies, /jd-match</td>
+      <td>Usability</td>
+      <td><span class="sev-l">Low</span></td>
+      <td>jobs/page.tsx, companies/page.tsx</td>
+    </tr>
+    <tr>
+      <td>500-row hard cap on /jobs with no pagination</td>
+      <td>Usability</td>
+      <td><span class="sev-m">Med</span></td>
+      <td>jobs/page.tsx:310</td>
+    </tr>
+    <tr>
+      <td><strong>Components</strong></td>
+      <td>DraftCard / TailoredResumeBlock / ReachOutPanel duplicated and diverging</td>
+      <td>Architectural</td>
+      <td><span class="sev-m">Med</span></td>
+      <td>fit/page.tsx ↔ jd-match/page.tsx</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- =========================================================== -->
+<h2 id="orphans">5. Orphans & duplication map</h2>
+<div class="svg-wrap">
+<svg viewBox="0 0 880 280" xmlns="http://www.w3.org/2000/svg" font-family="system-ui" font-size="11">
+  <!-- sidebar box -->
+  <rect x="20" y="20" width="220" height="240" rx="6" fill="#fff" stroke="#1a1a1a"/>
+  <text x="130" y="40" text-anchor="middle" font-weight="700">Sidebar (linked)</text>
+  <g font-size="11">
+    <text x="40" y="64">/ Pulse</text>
+    <text x="40" y="82">/changes</text>
+    <text x="40" y="100">/trends</text>
+    <text x="40" y="118">/companies</text>
+    <text x="40" y="136">/coverage</text>
+    <text x="40" y="154">/fit</text>
+    <text x="40" y="172">/jd-match</text>
+    <text x="40" y="190">/skills</text>
+    <text x="40" y="208">/roles</text>
+    <text x="40" y="226">/jobs</text>
+    <text x="40" y="244">/health</text>
+  </g>
+
+  <!-- orphans -->
+  <text x="320" y="40" font-weight="700" fill="#b03030">Orphan pages (built, no nav)</text>
+  <rect x="320" y="56" width="160" height="32" rx="4" fill="#fbe5e3" stroke="#b03030" stroke-dasharray="4,3"/>
+  <text x="400" y="76" text-anchor="middle" fill="#b03030">/radar</text>
+  <rect x="500" y="56" width="160" height="32" rx="4" fill="#fbe5e3" stroke="#b03030" stroke-dasharray="4,3"/>
+  <text x="580" y="76" text-anchor="middle" fill="#b03030">/analyst</text>
+  <rect x="680" y="56" width="160" height="32" rx="4" fill="#fbe5e3" stroke="#b03030" stroke-dasharray="4,3"/>
+  <text x="760" y="76" text-anchor="middle" fill="#b03030">/compare (URL-only)</text>
+
+  <!-- duplication -->
+  <text x="320" y="120" font-weight="700" fill="#b87a00">Duplicated components</text>
+  <rect x="320" y="136" width="200" height="60" rx="4" fill="#fbf0d0" stroke="#b87a00"/>
+  <text x="420" y="156" text-anchor="middle">/fit/page.tsx</text>
+  <text x="420" y="172" text-anchor="middle" font-size="10" fill="#6b6b6b">DraftCard, TailoredResumeBlock,</text>
+  <text x="420" y="186" text-anchor="middle" font-size="10" fill="#6b6b6b">ReachOutPanel</text>
+
+  <text x="540" y="170" text-anchor="middle" font-size="14" fill="#b87a00">⇆</text>
+
+  <rect x="560" y="136" width="200" height="60" rx="4" fill="#fbf0d0" stroke="#b87a00"/>
+  <text x="660" y="156" text-anchor="middle">/jd-match/page.tsx</text>
+  <text x="660" y="172" text-anchor="middle" font-size="10" fill="#6b6b6b">SAME components, with</text>
+  <text x="660" y="186" text-anchor="middle" font-size="10" fill="#6b6b6b">divergent local-file behaviour</text>
+
+  <text x="320" y="222" font-size="11" fill="#6b6b6b">→ Fix path: hoist into</text>
+  <text x="450" y="222" font-size="11" fill="#1a1a1a"><tspan font-family="monospace">dashboard/src/components/outreach/</tspan></text>
+
+  <text x="320" y="252" font-size="11" fill="#6b6b6b">→ Add 3 missing entries to</text>
+  <text x="495" y="252" font-size="11" fill="#1a1a1a"><tspan font-family="monospace">Sidebar.tsx NAV</tspan></text>
+</svg>
+</div>
+
+<!-- =========================================================== -->
+<h2>PRD — Top 5</h2>
+<p>Each item has a problem statement, user story, proposed change, acceptance criteria, success metric, and effort estimate.</p>
+
+<!-- ========== PRD 1 ========== -->
+<div class="prd" id="prd-1">
+  <div class="prd-head">
+    <h3>1. Outreach lifecycle: sent / replied / status + "My Outreach" page</h3>
+    <span class="prd-meta"><span class="pill bad">P0</span><span class="pill neutral">Effort: M</span><span class="pill neutral">Unblocks: 2, 3</span></span>
+  </div>
+
+  <dl>
+    <dt>Problem</dt>
+    <dd><code>outreach_drafts</code> stores generated drafts but has no lifecycle columns (<code>db/models.py:197</code>). Once you copy a message, the app loses track of it forever — no sent state, no reply tracking, no follow-up surface.</dd>
+
+    <dt>User story</dt>
+    <dd><div class="quote">As a job hunter, I want to see who I've messaged, who replied, and what's overdue for a follow-up — so my pipeline doesn't live in my head.</div></dd>
+
+    <dt>Proposed change</dt>
+    <dd>
+      <strong>Schema:</strong> add <code>sent_at</code>, <code>replied_at</code>, <code>reply_text</code>, <code>status</code> (<code>draft|sent|replied|no_reply|bounced</code>), <code>parent_attempt_id</code>, <code>follow_up_due_at</code> to <code>outreach_drafts</code> (or split into <code>outreach_attempts</code>).
+      <br><strong>UI:</strong> new <code>/outreach</code> page listing all drafts grouped by status, with filters (archetype, company, status, overdue).
+    </dd>
+
+    <dt>Acceptance criteria</dt>
+    <dd><ul>
+      <li>Marking a draft "sent" stamps <code>sent_at</code> and schedules a follow-up due-date.</li>
+      <li>"My Outreach" page renders &lt; 500ms with 200 drafts.</li>
+      <li>An "Overdue follow-ups" badge appears in the sidebar when ≥ 1 item is overdue.</li>
+      <li>Reply logging accepts free-text + a quick category (<em>positive / neutral / negative / interview</em>).</li>
+      <li>Drafts persist across sessions (no per-session loss).</li>
+    </ul></dd>
+
+    <dt>Success metric</dt>
+    <dd>≥ 70% of generated drafts have a non-<code>draft</code> status within 7 days of creation (i.e. the user is actually moving them forward in the app).</dd>
+  </dl>
+</div>
+
+<!-- ========== PRD 2 ========== -->
+<div class="prd" id="prd-2">
+  <div class="prd-head">
+    <h3>2. One-click <code>mailto:</code> / Gmail compose from <code>DraftCard</code></h3>
+    <span class="prd-meta"><span class="pill bad">P0</span><span class="pill neutral">Effort: S</span><span class="pill neutral">Depends on: 1, 4</span></span>
+  </div>
+
+  <dl>
+    <dt>Problem</dt>
+    <dd>Today the user copies the message body, then the email, then the subject — three separate clipboard operations — then opens a mail client and pastes them in (<code>fit/page.tsx:539</code>). Highest-friction step in the entire flow.</dd>
+
+    <dt>User story</dt>
+    <dd><div class="quote">As a job hunter, I want one button that opens my email client with the recipient, subject, and body all filled in — and marks the draft as "sent" when I click it.</div></dd>
+
+    <dt>Proposed change</dt>
+    <dd>
+      In the shared <code>DraftCard</code> (see #4), replace "Copy message" with two primary buttons:
+      <br><strong>[Open in mail]</strong> — generates <code>mailto:&lt;email&gt;?subject=...&amp;body=...</code> and on click POSTs to <code>/outreach/{id}/sent</code>.
+      <br><strong>[Open in Gmail]</strong> — generates <code>https://mail.google.com/mail/?view=cm&amp;to=...&amp;su=...&amp;body=...</code>.
+      <br>"Copy" stays as a tertiary action.
+    </dd>
+
+    <dt>Acceptance criteria</dt>
+    <dd><ul>
+      <li>Clicking either button opens the user's mail client with all 3 fields populated correctly (encoded for special chars).</li>
+      <li>Click also fires the "mark sent" mutation; UI shows the sent state without a full page reload.</li>
+      <li>Body is editable in-place before clicking send (so users can add a personal line).</li>
+      <li>If the person has no email, the buttons are replaced with "Open LinkedIn" linking to <code>linkedin_url</code>.</li>
+    </ul></dd>
+
+    <dt>Success metric</dt>
+    <dd>Median time from "drafts appear" to "marked sent" drops below 60s (vs the current never-recorded baseline).</dd>
+  </dl>
+</div>
+
+<!-- ========== PRD 3 ========== -->
+<div class="prd" id="prd-3">
+  <div class="prd-head">
+    <h3>3. Per-job state (saved / applied / dismissed) + "My Pipeline"</h3>
+    <span class="prd-meta"><span class="pill bad">P0</span><span class="pill neutral">Effort: M</span><span class="pill neutral">Unblocks: 5</span></span>
+  </div>
+
+  <dl>
+    <dt>Problem</dt>
+    <dd><code>job_postings</code> has scraper-driven status only (<code>db/models.py:50</code>). After scoring 40 jobs, the user has no way to mark which they've saved, applied to, or want to ignore. Each session re-scores the same jobs from scratch.</dd>
+
+    <dt>User story</dt>
+    <dd><div class="quote">As a job hunter, I want to mark a job "saved" or "applied" and see all my in-flight jobs in one place — so I'm not scrolling through 500 listings every session.</div></dd>
+
+    <dt>Proposed change</dt>
+    <dd>
+      <strong>Schema:</strong> new table <code>user_job_status (job_id, status, action_at, outcome, outcome_at, notes)</code>. Status enum: <code>saved | applied | interviewing | rejected | offered | dismissed</code>.
+      <br><strong>UI:</strong> star + status pill on every <code>FitCard</code>, <code>/jobs</code> row, and <code>/companies/[id]</code> job row. New <code>/pipeline</code> page grouped by status.
+    </dd>
+
+    <dt>Acceptance criteria</dt>
+    <dd><ul>
+      <li>Star button is one click and updates without reload.</li>
+      <li>Dismissed jobs are hidden from <code>/fit</code> and <code>/jd-match</code> results by default (with a "show dismissed" toggle).</li>
+      <li><code>/pipeline</code> page renders with kanban-style columns by status.</li>
+      <li>Status changes log to a per-job timeline (visible on <code>/companies/[id]</code>).</li>
+    </ul></dd>
+
+    <dt>Success metric</dt>
+    <dd>≥ 30% of fit-scored jobs receive a status update within their first appearance (proxy for "the user found this useful").</dd>
+  </dl>
+</div>
+
+<!-- ========== PRD 4 ========== -->
+<div class="prd" id="prd-4">
+  <div class="prd-head">
+    <h3>4. Hoist <code>DraftCard</code> / <code>TailoredResumeBlock</code> / <code>ReachOutPanel</code> into shared components</h3>
+    <span class="prd-meta"><span class="pill warn">P1</span><span class="pill neutral">Effort: S</span><span class="pill neutral">Pre-req for: 2, 5</span></span>
+  </div>
+
+  <dl>
+    <dt>Problem</dt>
+    <dd>These three components are copy-pasted between <code>fit/page.tsx</code> and <code>jd-match/page.tsx</code> with subtle behavioural divergence (resume upload-in-panel works on <code>/jd-match</code> but not <code>/fit</code>). A comment in the code already flags this.</dd>
+
+    <dt>User story</dt>
+    <dd><div class="quote">As a developer / future you, I want one source of truth for the outreach UI so a fix in one place fixes both pages.</div></dd>
+
+    <dt>Proposed change</dt>
+    <dd>
+      Create <code>dashboard/src/components/outreach/</code> with:
+      <br><code>DraftCard.tsx</code>, <code>TailoredResumeBlock.tsx</code>, <code>ReachOutPanel.tsx</code>.
+      <br>Reconcile the local-file vs page-file behaviour to the page-file version (simpler) and document via TS prop types.
+    </dd>
+
+    <dt>Acceptance criteria</dt>
+    <dd><ul>
+      <li>Both <code>/fit</code> and <code>/jd-match</code> import from the new location; no inline copies remain.</li>
+      <li>Behaviour is identical on both pages (verified with a manual smoke test on each).</li>
+      <li>TypeScript build passes; no new ESLint warnings.</li>
+    </ul></dd>
+
+    <dt>Success metric</dt>
+    <dd>Diff impact: a single-line change to <code>DraftCard</code> now affects both pages (verified by editing one prop and observing both pages).</dd>
+  </dl>
+</div>
+
+<!-- ========== PRD 5 ========== -->
+<div class="prd" id="prd-5">
+  <div class="prd-head">
+    <h3>5. "Score this against my resume" link from <code>/companies/[id]</code> and <code>/jobs</code> rows</h3>
+    <span class="prd-meta"><span class="pill warn">P1</span><span class="pill neutral">Effort: S</span><span class="pill neutral">Depends on: 3 (session resume)</span></span>
+  </div>
+
+  <dl>
+    <dt>Problem</dt>
+    <dd>To score a job, the user has to memorise its ID and walk over to <code>/fit</code> manually. The link from <code>/jobs</code> exists (<code>jobs/page.tsx:295</code>) but the company-detail page has no such affordance.</dd>
+
+    <dt>User story</dt>
+    <dd><div class="quote">As a job hunter browsing a company I love, I want to click "Score" on any of their jobs and immediately see how I match — without leaving the page or re-uploading my resume.</div></dd>
+
+    <dt>Proposed change</dt>
+    <dd>
+      Add a <strong>[Score]</strong> button to every job row on <code>/companies/[id]</code> (and harmonise the existing one on <code>/jobs</code>).
+      <br>If a session resume is loaded, render the result inline in a side-panel; otherwise prompt for upload.
+      <br>Result panel re-uses <code>FitCard</code> from <code>/fit</code> (extract to shared component as part of #4).
+    </dd>
+
+    <dt>Acceptance criteria</dt>
+    <dd><ul>
+      <li>Score button visible on every active job row in <code>/companies/[id]</code>.</li>
+      <li>With a loaded resume, the score appears in &lt; 4s without navigation.</li>
+      <li>Without a resume, an inline upload prompt appears and the score follows automatically.</li>
+      <li>The score result is cached so re-clicking is instant.</li>
+    </ul></dd>
+
+    <dt>Success metric</dt>
+    <dd>≥ 50% of fit-scoring sessions originate from a "Score" button on a company or jobs page (vs the current "navigate to /fit" flow).</dd>
+  </dl>
+</div>
+
+<!-- =========================================================== -->
+<h2 id="sequencing">6. Sequencing</h2>
+
+<div class="svg-wrap">
+<svg viewBox="0 0 880 220" xmlns="http://www.w3.org/2000/svg" font-family="system-ui" font-size="11">
+  <defs>
+    <marker id="d1" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#1a1a1a"/></marker>
+  </defs>
+
+  <!-- nodes -->
+  <rect x="40" y="40" width="160" height="50" rx="6" fill="#fce8de" stroke="#d4582c"/>
+  <text x="120" y="60" text-anchor="middle" font-weight="700">#1 Outreach lifecycle</text>
+  <text x="120" y="78" text-anchor="middle" fill="#6b6b6b">P0 · M</text>
+
+  <rect x="40" y="130" width="160" height="50" rx="6" fill="#fce8de" stroke="#d4582c"/>
+  <text x="120" y="150" text-anchor="middle" font-weight="700">#3 Job pipeline state</text>
+  <text x="120" y="168" text-anchor="middle" fill="#6b6b6b">P0 · M</text>
+
+  <rect x="280" y="40" width="160" height="50" rx="6" fill="#fff" stroke="#e4e4dc"/>
+  <text x="360" y="60" text-anchor="middle" font-weight="700">#4 Shared components</text>
+  <text x="360" y="78" text-anchor="middle" fill="#6b6b6b">P1 · S</text>
+
+  <rect x="520" y="20" width="160" height="50" rx="6" fill="#fff" stroke="#e4e4dc"/>
+  <text x="600" y="40" text-anchor="middle" font-weight="700">#2 One-click send</text>
+  <text x="600" y="58" text-anchor="middle" fill="#6b6b6b">P0 · S</text>
+
+  <rect x="520" y="100" width="160" height="50" rx="6" fill="#fff" stroke="#e4e4dc"/>
+  <text x="600" y="120" text-anchor="middle" font-weight="700">#5 Score from job row</text>
+  <text x="600" y="138" text-anchor="middle" fill="#6b6b6b">P1 · S</text>
+
+  <rect x="720" y="60" width="140" height="80" rx="6" fill="#e3f2e6" stroke="#2f7a3f"/>
+  <text x="790" y="90" text-anchor="middle" font-weight="700">Closed loop</text>
+  <text x="790" y="108" text-anchor="middle" font-size="10" fill="#6b6b6b">discover → score →</text>
+  <text x="790" y="122" text-anchor="middle" font-size="10" fill="#6b6b6b">reach out → track</text>
+
+  <!-- edges -->
+  <line x1="200" y1="65" x2="280" y2="65" stroke="#1a1a1a" marker-end="url(#d1)"/>
+  <line x1="200" y1="155" x2="280" y2="80" stroke="#1a1a1a" marker-end="url(#d1)"/>
+  <line x1="440" y1="60" x2="520" y2="45" stroke="#1a1a1a" marker-end="url(#d1)"/>
+  <line x1="440" y1="70" x2="520" y2="120" stroke="#1a1a1a" marker-end="url(#d1)"/>
+  <line x1="200" y1="155" x2="520" y2="125" stroke="#1a1a1a" marker-end="url(#d1)" stroke-dasharray="3,3"/>
+  <line x1="680" y1="45" x2="720" y2="80" stroke="#2f7a3f" marker-end="url(#d1)"/>
+  <line x1="680" y1="125" x2="720" y2="115" stroke="#2f7a3f" marker-end="url(#d1)"/>
+</svg>
+</div>
+
+<!-- =========================================================== -->
+<h2 id="rollout">7. Rollout</h2>
+
+<table>
+  <thead>
+    <tr><th>Phase</th><th>Items</th><th>Why this order</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Week 1</strong></td>
+      <td>#4 Shared components</td>
+      <td>Cheapest item, no schema change. Stops the divergence and clears the way for #2 and #5 to land in <em>both</em> pages from a single edit.</td>
+    </tr>
+    <tr>
+      <td><strong>Weeks 2–3</strong></td>
+      <td>#1 Outreach lifecycle, #2 One-click send</td>
+      <td>#1 is the schema move; #2 lights up the user-visible win on top of it. Together they convert outreach from fire-and-forget into a tracked workflow.</td>
+    </tr>
+    <tr>
+      <td><strong>Week 4+</strong></td>
+      <td>#3 Job pipeline state, #5 Score from job row</td>
+      <td>#3 needs another schema change but unlocks the "/pipeline" surface and makes #5 instant. With #5 the discovery → score → reach out → track loop closes.</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="callout good">
+  <strong>End state after all 5</strong>
+  The user's mental model collapses from "scoring tool + manual job hunt spreadsheet" into a single tracked pipeline. Every job they care about has a status; every outreach has a lifecycle; every action takes one click.
+</div>
+
+<!-- =========================================================== -->
+<h2 id="oos">8. Out of scope (explicitly)</h2>
+<p>These came up in the audit but are deliberately deferred — they're either large investments or premature for current usage:</p>
+
+<div class="grid-2">
+  <div class="card">
+    <h4>Deferred — bigger investments</h4>
+    <ul>
+      <li><strong>User accounts / multi-tenant</strong> — currently single-operator. Defer until there's a second user.</li>
+      <li><strong>Resume version library</strong> (multiple resumes saved per user) — wait until #3 proves session-resume is enough.</li>
+      <li><strong>Editable parsed-resume + parsed-JD</strong> — valuable but requires LLM round-trip + diff UI. Re-evaluate after #1.</li>
+      <li><strong>Batch outreach</strong> (send to 5 dream jobs at once) — depends on #1 + #2 being battle-tested.</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h4>Deferred — nice-to-have polish</h4>
+    <ul>
+      <li>Sidebar entries for /radar, /analyst, /compare (1-line fix, batch with any future Sidebar work).</li>
+      <li>URL-persisted filters on /jobs and /companies.</li>
+      <li>/jobs pagination beyond 500 rows.</li>
+      <li>Outreach template library / saved voices.</li>
+      <li>CRM-style person notes + tags.</li>
+      <li>must-have vs nice-to-have skill weighting in fit scoring.</li>
+    </ul>
+  </div>
+</div>
+
+<div class="footer">
+  Generated 2026-04-27 · Audit covers branch <code>feat/job-search-v1</code> at the time of writing · No app code modified by this document.
+</div>
+</main>
+</div>
+</body>
+</html>

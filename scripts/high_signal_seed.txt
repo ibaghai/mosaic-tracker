@@ -1,0 +1,127 @@
+Adobe
+Adyen
+Akamai
+Alation
+Alteryx
+Anduril Industries
+Anyscale
+Apollo.io
+Atlassian
+AuditBoard
+Beamery
+BigPanda
+BitGo
+Bitwarden
+Canva
+Cerebras
+Chainalysis
+Checkr
+Chronosphere
+Circle
+ClickHouse
+Clipboard Health
+Clio
+Coalition
+Codeium
+Cohere
+Confluent
+Contentsquare
+CoreWeave
+Coupa
+Cribl
+CrowdStrike
+Databricks
+dbt Labs
+DeepL
+Deel
+Discord
+Docker
+DoorDash
+Dropbox
+eBay
+Elastic
+Figma
+Fivetran
+Flexport
+G2
+Gemini
+GitHub
+GitLab
+Grammarly
+Groq
+HashiCorp
+Hightouch
+HubSpot
+IBM
+Instacart
+Intercom
+Intuit
+Kong
+Lattice
+Lemonade
+Linear
+LinkedIn
+Liquid Death
+Looker
+Lucid Software
+Lyft
+Meesho
+Mercor
+Miro
+Mistral AI
+Monday.com
+MongoDB
+Mural
+Neo4j
+Netskope
+Nuro
+Octopus Energy
+Okta
+OpenSea
+PagerDuty
+Palantir
+Palo Alto Networks
+Patreon
+Perplexity
+Plaid
+PostHog
+Postman
+Procore
+PsiQuantum
+Ramp
+Reddit
+Replit
+Retool
+Rippling
+Roblox
+Samsara
+Scale AI
+SeatGeek
+SentinelOne
+Sentry
+ServiceTitan
+Shein
+Shield AI
+Sigma Computing
+Snap
+Snowflake
+Snyk
+Substack
+Suno
+Talkdesk
+Telnyx
+Tesla
+The Browser Company
+Thinkific
+TripActions
+TruEra
+Typeface
+Uber
+Vanta
+Vercel
+Vimeo
+Wiz
+xAI
+Zapier
+Zeta Global
+Zip

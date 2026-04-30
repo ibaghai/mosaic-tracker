@@ -1,0 +1,916 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Startup Tracker Visual Textbook</title>
+  <style>
+    @page { size: Letter; margin: 0.6in; }
+    :root { --fg: #111827; --muted: #4b5563; --line: #e5e7eb; --bg-soft: #f8fafc; --accent: #1d4ed8; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; color: var(--fg); line-height: 1.45; font-size: 11px; }
+    h1 { font-size: 28px; line-height: 1.2; margin: 0 0 10px; color: #0f172a; }
+    h2 { font-size: 18px; margin: 22px 0 8px; padding-bottom: 4px; border-bottom: 1px solid var(--line); color: #0f172a; }
+    h3 { font-size: 14px; margin: 14px 0 6px; color: #0f172a; }
+    p { margin: 8px 0; }
+    ul, ol { margin: 8px 0 8px 20px; }
+    li { margin: 3px 0; }
+    hr { border: 0; border-top: 1px solid var(--line); margin: 20px 0; }
+    table { border-collapse: collapse; width: 100%; margin: 10px 0; font-size: 10.5px; }
+    th, td { border: 1px solid var(--line); padding: 6px 8px; vertical-align: top; }
+    th { background: var(--bg-soft); text-align: left; }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 10px; background: #f3f4f6; padding: 1px 4px; border-radius: 4px; }
+    pre { background: #0b1220; color: #e5e7eb; border-radius: 8px; padding: 10px; overflow: auto; font-size: 9.5px; line-height: 1.35; }
+    pre code { background: transparent; padding: 0; color: inherit; }
+    a { color: var(--accent); text-decoration: none; }
+    .mermaid { margin: 14px 0; padding: 10px; border: 1px solid var(--line); border-radius: 8px; background: #fff; }
+    blockquote { margin: 10px 0; padding: 8px 10px; border-left: 3px solid #cbd5e1; color: var(--muted); background: #f8fafc; }
+  </style>
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({ startOnLoad: true, theme: 'default', securityLevel: 'loose' });
+    window.__MERMAID_READY__ = true;
+  </script>
+</head>
+<body>
+<h1>Startup Tracker Visual Textbook (Beginner Edition)</h1>
+<p>Version: 2026-04-18<br>
+Audience: People with little or no technical background</p>
+<hr>
+<h2>How to Use This Book</h2>
+<p>This book is designed so you can:</p>
+<ol>
+<li>Understand what this app does in plain English.</li>
+<li>See the system visually.</li>
+<li>Rebuild a working version step by step by hand.</li>
+<li>Know what to do every day to operate it.</li>
+</ol>
+<p>Use it like a workbook:</p>
+<ul>
+<li>Read one phase.</li>
+<li>Copy the commands exactly.</li>
+<li>Run the “Check” step before moving on.</li>
+</ul>
+<hr>
+<h2>Visual Legend</h2>
+<ul>
+<li><code>Goal</code>: what this phase gives you.</li>
+<li><code>Do This</code>: exact steps.</li>
+<li><code>Check</code>: how to confirm you did it right.</li>
+<li><code>If Stuck</code>: the fastest fix.</li>
+</ul>
+<hr>
+<h2>Part 1: What This App Is</h2>
+<h2>1.1 One-Sentence Summary</h2>
+<p>This app tracks job openings from many startup career pages, stores changes over time, and shows charts so you can see who is hiring, where, and for what roles.</p>
+<h2>1.2 Big Picture (Visual)</h2>
+<div class="mermaid">flowchart LR
+  A["Company career pages"] --> B["Scrapers (collect jobs)"]
+  B --> C["Database (store jobs + history)"]
+  C --> D["API (serve data)"]
+  D --> E["Dashboard (charts + tables)"]
+  C --> F["Resume Fit (optional)"]
+</div>
+<h2>1.3 Real-World Analogy</h2>
+<p>Think of this app like a weather station:</p>
+<ul>
+<li>Scrapers = sensors collecting data.</li>
+<li>Database = weather archive.</li>
+<li>API = newsroom desk.</li>
+<li>Dashboard = weather map on TV.</li>
+</ul>
+<hr>
+<h2>Part 2: What Each Layer Does</h2>
+<h2>2.1 Layer Map</h2>
+<div class="mermaid">flowchart TD
+  A["Input Lists\ncompanies.json + candidate files"] --> B["Ingestion\ntracker.py + scripts/"]
+  B --> C["Normalization\nenrichment + skill extraction"]
+  C --> D["Storage\nSQLite tables"]
+  D --> E["Backend\nFastAPI endpoints"]
+  E --> F["Frontend\nNext.js dashboard"]
+</div>
+<h2>2.2 File Map (Simple)</h2>
+<table>
+<thead>
+<tr>
+<th>Folder/File</th>
+<th>Job</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>tracker.py</code></td>
+<td>Main run: scrape + sync + enrich + skills</td>
+</tr>
+<tr>
+<td><code>scraper/</code></td>
+<td>Website-specific collectors</td>
+</tr>
+<tr>
+<td><code>db/models.py</code></td>
+<td>DB connection + schema</td>
+</tr>
+<tr>
+<td><code>db/queries.py</code></td>
+<td>Read/write logic</td>
+</tr>
+<tr>
+<td><code>api/app.py</code></td>
+<td>HTTP endpoints</td>
+</tr>
+<tr>
+<td><code>dashboard/</code></td>
+<td>Web UI</td>
+</tr>
+<tr>
+<td><code>analysis/resume_fit.py</code></td>
+<td>Resume matching</td>
+</tr>
+<tr>
+<td><code>scripts/</code></td>
+<td>Discovery + ops utilities</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>Part 3: Rebuild It By Hand (Beginner Path)</h2>
+<p>This section is a <strong>guided rebuild</strong> of the app architecture.<br>
+You can do this even if you are new, by following exactly.</p>
+<h2>Phase 0: Install Tools</h2>
+<h3>Goal</h3>
+<p>Have the tools needed to run Python backend + Next.js frontend.</p>
+<h3>Do This</h3>
+<p>Open Terminal and run:</p>
+<pre><code class="language-bash">python3 --version
+node --version
+npm --version
+</code></pre>
+<p>If missing:</p>
+<ul>
+<li>Install Python 3.11+ from <a href="https://www.python.org/downloads/">python.org</a></li>
+<li>Install Node LTS from <a href="https://nodejs.org/">nodejs.org</a></li>
+</ul>
+<h3>Check</h3>
+<p>You should see version numbers, not “command not found”.</p>
+<h3>If Stuck</h3>
+<p>Restart Terminal after installing.</p>
+<hr>
+<h2>Phase 1: Start Project Folder</h2>
+<h3>Goal</h3>
+<p>Create a workspace you can run locally.</p>
+<h3>Do This</h3>
+<pre><code class="language-bash">cd ~/Desktop
+mkdir my-startup-tracker
+cd my-startup-tracker
+mkdir -p api db scraper analysis dashboard/src/app dashboard/src/lib scripts data
+</code></pre>
+<h3>Check</h3>
+<pre><code class="language-bash">find . -maxdepth 2 -type d | sort
+</code></pre>
+<p>You should see the folders you created.</p>
+<hr>
+<h2>Phase 2: Python Environment</h2>
+<h3>Goal</h3>
+<p>Install Python packages in an isolated environment.</p>
+<h3>Do This</h3>
+<pre><code class="language-bash">python3 -m venv .venv
+source .venv/bin/activate
+pip install --upgrade pip
+pip install aiohttp fastapi uvicorn pypdf python-docx python-multipart
+</code></pre>
+<h3>Check</h3>
+<pre><code class="language-bash">python -c &quot;import fastapi, aiohttp; print('ok')&quot;
+</code></pre>
+<p>Expected output: <code>ok</code></p>
+<hr>
+<h2>Phase 3: Create the Database Layer</h2>
+<h3>Goal</h3>
+<p>Create a SQLite DB with key tables.</p>
+<h3>Do This</h3>
+<p>Create <code>db/models.py</code> (minimum starter):</p>
+<pre><code class="language-python">import sqlite3
+from pathlib import Path
+
+DB_PATH = Path(&quot;data/tracker.db&quot;)
+
+
+def get_connection():
+    DB_PATH.parent.mkdir(parents=True, exist_ok=True)
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    conn.execute(&quot;PRAGMA journal_mode=WAL&quot;)
+    conn.execute(&quot;PRAGMA foreign_keys=ON&quot;)
+    return conn
+
+
+def init_db():
+    conn = get_connection()
+    with conn:
+        conn.executescript(
+            &quot;&quot;&quot;
+            CREATE TABLE IF NOT EXISTS companies (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL UNIQUE,
+                ats_type TEXT NOT NULL,
+                ats_identifier TEXT,
+                sector TEXT,
+                company_type TEXT DEFAULT 'startup'
+            );
+
+            CREATE TABLE IF NOT EXISTS job_postings (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                company_id INTEGER NOT NULL REFERENCES companies(id),
+                title TEXT NOT NULL,
+                location TEXT,
+                department TEXT,
+                url TEXT,
+                external_id TEXT,
+                first_seen_at DATETIME DEFAULT (datetime('now')),
+                last_seen_at DATETIME DEFAULT (datetime('now')),
+                is_active BOOLEAN DEFAULT 1
+            );
+
+            CREATE TABLE IF NOT EXISTS scrape_runs (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                company_id INTEGER NOT NULL REFERENCES companies(id),
+                run_at DATETIME DEFAULT (datetime('now')),
+                jobs_found INTEGER DEFAULT 0,
+                jobs_added INTEGER DEFAULT 0,
+                jobs_removed INTEGER DEFAULT 0,
+                status TEXT DEFAULT 'success'
+            );
+
+            CREATE TABLE IF NOT EXISTS job_events (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                job_id INTEGER NOT NULL REFERENCES job_postings(id),
+                run_id INTEGER NOT NULL REFERENCES scrape_runs(id),
+                event_type TEXT NOT NULL,
+                created_at DATETIME DEFAULT (datetime('now'))
+            );
+            &quot;&quot;&quot;
+        )
+    conn.close()
+</code></pre>
+<h3>Check</h3>
+<pre><code class="language-bash">python - &lt;&lt;'PY'
+from db.models import init_db
+init_db()
+print('db initialized')
+PY
+</code></pre>
+<hr>
+<h2>Phase 4: Create a Simple Scraper Contract</h2>
+<h3>Goal</h3>
+<p>Standardize job data shape.</p>
+<h3>Do This</h3>
+<p>Create <code>scraper/base.py</code>:</p>
+<pre><code class="language-python">from dataclasses import dataclass
+from typing import Optional
+
+
+@dataclass
+class JobPosting:
+    title: str
+    company: str
+    external_id: Optional[str] = None
+    location: Optional[str] = None
+    department: Optional[str] = None
+    url: Optional[str] = None
+
+    def to_dict(self):
+        return {
+            &quot;title&quot;: self.title,
+            &quot;company&quot;: self.company,
+            &quot;external_id&quot;: self.external_id,
+            &quot;location&quot;: self.location,
+            &quot;department&quot;: self.department,
+            &quot;url&quot;: self.url,
+        }
+</code></pre>
+<h3>Why</h3>
+<p>Every scraper should return the same data format.</p>
+<hr>
+<h2>Phase 5: Add One Working Scraper (Greenhouse)</h2>
+<h3>Goal</h3>
+<p>Collect jobs from one ATS provider end-to-end.</p>
+<h3>Do This</h3>
+<p>Create <code>scraper/greenhouse.py</code>:</p>
+<pre><code class="language-python">import aiohttp
+from scraper.base import JobPosting
+
+
+async def parse(company_name: str, slug: str):
+    url = f&quot;https://boards-api.greenhouse.io/v1/boards/{slug}/jobs?content=true&quot;
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url, timeout=aiohttp.ClientTimeout(total=15)) as resp:
+            if resp.status != 200:
+                return []
+            data = await resp.json()
+
+    jobs = []
+    for row in data.get(&quot;jobs&quot;) or []:
+        jobs.append(
+            JobPosting(
+                title=row.get(&quot;title&quot;, &quot;&quot;),
+                company=company_name,
+                external_id=str(row.get(&quot;id&quot;)) if row.get(&quot;id&quot;) else None,
+                location=(row.get(&quot;location&quot;) or {}).get(&quot;name&quot;),
+                department=((row.get(&quot;departments&quot;) or [{}])[0]).get(&quot;name&quot;),
+                url=row.get(&quot;absolute_url&quot;),
+            )
+        )
+    return [j for j in jobs if j.title]
+</code></pre>
+<h3>Check</h3>
+<p>You can test later from <code>tracker.py</code>.</p>
+<hr>
+<h2>Phase 6: Add Query Functions (Write + Read)</h2>
+<h3>Goal</h3>
+<p>Store companies/jobs and read summary data.</p>
+<h3>Do This</h3>
+<p>Create <code>db/queries.py</code>:</p>
+<pre><code class="language-python">from db.models import get_connection
+
+
+def upsert_company(company: dict) -&gt; int:
+    conn = get_connection()
+    with conn:
+        conn.execute(
+            &quot;&quot;&quot;
+            INSERT INTO companies(name, ats_type, ats_identifier, sector, company_type)
+            VALUES (?, ?, ?, ?, ?)
+            ON CONFLICT(name) DO UPDATE SET
+              ats_type=excluded.ats_type,
+              ats_identifier=excluded.ats_identifier,
+              sector=excluded.sector,
+              company_type=excluded.company_type
+            &quot;&quot;&quot;,
+            (
+                company[&quot;name&quot;],
+                company[&quot;ats_type&quot;],
+                company.get(&quot;ats_identifier&quot;),
+                company.get(&quot;sector&quot;),
+                company.get(&quot;company_type&quot;, &quot;startup&quot;),
+            ),
+        )
+        row = conn.execute(&quot;SELECT id FROM companies WHERE name = ?&quot;, (company[&quot;name&quot;],)).fetchone()
+    conn.close()
+    return row[&quot;id&quot;]
+
+
+def log_run(company_id: int, jobs_found: int, jobs_added: int, jobs_removed: int, status: str = &quot;success&quot;) -&gt; int:
+    conn = get_connection()
+    with conn:
+        cur = conn.execute(
+            &quot;&quot;&quot;
+            INSERT INTO scrape_runs(company_id, jobs_found, jobs_added, jobs_removed, status)
+            VALUES (?, ?, ?, ?, ?)
+            &quot;&quot;&quot;,
+            (company_id, jobs_found, jobs_added, jobs_removed, status),
+        )
+        run_id = cur.lastrowid
+    conn.close()
+    return run_id
+
+
+def sync_jobs(company_id: int, run_id: int, scraped_jobs: list[dict]):
+    conn = get_connection()
+    existing = conn.execute(
+        &quot;SELECT id, external_id, title FROM job_postings WHERE company_id=? AND is_active=1&quot;,
+        (company_id,),
+    ).fetchall()
+
+    by_ext = {r[&quot;external_id&quot;]: r[&quot;id&quot;] for r in existing if r[&quot;external_id&quot;]}
+    by_title = {r[&quot;title&quot;].strip().lower(): r[&quot;id&quot;] for r in existing}
+
+    matched = set()
+    added = 0
+
+    with conn:
+        for job in scraped_jobs:
+            existing_id = None
+            ext = job.get(&quot;external_id&quot;)
+            if ext and ext in by_ext:
+                existing_id = by_ext[ext]
+            elif job.get(&quot;title&quot;, &quot;&quot;).strip().lower() in by_title:
+                existing_id = by_title[job[&quot;title&quot;].strip().lower()]
+
+            if existing_id:
+                matched.add(existing_id)
+                conn.execute(
+                    &quot;UPDATE job_postings SET last_seen_at=datetime('now'), is_active=1 WHERE id=?&quot;,
+                    (existing_id,),
+                )
+            else:
+                cur = conn.execute(
+                    &quot;&quot;&quot;
+                    INSERT INTO job_postings(company_id, title, location, department, url, external_id, is_active)
+                    VALUES (?, ?, ?, ?, ?, ?, 1)
+                    &quot;&quot;&quot;,
+                    (
+                        company_id,
+                        job[&quot;title&quot;],
+                        job.get(&quot;location&quot;),
+                        job.get(&quot;department&quot;),
+                        job.get(&quot;url&quot;),
+                        job.get(&quot;external_id&quot;),
+                    ),
+                )
+                job_id = cur.lastrowid
+                conn.execute(
+                    &quot;INSERT INTO job_events(job_id, run_id, event_type) VALUES (?, ?, 'added')&quot;,
+                    (job_id, run_id),
+                )
+                added += 1
+
+        removed = 0
+        for row in existing:
+            if row[&quot;id&quot;] not in matched:
+                conn.execute(&quot;UPDATE job_postings SET is_active=0 WHERE id=?&quot;, (row[&quot;id&quot;],))
+                conn.execute(
+                    &quot;INSERT INTO job_events(job_id, run_id, event_type) VALUES (?, ?, 'removed')&quot;,
+                    (row[&quot;id&quot;], run_id),
+                )
+                removed += 1
+
+        conn.execute(&quot;UPDATE scrape_runs SET jobs_added=?, jobs_removed=? WHERE id=?&quot;, (added, removed, run_id))
+
+    conn.close()
+    return added, removed
+
+
+def get_overview_stats(company_type=None):
+    conn = get_connection()
+    params = []
+    company_where = &quot;&quot;
+    join_where = &quot; WHERE jp.is_active=1&quot;
+
+    if company_type:
+        company_where = &quot; WHERE company_type = ?&quot;
+        join_where += &quot; AND c.company_type = ?&quot;
+        params.append(company_type)
+
+    total_companies = conn.execute(
+        f&quot;SELECT COUNT(*) FROM companies{company_where}&quot;,
+        params if company_type else (),
+    ).fetchone()[0]
+
+    total_active_jobs = conn.execute(
+        f&quot;SELECT COUNT(*) FROM job_postings jp JOIN companies c ON c.id=jp.company_id{join_where}&quot;,
+        params if company_type else (),
+    ).fetchone()[0]
+
+    last_run = conn.execute(&quot;SELECT MAX(run_at) FROM scrape_runs&quot;).fetchone()[0]
+    conn.close()
+
+    return {
+        &quot;total_companies&quot;: total_companies,
+        &quot;total_active_jobs&quot;: total_active_jobs,
+        &quot;last_run&quot;: last_run,
+        &quot;net_added&quot;: 0,
+        &quot;net_removed&quot;: 0,
+    }
+</code></pre>
+<hr>
+<h2>Phase 7: Create the Main Runner</h2>
+<h3>Goal</h3>
+<p>Run one full scrape and save data.</p>
+<h3>Do This</h3>
+<p>Create <code>companies.json</code>:</p>
+<pre><code class="language-json">[
+  {
+    &quot;name&quot;: &quot;Stripe&quot;,
+    &quot;ats_type&quot;: &quot;greenhouse&quot;,
+    &quot;ats_identifier&quot;: &quot;stripe&quot;,
+    &quot;sector&quot;: &quot;Fintech &amp; Payments&quot;,
+    &quot;company_type&quot;: &quot;bigco&quot;
+  }
+]
+</code></pre>
+<p>Create <code>tracker.py</code>:</p>
+<pre><code class="language-python">import asyncio
+import json
+from pathlib import Path
+
+from db.models import init_db
+from db import queries
+import scraper.greenhouse as greenhouse
+
+COMPANIES_FILE = Path(&quot;companies.json&quot;)
+
+
+def load_companies():
+    with open(COMPANIES_FILE) as f:
+        return json.load(f)
+
+
+async def run():
+    init_db()
+    companies = load_companies()
+
+    for c in companies:
+        company_id = queries.upsert_company(c)
+        jobs = await greenhouse.parse(c[&quot;name&quot;], c[&quot;ats_identifier&quot;])
+        run_id = queries.log_run(company_id, len(jobs), 0, 0)
+        added, removed = queries.sync_jobs(company_id, run_id, [j.to_dict() for j in jobs])
+        print(f&quot;{c['name']}: found={len(jobs)} added={added} removed={removed}&quot;)
+
+
+if __name__ == &quot;__main__&quot;:
+    asyncio.run(run())
+</code></pre>
+<h3>Check</h3>
+<pre><code class="language-bash">python tracker.py
+</code></pre>
+<p>You should see one line of results with found/added/removed counts.</p>
+<hr>
+<h2>Phase 8: Add the API</h2>
+<h3>Goal</h3>
+<p>Make your data available to a web app.</p>
+<h3>Do This</h3>
+<p>Create <code>api/app.py</code>:</p>
+<pre><code class="language-python">from fastapi import FastAPI
+from typing import Optional
+
+from db.models import init_db
+from db import queries
+
+app = FastAPI(title=&quot;Startup Tracker API&quot;)
+init_db()
+
+
+@app.get(&quot;/api/overview&quot;)
+def overview(company_type: Optional[str] = None):
+    return queries.get_overview_stats(company_type=company_type)
+</code></pre>
+<p>Run API:</p>
+<pre><code class="language-bash">uvicorn api.app:app --reload --port 8000
+</code></pre>
+<h3>Check</h3>
+<p>Open in browser:</p>
+<p><a href="http://localhost:8000/api/overview">http://localhost:8000/api/overview</a></p>
+<p>You should see JSON.</p>
+<hr>
+<h2>Phase 9: Add a Very Simple Dashboard</h2>
+<h3>Goal</h3>
+<p>Show data in a browser UI.</p>
+<h3>Do This</h3>
+<pre><code class="language-bash">cd dashboard
+npm init -y
+npm install next react react-dom
+npm install -D typescript @types/react @types/react-dom @types/node
+npx next@latest telemetry disable
+</code></pre>
+<p>Create <code>dashboard/package.json</code> scripts (edit):</p>
+<pre><code class="language-json">{
+  &quot;scripts&quot;: {
+    &quot;dev&quot;: &quot;next dev&quot;,
+    &quot;build&quot;: &quot;next build&quot;,
+    &quot;start&quot;: &quot;next start&quot;
+  }
+}
+</code></pre>
+<p>Create <code>dashboard/src/app/page.tsx</code>:</p>
+<pre><code class="language-tsx">&quot;use client&quot;;
+
+import { useEffect, useState } from &quot;react&quot;;
+
+export default function Page() {
+  const [data, setData] = useState&lt;any&gt;(null);
+
+  useEffect(() =&gt; {
+    fetch(&quot;http://localhost:8000/api/overview&quot;)
+      .then((r) =&gt; r.json())
+      .then(setData);
+  }, []);
+
+  return (
+    &lt;main style={{ padding: 24, fontFamily: &quot;sans-serif&quot; }}&gt;
+      &lt;h1&gt;Startup Tracker&lt;/h1&gt;
+      {!data ? (
+        &lt;p&gt;Loading...&lt;/p&gt;
+      ) : (
+        &lt;div&gt;
+          &lt;p&gt;Total companies: {data.total_companies}&lt;/p&gt;
+          &lt;p&gt;Total active jobs: {data.total_active_jobs}&lt;/p&gt;
+          &lt;p&gt;Last run: {data.last_run || &quot;Never&quot;}&lt;/p&gt;
+        &lt;/div&gt;
+      )}
+    &lt;/main&gt;
+  );
+}
+</code></pre>
+<p>Start frontend:</p>
+<pre><code class="language-bash">npm run dev
+</code></pre>
+<h3>Check</h3>
+<p>Open <a href="http://localhost:3000">http://localhost:3000</a></p>
+<hr>
+<h2>Phase 10: Expand to Full App (This Repo)</h2>
+<p>Now map your mini version to the full production-style version:</p>
+<table>
+<thead>
+<tr>
+<th>Mini Build</th>
+<th>Full Repo Equivalent</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>one scraper</td>
+<td>many scrapers in <code>scraper/*.py</code></td>
+</tr>
+<tr>
+<td>one endpoint</td>
+<td>many in <code>api/app.py</code></td>
+</tr>
+<tr>
+<td>one page</td>
+<td>many in <code>dashboard/src/app/*</code></td>
+</tr>
+<tr>
+<td>simple sync</td>
+<td>advanced lifecycle sync in <code>db/queries.py</code></td>
+</tr>
+<tr>
+<td>no enrichment</td>
+<td>enrichment + skill extraction pipeline</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>Part 4: Visual Flows You Should Understand</h2>
+<h2>4.1 Daily Run Timeline</h2>
+<div class="mermaid">sequenceDiagram
+  participant U as You
+  participant T as tracker.py
+  participant S as Scrapers
+  participant D as Database
+  participant E as Enrichment
+  participant N as Skill Extraction
+
+  U->>T: run tracker
+  T->>S: fetch jobs from ATS
+  S-->>T: raw jobs
+  T->>D: upsert + sync + events
+  T->>E: normalize fields
+  E-->>D: update job metadata
+  T->>N: extract skills
+  N-->>D: job_skills tags
+</div>
+<h2>4.2 Job Open/Close Logic</h2>
+<div class="mermaid">flowchart TD
+  A["Job scraped this run?"] -->|Yes| B["Mark active + update last_seen"]
+  A -->|No| C["Mark suspected closed or closed"]
+  C --> D["Emit removed event when closed"]
+</div>
+<h2>4.3 API-to-UI Flow</h2>
+<div class="mermaid">flowchart LR
+  A["Browser Page"] --> B["dashboard/src/lib/api.ts"]
+  B --> C["FastAPI endpoint"]
+  C --> D["db/queries.py SQL"]
+  D --> E["SQLite"]
+  E --> D --> C --> B --> A
+</div>
+<hr>
+<h2>Part 5: Plain-English Explanation of Key Features</h2>
+<h2>5.1 Overview Page</h2>
+<p>Shows:</p>
+<ul>
+<li>How many companies are tracked.</li>
+<li>How many jobs are active.</li>
+<li>What changed recently.</li>
+</ul>
+<h2>5.2 Companies Page</h2>
+<p>Shows each company with:</p>
+<ul>
+<li>active job count,</li>
+<li>sector,</li>
+<li>funding stage,</li>
+<li>change velocity.</li>
+</ul>
+<h2>5.3 Changes Page</h2>
+<p>Shows timeline of openings/closures.<br>
+This is powered by <code>job_events</code>.</p>
+<h2>5.4 Jobs Page</h2>
+<p>Search and filter jobs by:</p>
+<ul>
+<li>sector,</li>
+<li>skills,</li>
+<li>department,</li>
+<li>work model,</li>
+<li>company type.</li>
+</ul>
+<h2>5.5 Resume Fit (Optional)</h2>
+<p>Upload resume, get:</p>
+<ul>
+<li>best matching jobs,</li>
+<li>score,</li>
+<li>strengths/gaps pointers.</li>
+</ul>
+<hr>
+<h2>Part 6: Scripts Explained Like a Playbook</h2>
+<table>
+<thead>
+<tr>
+<th>Script</th>
+<th>Use It When</th>
+<th>Input</th>
+<th>Output</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>scripts/batch_discover.py</code></td>
+<td>You have new company names to test</td>
+<td>txt names</td>
+<td>JSON ATS hits</td>
+</tr>
+<tr>
+<td><code>scripts/import_bulk_hits.py</code></td>
+<td>You want to add discovered hits to DB</td>
+<td>hits JSON</td>
+<td>new companies in DB</td>
+</tr>
+<tr>
+<td><code>scripts/growth_run.py</code></td>
+<td>You want one-command growth cycle</td>
+<td>candidate files</td>
+<td>discovery + import + scrape + maintenance</td>
+</tr>
+<tr>
+<td><code>scripts/growth_maintenance.py</code></td>
+<td>You want to apply quality tags</td>
+<td>DB state</td>
+<td>tag updates</td>
+</tr>
+<tr>
+<td><code>scripts/make_demo_db.py</code></td>
+<td>You need lightweight demo DB</td>
+<td>existing DB</td>
+<td>trimmed demo DB</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>Part 7: Daily Operations (Beginner Checklist)</h2>
+<h2>7.1 Morning Checklist</h2>
+<ol>
+<li>Start API.</li>
+<li>Start dashboard.</li>
+<li>Run tracker.</li>
+<li>Open Health page.</li>
+<li>Confirm no major scraper failures.</li>
+</ol>
+<p>Commands:</p>
+<pre><code class="language-bash">source .venv/bin/activate
+python tracker.py
+uvicorn api.app:app --reload --port 8000
+</code></pre>
+<p>New terminal:</p>
+<pre><code class="language-bash">cd dashboard
+npm run dev
+</code></pre>
+<h2>7.2 Weekly Checklist</h2>
+<ol>
+<li>Run growth discovery scripts.</li>
+<li>Import valid hits.</li>
+<li>Re-run tracker.</li>
+<li>Check Trends and Changes pages.</li>
+</ol>
+<hr>
+<h2>Part 8: Troubleshooting (Very Practical)</h2>
+<h2>8.1 “API not loading”</h2>
+<ul>
+<li>Make sure backend is running on port 8000.</li>
+<li>Open <a href="http://localhost:8000/api/overview">http://localhost:8000/api/overview</a></li>
+<li>If it fails, check terminal error and restart.</li>
+</ul>
+<h2>8.2 “Dashboard shows blank”</h2>
+<ul>
+<li>Confirm frontend is running on port 3000.</li>
+<li>Confirm <code>NEXT_PUBLIC_API_URL</code> points to backend if not localhost.</li>
+</ul>
+<h2>8.3 “No jobs found”</h2>
+<ul>
+<li>ATS slug may be wrong.</li>
+<li>Test with known slug in Greenhouse first.</li>
+<li>Confirm internet access.</li>
+</ul>
+<h2>8.4 “Build/type errors”</h2>
+<p>In the current repo state, some newer pages (<code>analyst</code>, <code>radar</code>) are ahead of API typings/endpoints and may fail full build until backend/type contracts are aligned.</p>
+<hr>
+<h2>Part 9: Why the Design Looks Like This</h2>
+<h2>9.1 Why SQLite first</h2>
+<ul>
+<li>Easy local setup.</li>
+<li>Great for analytics prototyping.</li>
+<li>No server admin needed.</li>
+</ul>
+<h2>9.2 Why many small scraper files</h2>
+<ul>
+<li>Each ATS changes independently.</li>
+<li>Easier debugging and safer updates.</li>
+</ul>
+<h2>9.3 Why event log + active table</h2>
+<ul>
+<li>Active table gives fast current views.</li>
+<li>Event log gives accurate history and trend charts.</li>
+</ul>
+<h2>9.4 Why deterministic score + LLM fit</h2>
+<ul>
+<li>Deterministic score gives stable ranking.</li>
+<li>LLM adds human-readable advice.</li>
+</ul>
+<hr>
+<h2>Part 10: Full-App Visual Blueprint (Reference)</h2>
+<div class="mermaid">flowchart TD
+  A["companies.json"] --> B["tracker.py"]
+  B --> C1["ashby.py"]
+  B --> C2["greenhouse.py"]
+  B --> C3["lever.py"]
+  B --> C4["smartrecruiters.py"]
+  B --> C5["teamtailor.py"]
+  B --> C6["playwright_scraper.py"]
+  B --> C7["static_html.py"]
+
+  C1 --> D["db/queries.sync_jobs"]
+  C2 --> D
+  C3 --> D
+  C4 --> D
+  C5 --> D
+  C6 --> D
+  C7 --> D
+
+  D --> E["job_postings + scrape_runs + job_events"]
+  E --> F["scraper/enrichment.py"]
+  F --> E
+  E --> G["analysis/nlp.py"]
+  G --> H["job_skills"]
+
+  E --> I["api/app.py"]
+  H --> I
+  I --> J["dashboard/src/lib/api.ts"]
+  J --> K["dashboard/src/app/*"]
+
+  E --> L["analysis/resume_fit.py"]
+  L --> M["resume_profiles + resume_job_fits"]
+</div>
+<hr>
+<h2>Part 11: “Copy This” Commands for This Existing Repo</h2>
+<p>If you want to run the full repo as-is:</p>
+<pre><code class="language-bash">cd /Users/imanbaghai/Desktop/startup-tracker
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+python tracker.py
+uvicorn api.app:app --reload --port 8000
+</code></pre>
+<p>New terminal:</p>
+<pre><code class="language-bash">cd /Users/imanbaghai/Desktop/startup-tracker/dashboard
+npm install
+npm run dev
+</code></pre>
+<p>Then open:</p>
+<ul>
+<li>API: <a href="http://localhost:8000/api/overview">http://localhost:8000/api/overview</a></li>
+<li>Dashboard: <a href="http://localhost:3000">http://localhost:3000</a></li>
+</ul>
+<hr>
+<h2>Part 12: Beginner Success Milestones</h2>
+<p>You are done with this textbook when you can:</p>
+<ol>
+<li>Explain the 5 layers (scrape, store, serve, visualize, analyze).</li>
+<li>Run <code>tracker.py</code> and see job counts update.</li>
+<li>Open <code>/api/overview</code> and understand the JSON.</li>
+<li>Open dashboard and explain each major page.</li>
+<li>Add one new company and see it appear after a run.</li>
+</ol>
+<hr>
+<h2>Part 13: Next Step Paths</h2>
+<p>Choose one learning path:</p>
+<h3>Path A (Operator)</h3>
+<ul>
+<li>Focus on daily runs, health checks, and growth scripts.</li>
+</ul>
+<h3>Path B (Analyst)</h3>
+<ul>
+<li>Focus on trends, changes, and cohort analysis.</li>
+</ul>
+<h3>Path C (Builder)</h3>
+<ul>
+<li>Add one new scraper adapter.</li>
+<li>Add one new API endpoint.</li>
+<li>Add one new dashboard chart.</li>
+</ul>
+<hr>
+<h2>Appendix: Current Repo Reality Notes</h2>
+<p>These are practical notes about the current state of this repository:</p>
+<ul>
+<li>The core scrape -&gt; DB -&gt; API -&gt; dashboard flow is solid.</li>
+<li>Some newer frontend pages (<code>analyst</code>, <code>radar</code>) are ahead of the exported API types/endpoints and may fail full production build until contracts are aligned.</li>
+<li>Some growth/discovery scripts reference functions not present in the current <code>db/queries.py</code> file.</li>
+</ul>
+<p>This does not block learning the architecture or running the core pipeline.</p>
+
+</body>
+</html>

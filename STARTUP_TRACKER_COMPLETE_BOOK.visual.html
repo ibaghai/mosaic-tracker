@@ -1,0 +1,3340 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Startup Tracker Complete Book</title>
+  <style>
+    @page { size: Letter; margin: 0.55in; }
+    :root {
+      --fg: #111827;
+      --muted: #4b5563;
+      --line: #e5e7eb;
+      --bg-soft: #f8fafc;
+      --accent: #0f766e;
+      --accent2: #1d4ed8;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+      color: var(--fg);
+      line-height: 1.5;
+      font-size: 11px;
+    }
+    h1 {
+      font-size: 30px;
+      line-height: 1.2;
+      margin: 0 0 10px;
+      color: #0f172a;
+      border-bottom: 2px solid #cbd5e1;
+      padding-bottom: 8px;
+    }
+    h2 {
+      font-size: 18px;
+      margin: 22px 0 8px;
+      color: var(--accent2);
+      border-left: 4px solid var(--accent);
+      padding-left: 8px;
+    }
+    h3 {
+      font-size: 14px;
+      margin: 14px 0 6px;
+      color: #0f172a;
+    }
+    p { margin: 8px 0; }
+    ul, ol { margin: 8px 0 8px 20px; }
+    li { margin: 3px 0; }
+    hr { border: 0; border-top: 1px solid var(--line); margin: 20px 0; }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 10px 0;
+      font-size: 10.5px;
+    }
+    th, td {
+      border: 1px solid var(--line);
+      padding: 6px 8px;
+      vertical-align: top;
+    }
+    th {
+      background: linear-gradient(180deg, #f8fafc, #eef2ff);
+      text-align: left;
+    }
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 10px;
+      background: #f3f4f6;
+      padding: 1px 4px;
+      border-radius: 4px;
+    }
+    pre {
+      background: #0b1220;
+      color: #e5e7eb;
+      border-radius: 8px;
+      padding: 10px;
+      overflow: auto;
+      font-size: 9.5px;
+      line-height: 1.35;
+      border: 1px solid #1f2937;
+    }
+    pre code { background: transparent; padding: 0; color: inherit; }
+    a { color: var(--accent2); text-decoration: none; }
+    .mermaid {
+      margin: 14px 0;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: linear-gradient(180deg, #ffffff, #f8fafc);
+    }
+    blockquote {
+      margin: 10px 0;
+      padding: 8px 10px;
+      border-left: 3px solid #94a3b8;
+      color: var(--muted);
+      background: #f8fafc;
+    }
+  </style>
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({ startOnLoad: true, theme: 'default', securityLevel: 'loose' });
+    window.__MERMAID_READY__ = true;
+  </script>
+</head>
+<body>
+<h1>Startup Tracker Complete Book</h1>
+<p>This single book combines both learning paths into one document.</p>
+<ul>
+<li>Section 1: Tutorial Workbook (beginner-friendly build path)</li>
+<li>Section 2: Project Atlas (deep walkthrough of the current repository)</li>
+</ul>
+<hr>
+<h2>Table of Contents</h2>
+<ol>
+<li>Section 1: Tutorial Workbook</li>
+<li>Section 2: Current Project Atlas</li>
+</ol>
+<hr>
+<h2>Section 1: Tutorial Workbook</h2>
+<p>Audience: beginner to low-technical background<br>
+Goal: rebuild a working version by hand, while learning why each part exists</p>
+<hr>
+<h2>How to use this workbook</h2>
+<p>This workbook is designed as a mission path.</p>
+<ul>
+<li>Read one mission at a time.</li>
+<li>Copy code exactly.</li>
+<li>Run the checkpoint command before moving on.</li>
+<li>If a checkpoint fails, use the “If stuck” box in that mission.</li>
+</ul>
+<p>Learning rhythm:</p>
+<ol>
+<li>Build a small piece.</li>
+<li>See it working.</li>
+<li>Understand it visually.</li>
+<li>Continue.</li>
+</ol>
+<hr>
+<h2>Mission Map</h2>
+<div class="mermaid">flowchart TD
+  M0["Mission 0\nPrepare your machine"] --> M1["Mission 1\nCreate project folders"]
+  M1 --> M2["Mission 2\nBuild database layer"]
+  M2 --> M3["Mission 3\nBuild first scraper"]
+  M3 --> M4["Mission 4\nSync jobs into database"]
+  M4 --> M5["Mission 5\nExpose API"]
+  M5 --> M6["Mission 6\nCreate dashboard"]
+  M6 --> M7["Mission 7\nRun full pipeline"]
+  M7 --> M8["Mission 8\nAdd enrichment + skills"]
+  M8 --> M9["Mission 9\nOperate like a pro"]
+</div>
+<p>Progress board:</p>
+<ul>
+<li>[ ] Mission 0 complete</li>
+<li>[ ] Mission 1 complete</li>
+<li>[ ] Mission 2 complete</li>
+<li>[ ] Mission 3 complete</li>
+<li>[ ] Mission 4 complete</li>
+<li>[ ] Mission 5 complete</li>
+<li>[ ] Mission 6 complete</li>
+<li>[ ] Mission 7 complete</li>
+<li>[ ] Mission 8 complete</li>
+<li>[ ] Mission 9 complete</li>
+</ul>
+<hr>
+<h2>Mission 0: Prepare your machine</h2>
+<h3>Goal</h3>
+<p>Install and verify required tools.</p>
+<h3>Run</h3>
+<pre><code class="language-bash">python3 --version
+node --version
+npm --version
+</code></pre>
+<h3>Expected</h3>
+<p>You should see version numbers, not “command not found”.</p>
+<h3>If stuck</h3>
+<ul>
+<li>Install Python from <a href="https://www.python.org/downloads/">python.org</a></li>
+<li>Install Node LTS from <a href="https://nodejs.org/">nodejs.org</a></li>
+<li>Restart terminal and run checks again</li>
+</ul>
+<hr>
+<h2>Mission 1: Create your project workspace</h2>
+<h3>Goal</h3>
+<p>Create the same layer structure used by the real app.</p>
+<h3>Run</h3>
+<pre><code class="language-bash">cd ~/Desktop
+mkdir startup-tracker-learning
+cd startup-tracker-learning
+mkdir -p api db scraper analysis dashboard/src/app dashboard/src/lib scripts data
+</code></pre>
+<h3>Visual</h3>
+<div class="mermaid">flowchart LR
+  A["scraper/"] --> B["db/"] --> C["api/"] --> D["dashboard/"]
+  E["analysis/"] --> B
+  F["scripts/"] --> A
+</div>
+<h3>Check</h3>
+<pre><code class="language-bash">find . -maxdepth 2 -type d | sort
+</code></pre>
+<hr>
+<h2>Mission 2: Build the database foundation</h2>
+<h3>Goal</h3>
+<p>Create a SQLite database with core tables.</p>
+<p>Create file: <code>db/models.py</code></p>
+<pre><code class="language-python"># Import sqlite so we can talk to a local database file.
+import sqlite3
+
+# Import Path so file paths work consistently on any OS.
+from pathlib import Path
+
+# Define where the DB file will live.
+DB_PATH = Path(&quot;data/tracker.db&quot;)
+
+
+def get_connection():
+    # Ensure the parent folder exists before opening DB.
+    DB_PATH.parent.mkdir(parents=True, exist_ok=True)
+
+    # Open a SQLite connection to our DB file.
+    conn = sqlite3.connect(DB_PATH)
+
+    # Make rows behave like dictionaries (row[&quot;column_name&quot;]).
+    conn.row_factory = sqlite3.Row
+
+    # Enable WAL mode for better read/write concurrency.
+    conn.execute(&quot;PRAGMA journal_mode=WAL&quot;)
+
+    # Enforce foreign key constraints.
+    conn.execute(&quot;PRAGMA foreign_keys=ON&quot;)
+
+    # Return the ready-to-use DB connection.
+    return conn
+
+
+def init_db():
+    # Open connection.
+    conn = get_connection()
+
+    # Use transaction block for schema creation.
+    with conn:
+        # Create core tables if they do not exist.
+        conn.executescript(
+            &quot;&quot;&quot;
+            CREATE TABLE IF NOT EXISTS companies (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL UNIQUE,
+                ats_type TEXT NOT NULL,
+                ats_identifier TEXT,
+                sector TEXT,
+                company_type TEXT DEFAULT 'startup'
+            );
+
+            CREATE TABLE IF NOT EXISTS job_postings (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                company_id INTEGER NOT NULL REFERENCES companies(id),
+                title TEXT NOT NULL,
+                location TEXT,
+                department TEXT,
+                url TEXT,
+                external_id TEXT,
+                first_seen_at DATETIME DEFAULT (datetime('now')),
+                last_seen_at DATETIME DEFAULT (datetime('now')),
+                posting_status TEXT DEFAULT 'active',
+                is_active BOOLEAN DEFAULT 1
+            );
+
+            CREATE TABLE IF NOT EXISTS scrape_runs (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                company_id INTEGER NOT NULL REFERENCES companies(id),
+                run_at DATETIME DEFAULT (datetime('now')),
+                jobs_found INTEGER DEFAULT 0,
+                jobs_added INTEGER DEFAULT 0,
+                jobs_removed INTEGER DEFAULT 0,
+                status TEXT DEFAULT 'success'
+            );
+
+            CREATE TABLE IF NOT EXISTS job_events (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                job_id INTEGER NOT NULL REFERENCES job_postings(id),
+                run_id INTEGER NOT NULL REFERENCES scrape_runs(id),
+                event_type TEXT NOT NULL,
+                created_at DATETIME DEFAULT (datetime('now'))
+            );
+            &quot;&quot;&quot;
+        )
+
+    # Close connection.
+    conn.close()
+</code></pre>
+<h3>Check</h3>
+<pre><code class="language-bash">python3 - &lt;&lt;'PY'
+from db.models import init_db
+init_db()
+print('DB created')
+PY
+</code></pre>
+<h3>Visual: table relationships</h3>
+<div class="mermaid">erDiagram
+  companies ||--o{ job_postings : has
+  companies ||--o{ scrape_runs : executes
+  scrape_runs ||--o{ job_events : creates
+  job_postings ||--o{ job_events : changes
+</div>
+<hr>
+<h2>Mission 3: Build your first scraper</h2>
+<h3>Goal</h3>
+<p>Collect jobs from Greenhouse and normalize fields.</p>
+<p>Create file: <code>scraper/base.py</code></p>
+<pre><code class="language-python"># Import dataclass to define clean structured data objects.
+from dataclasses import dataclass
+
+# Import Optional for fields that may be empty.
+from typing import Optional
+
+
+@dataclass
+class JobPosting:
+    # Required fields.
+    title: str
+    company: str
+
+    # Optional fields from ATS providers.
+    external_id: Optional[str] = None
+    location: Optional[str] = None
+    department: Optional[str] = None
+    url: Optional[str] = None
+
+    def to_dict(self):
+        # Convert dataclass to plain dict for DB writing.
+        return {
+            &quot;title&quot;: self.title,
+            &quot;company&quot;: self.company,
+            &quot;external_id&quot;: self.external_id,
+            &quot;location&quot;: self.location,
+            &quot;department&quot;: self.department,
+            &quot;url&quot;: self.url,
+        }
+</code></pre>
+<p>Create file: <code>scraper/greenhouse.py</code></p>
+<pre><code class="language-python"># aiohttp lets us call APIs asynchronously.
+import aiohttp
+
+# Import the shared normalized job model.
+from scraper.base import JobPosting
+
+
+async def parse(company_name: str, slug: str):
+    # Build Greenhouse API URL for this company slug.
+    url = f&quot;https://boards-api.greenhouse.io/v1/boards/{slug}/jobs?content=true&quot;
+
+    # Open network session.
+    async with aiohttp.ClientSession() as session:
+        # Call API with timeout.
+        async with session.get(url, timeout=aiohttp.ClientTimeout(total=15)) as resp:
+            # If not successful, return empty list.
+            if resp.status != 200:
+                return []
+
+            # Parse JSON body.
+            data = await resp.json()
+
+    # Build normalized job list.
+    jobs = []
+
+    # Iterate each job in API response.
+    for row in data.get(&quot;jobs&quot;) or []:
+        jobs.append(
+            JobPosting(
+                # Job title.
+                title=row.get(&quot;title&quot;, &quot;&quot;),
+                # Company display name.
+                company=company_name,
+                # Stable ATS job ID.
+                external_id=str(row.get(&quot;id&quot;)) if row.get(&quot;id&quot;) else None,
+                # Human readable location.
+                location=(row.get(&quot;location&quot;) or {}).get(&quot;name&quot;),
+                # First department if present.
+                department=((row.get(&quot;departments&quot;) or [{}])[0]).get(&quot;name&quot;),
+                # Public application URL.
+                url=row.get(&quot;absolute_url&quot;),
+            )
+        )
+
+    # Return only jobs that have a title.
+    return [j for j in jobs if j.title]
+</code></pre>
+<h3>Check</h3>
+<pre><code class="language-bash">python3 - &lt;&lt;'PY'
+import asyncio
+from scraper.greenhouse import parse
+
+async def main():
+    rows = await parse('Stripe', 'stripe')
+    print('jobs fetched:', len(rows))
+    if rows:
+        print('example title:', rows[0].title)
+
+asyncio.run(main())
+PY
+</code></pre>
+<hr>
+<h2>Mission 4: Sync jobs into database</h2>
+<h3>Goal</h3>
+<p>Insert new jobs, keep existing jobs updated, close missing jobs.</p>
+<p>Create file: <code>db/queries.py</code></p>
+<pre><code class="language-python"># Import DB connection factory.
+from db.models import get_connection
+
+
+def upsert_company(company: dict) -&gt; int:
+    # Open DB connection.
+    conn = get_connection()
+
+    # Run write transaction.
+    with conn:
+        # Insert company, or update key metadata on name conflict.
+        conn.execute(
+            &quot;&quot;&quot;
+            INSERT INTO companies(name, ats_type, ats_identifier, sector, company_type)
+            VALUES (?, ?, ?, ?, ?)
+            ON CONFLICT(name) DO UPDATE SET
+                ats_type=excluded.ats_type,
+                ats_identifier=excluded.ats_identifier,
+                sector=excluded.sector,
+                company_type=excluded.company_type
+            &quot;&quot;&quot;,
+            (
+                company[&quot;name&quot;],
+                company[&quot;ats_type&quot;],
+                company.get(&quot;ats_identifier&quot;),
+                company.get(&quot;sector&quot;),
+                company.get(&quot;company_type&quot;, &quot;startup&quot;),
+            ),
+        )
+
+        # Read final company id.
+        row = conn.execute(
+            &quot;SELECT id FROM companies WHERE name = ?&quot;,
+            (company[&quot;name&quot;],),
+        ).fetchone()
+
+    # Close connection.
+    conn.close()
+
+    # Return id as integer.
+    return row[&quot;id&quot;]
+
+
+def log_run(company_id: int, jobs_found: int, jobs_added: int, jobs_removed: int, status: str = &quot;success&quot;) -&gt; int:
+    # Open DB connection.
+    conn = get_connection()
+
+    # Insert scrape run row.
+    with conn:
+        cur = conn.execute(
+            &quot;&quot;&quot;
+            INSERT INTO scrape_runs(company_id, jobs_found, jobs_added, jobs_removed, status)
+            VALUES (?, ?, ?, ?, ?)
+            &quot;&quot;&quot;,
+            (company_id, jobs_found, jobs_added, jobs_removed, status),
+        )
+
+        # Capture run id for linking events.
+        run_id = cur.lastrowid
+
+    # Close connection.
+    conn.close()
+
+    # Return run id.
+    return run_id
+
+
+def sync_jobs(company_id: int, run_id: int, scraped_jobs: list[dict]):
+    # Open DB connection.
+    conn = get_connection()
+
+    # Pull currently active jobs for this company.
+    existing = conn.execute(
+        &quot;&quot;&quot;
+        SELECT id, external_id, title
+        FROM job_postings
+        WHERE company_id = ? AND is_active = 1
+        &quot;&quot;&quot;,
+        (company_id,),
+    ).fetchall()
+
+    # Build quick lookup maps.
+    by_external_id = {r[&quot;external_id&quot;]: r[&quot;id&quot;] for r in existing if r[&quot;external_id&quot;]}
+    by_title = {r[&quot;title&quot;].strip().lower(): r[&quot;id&quot;] for r in existing if r[&quot;title&quot;]}
+
+    # Keep track of records we matched this run.
+    matched_ids = set()
+
+    # Count newly added jobs.
+    added = 0
+
+    with conn:
+        # Process every scraped job.
+        for job in scraped_jobs:
+            existing_id = None
+
+            # Try best match by external id.
+            ext_id = job.get(&quot;external_id&quot;)
+            if ext_id and ext_id in by_external_id:
+                existing_id = by_external_id[ext_id]
+
+            # Fallback match by normalized title.
+            if not existing_id:
+                title_key = job.get(&quot;title&quot;, &quot;&quot;).strip().lower()
+                if title_key in by_title:
+                    existing_id = by_title[title_key]
+
+            if existing_id:
+                # Mark as seen and keep active.
+                matched_ids.add(existing_id)
+                conn.execute(
+                    &quot;&quot;&quot;
+                    UPDATE job_postings
+                    SET last_seen_at = datetime('now'), posting_status='active', is_active=1
+                    WHERE id = ?
+                    &quot;&quot;&quot;,
+                    (existing_id,),
+                )
+            else:
+                # Insert brand new job.
+                cur = conn.execute(
+                    &quot;&quot;&quot;
+                    INSERT INTO job_postings(
+                        company_id, title, location, department, url, external_id,
+                        posting_status, is_active
+                    )
+                    VALUES (?, ?, ?, ?, ?, ?, 'active', 1)
+                    &quot;&quot;&quot;,
+                    (
+                        company_id,
+                        job.get(&quot;title&quot;),
+                        job.get(&quot;location&quot;),
+                        job.get(&quot;department&quot;),
+                        job.get(&quot;url&quot;),
+                        job.get(&quot;external_id&quot;),
+                    ),
+                )
+
+                # New inserted id.
+                new_job_id = cur.lastrowid
+
+                # Log add event.
+                conn.execute(
+                    &quot;INSERT INTO job_events(job_id, run_id, event_type) VALUES (?, ?, 'added')&quot;,
+                    (new_job_id, run_id),
+                )
+
+                # Increase add counter.
+                added += 1
+
+        # Detect jobs that disappeared this run.
+        removed = 0
+        for row in existing:
+            if row[&quot;id&quot;] not in matched_ids:
+                # Mark missing jobs as closed.
+                conn.execute(
+                    &quot;&quot;&quot;
+                    UPDATE job_postings
+                    SET is_active = 0, posting_status='closed'
+                    WHERE id = ?
+                    &quot;&quot;&quot;,
+                    (row[&quot;id&quot;],),
+                )
+
+                # Log remove event.
+                conn.execute(
+                    &quot;INSERT INTO job_events(job_id, run_id, event_type) VALUES (?, ?, 'removed')&quot;,
+                    (row[&quot;id&quot;], run_id),
+                )
+
+                # Increase remove counter.
+                removed += 1
+
+        # Update run metrics with final counts.
+        conn.execute(
+            &quot;UPDATE scrape_runs SET jobs_added=?, jobs_removed=? WHERE id=?&quot;,
+            (added, removed, run_id),
+        )
+
+    # Close connection.
+    conn.close()
+
+    # Return summary tuple.
+    return added, removed
+
+
+def get_overview_stats(company_type=None):
+    # Open connection.
+    conn = get_connection()
+
+    # Count companies (optionally scoped by type).
+    if company_type:
+        total_companies = conn.execute(
+            &quot;SELECT COUNT(*) FROM companies WHERE company_type = ?&quot;,
+            (company_type,),
+        ).fetchone()[0]
+    else:
+        total_companies = conn.execute(&quot;SELECT COUNT(*) FROM companies&quot;).fetchone()[0]
+
+    # Count active jobs (optionally scoped by company type).
+    if company_type:
+        total_active_jobs = conn.execute(
+            &quot;&quot;&quot;
+            SELECT COUNT(*)
+            FROM job_postings jp
+            JOIN companies c ON c.id = jp.company_id
+            WHERE jp.is_active = 1 AND c.company_type = ?
+            &quot;&quot;&quot;,
+            (company_type,),
+        ).fetchone()[0]
+    else:
+        total_active_jobs = conn.execute(
+            &quot;SELECT COUNT(*) FROM job_postings WHERE is_active = 1&quot;
+        ).fetchone()[0]
+
+    # Last successful run timestamp.
+    last_run = conn.execute(&quot;SELECT MAX(run_at) FROM scrape_runs&quot;).fetchone()[0]
+
+    # Close connection.
+    conn.close()
+
+    # Return dashboard-friendly shape.
+    return {
+        &quot;total_companies&quot;: total_companies,
+        &quot;total_active_jobs&quot;: total_active_jobs,
+        &quot;last_run&quot;: last_run,
+        &quot;net_added&quot;: 0,
+        &quot;net_removed&quot;: 0,
+    }
+</code></pre>
+<h3>Visual: sync logic</h3>
+<div class="mermaid">flowchart TD
+  A["Scraped job"] --> B{"Matches active record?"}
+  B -->|Yes| C["Update last_seen + keep active"]
+  B -->|No| D["Insert new job + added event"]
+  E["Active job not matched"] --> F["Mark closed + removed event"]
+</div>
+<hr>
+<h2>Mission 5: Build the orchestrator</h2>
+<h3>Goal</h3>
+<p>Run one command to scrape and sync all tracked companies.</p>
+<p>Create file: <code>companies.json</code></p>
+<pre><code class="language-json">[
+  {
+    &quot;name&quot;: &quot;Stripe&quot;,
+    &quot;ats_type&quot;: &quot;greenhouse&quot;,
+    &quot;ats_identifier&quot;: &quot;stripe&quot;,
+    &quot;sector&quot;: &quot;Fintech &amp; Payments&quot;,
+    &quot;company_type&quot;: &quot;bigco&quot;
+  },
+  {
+    &quot;name&quot;: &quot;Notion&quot;,
+    &quot;ats_type&quot;: &quot;greenhouse&quot;,
+    &quot;ats_identifier&quot;: &quot;notion&quot;,
+    &quot;sector&quot;: &quot;Enterprise Software&quot;,
+    &quot;company_type&quot;: &quot;startup&quot;
+  }
+]
+</code></pre>
+<p>Create file: <code>tracker.py</code></p>
+<pre><code class="language-python"># asyncio is used to run async scraper functions.
+import asyncio
+
+# json loads the companies config file.
+import json
+
+# Path gives stable file handling.
+from pathlib import Path
+
+# Initialize database schema.
+from db.models import init_db
+
+# Query helpers for company upsert + job sync.
+from db import queries
+
+# Greenhouse scraper module.
+import scraper.greenhouse as greenhouse_scraper
+
+# Companies source file path.
+COMPANIES_FILE = Path(&quot;companies.json&quot;)
+
+
+def load_companies() -&gt; list:
+    # Open and parse JSON config.
+    with open(COMPANIES_FILE) as f:
+        return json.load(f)
+
+
+async def scrape_company(company: dict, company_id: int):
+    # Read key company fields.
+    name = company[&quot;name&quot;]
+    ats_type = company[&quot;ats_type&quot;]
+
+    # Support Greenhouse in this tutorial build.
+    if ats_type == &quot;greenhouse&quot;:
+        jobs = await greenhouse_scraper.parse(name, company[&quot;ats_identifier&quot;])
+    else:
+        # Unknown ATS in this tutorial path.
+        jobs = []
+
+    # Convert JobPosting objects to dictionaries.
+    job_dicts = [j.to_dict() for j in jobs]
+
+    # Create run row with placeholder add/remove counts.
+    run_id = queries.log_run(company_id, len(jobs), 0, 0, status=&quot;success&quot;)
+
+    # Sync canonical job state.
+    added, removed = queries.sync_jobs(company_id, run_id, job_dicts)
+
+    # Return summary.
+    return len(jobs), added, removed
+
+
+async def run():
+    # Ensure DB schema exists.
+    init_db()
+
+    # Load company list.
+    companies = load_companies()
+
+    # Map company names to DB ids.
+    company_ids = {}
+    for c in companies:
+        company_ids[c[&quot;name&quot;]] = queries.upsert_company(c)
+
+    # Process all companies one-by-one for beginner clarity.
+    for c in companies:
+        found, added, removed = await scrape_company(c, company_ids[c[&quot;name&quot;]])
+        print(f&quot;{c['name']}: found={found} added={added} removed={removed}&quot;)
+
+
+if __name__ == &quot;__main__&quot;:
+    # Entry point.
+    asyncio.run(run())
+</code></pre>
+<h3>Check</h3>
+<pre><code class="language-bash">python3 tracker.py
+</code></pre>
+<hr>
+<h2>Mission 6: Build API layer</h2>
+<h3>Goal</h3>
+<p>Expose data to frontend.</p>
+<p>Create file: <code>api/app.py</code></p>
+<pre><code class="language-python"># FastAPI framework.
+from fastapi import FastAPI
+
+# Optional type for query params.
+from typing import Optional
+
+# Ensure database exists at API startup.
+from db.models import init_db
+
+# Query layer for reading stats.
+from db import queries
+
+# Create web app instance.
+app = FastAPI(title=&quot;Startup Tracker API&quot;)
+
+# Initialize DB schema now.
+init_db()
+
+
+@app.get(&quot;/api/overview&quot;)
+def overview(company_type: Optional[str] = None):
+    # Return high-level totals for dashboard cards.
+    return queries.get_overview_stats(company_type=company_type)
+</code></pre>
+<h3>Check</h3>
+<pre><code class="language-bash">uvicorn api.app:app --reload --port 8000
+</code></pre>
+<p>Open <a href="http://localhost:8000/api/overview">http://localhost:8000/api/overview</a></p>
+<hr>
+<h2>Mission 7: Build dashboard layer</h2>
+<h3>Goal</h3>
+<p>Show API data in a browser page.</p>
+<p>Inside <code>dashboard/</code> run:</p>
+<pre><code class="language-bash">npm init -y
+npm install next react react-dom
+npm install -D typescript @types/react @types/react-dom @types/node
+</code></pre>
+<p>Create file: <code>dashboard/package.json</code> (replace scripts section):</p>
+<pre><code class="language-json">{
+  &quot;name&quot;: &quot;dashboard&quot;,
+  &quot;private&quot;: true,
+  &quot;scripts&quot;: {
+    &quot;dev&quot;: &quot;next dev&quot;,
+    &quot;build&quot;: &quot;next build&quot;,
+    &quot;start&quot;: &quot;next start&quot;
+  }
+}
+</code></pre>
+<p>Create file: <code>dashboard/src/app/page.tsx</code></p>
+<pre><code class="language-tsx">&quot;use client&quot;;
+
+// React hooks for state and lifecycle.
+import { useEffect, useState } from &quot;react&quot;;
+
+export default function Page() {
+  // Hold API response.
+  const [data, setData] = useState&lt;any&gt;(null);
+
+  // Fetch once after component mounts.
+  useEffect(() =&gt; {
+    fetch(&quot;http://localhost:8000/api/overview&quot;)
+      .then((r) =&gt; r.json())
+      .then(setData)
+      .catch(() =&gt; setData({ error: true }));
+  }, []);
+
+  return (
+    &lt;main style={{ padding: 24, fontFamily: &quot;sans-serif&quot;, maxWidth: 900, margin: &quot;0 auto&quot; }}&gt;
+      &lt;h1&gt;Startup Tracker&lt;/h1&gt;
+      &lt;p style={{ color: &quot;#555&quot; }}&gt;Tutorial dashboard&lt;/p&gt;
+
+      {!data ? (
+        &lt;p&gt;Loading...&lt;/p&gt;
+      ) : data.error ? (
+        &lt;p&gt;Could not load API data.&lt;/p&gt;
+      ) : (
+        &lt;section style={{ border: &quot;1px solid #ddd&quot;, borderRadius: 8, padding: 16 }}&gt;
+          &lt;p&gt;Total companies: {data.total_companies}&lt;/p&gt;
+          &lt;p&gt;Total active jobs: {data.total_active_jobs}&lt;/p&gt;
+          &lt;p&gt;Last run: {data.last_run || &quot;Never&quot;}&lt;/p&gt;
+        &lt;/section&gt;
+      )}
+    &lt;/main&gt;
+  );
+}
+</code></pre>
+<h3>Check</h3>
+<pre><code class="language-bash">cd dashboard
+npm run dev
+</code></pre>
+<p>Open <a href="http://localhost:3000">http://localhost:3000</a></p>
+<hr>
+<h2>Mission 8: Add simple enrichment + skill extraction</h2>
+<h3>Goal</h3>
+<p>Turn raw text into useful analytics dimensions.</p>
+<p>Create file: <code>scraper/enrichment.py</code></p>
+<pre><code class="language-python"># Import DB connection.
+from db.models import get_connection
+
+
+def enrich_all():
+    # Open connection.
+    conn = get_connection()
+
+    # Get jobs missing basic normalized fields.
+    rows = conn.execute(
+        &quot;&quot;&quot;
+        SELECT id, title, location, department
+        FROM job_postings
+        WHERE posting_status IS NULL OR department IS NULL
+        &quot;&quot;&quot;
+    ).fetchall()
+
+    if not rows:
+        conn.close()
+        return 0
+
+    with conn:
+        for r in rows:
+            # Fallback department if missing.
+            department = r[&quot;department&quot;] or &quot;Other&quot;
+
+            # Ensure status default.
+            status = &quot;active&quot;
+
+            # Update row.
+            conn.execute(
+                &quot;&quot;&quot;
+                UPDATE job_postings
+                SET department = ?, posting_status = ?
+                WHERE id = ?
+                &quot;&quot;&quot;,
+                (department, status, r[&quot;id&quot;]),
+            )
+
+    count = len(rows)
+    conn.close()
+    return count
+</code></pre>
+<p>Create file: <code>analysis/nlp.py</code></p>
+<pre><code class="language-python"># Regex engine.
+import re
+
+# DB connection.
+from db.models import get_connection
+
+# Tiny starter dictionary.
+SKILLS = {
+    &quot;Python&quot;: re.compile(r&quot;\\bPython\\b&quot;, re.I),
+    &quot;SQL&quot;: re.compile(r&quot;\\bSQL\\b&quot;, re.I),
+    &quot;React&quot;: re.compile(r&quot;\\bReact\\b&quot;, re.I),
+}
+
+
+def extract_skills(text: str):
+    # Return matched canonical skill names.
+    if not text:
+        return []
+    found = []
+    for name, pattern in SKILLS.items():
+        if pattern.search(text):
+            found.append(name)
+    return found
+
+
+def extract_all_skills():
+    # Open connection.
+    conn = get_connection()
+
+    # Ensure table exists.
+    with conn:
+        conn.execute(
+            &quot;&quot;&quot;
+            CREATE TABLE IF NOT EXISTS job_skills (
+                job_id INTEGER NOT NULL REFERENCES job_postings(id),
+                skill TEXT NOT NULL,
+                PRIMARY KEY(job_id, skill)
+            )
+            &quot;&quot;&quot;
+        )
+
+    # Read jobs.
+    rows = conn.execute(&quot;SELECT id, title FROM job_postings&quot;).fetchall()
+
+    total = 0
+    with conn:
+        for r in rows:
+            # Use title as text source in this mini tutorial.
+            skills = extract_skills(r[&quot;title&quot;])
+            for s in skills:
+                conn.execute(
+                    &quot;INSERT OR IGNORE INTO job_skills(job_id, skill) VALUES (?, ?)&quot;,
+                    (r[&quot;id&quot;], s),
+                )
+                total += 1
+
+    conn.close()
+    return total
+</code></pre>
+<hr>
+<h2>Mission 9: Run and operate</h2>
+<h3>Goal</h3>
+<p>Run the complete mini pipeline in the correct order.</p>
+<h3>Run order</h3>
+<div class="mermaid">flowchart LR
+  A["python tracker.py"] --> B["python enrichment/skills"] --> C["start api"] --> D["start dashboard"]
+</div>
+<h3>Commands</h3>
+<p>Terminal 1:</p>
+<pre><code class="language-bash">cd ~/Desktop/startup-tracker-learning
+source .venv/bin/activate
+python3 tracker.py
+python3 - &lt;&lt;'PY'
+from scraper.enrichment import enrich_all
+from analysis.nlp import extract_all_skills
+print('enriched:', enrich_all())
+print('skills:', extract_all_skills())
+PY
+uvicorn api.app:app --reload --port 8000
+</code></pre>
+<p>Terminal 2:</p>
+<pre><code class="language-bash">cd ~/Desktop/startup-tracker-learning/dashboard
+npm run dev
+</code></pre>
+<hr>
+<h2>Quick visual recap</h2>
+<div class="mermaid">flowchart TD
+  Input["companies.json"] --> Scrape["Scrapers"]
+  Scrape --> Sync["sync_jobs"]
+  Sync --> DB["SQLite"]
+  DB --> API["FastAPI"]
+  API --> UI["Next.js"]
+  DB --> Enrich["Enrichment + NLP"]
+  Enrich --> DB
+</div>
+<hr>
+<h2>Beginner troubleshooting tree</h2>
+<div class="mermaid">flowchart TD
+  A["Page is blank"] --> B{"Can /api/overview open?"}
+  B -->|No| C["Backend not running\nStart uvicorn"]
+  B -->|Yes| D{"Can localhost:3000 open?"}
+  D -->|No| E["Frontend not running\nRun npm run dev"]
+  D -->|Yes| F["Check browser console\nCheck CORS/API URL"]
+</div>
+<hr>
+<h2>What to learn next</h2>
+<ol>
+<li>Add more scrapers (<code>ashby</code>, <code>lever</code>, <code>smartrecruiters</code>).</li>
+<li>Add richer lifecycle logic (<code>suspected_closed</code> before hard close).</li>
+<li>Add job events analytics endpoint and changes chart.</li>
+<li>Add resume-fit endpoint and upload UI.</li>
+</ol>
+<hr>
+<h2>Appendix A: How this tutorial maps to the real repo</h2>
+<table>
+<thead>
+<tr>
+<th>Tutorial Component</th>
+<th>Real Project Component</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>minimal <code>db/models.py</code></td>
+<td>full schema + migration-safe alters</td>
+</tr>
+<tr>
+<td>one scraper</td>
+<td>many ATS modules in <code>scraper/</code></td>
+</tr>
+<tr>
+<td>simple <code>sync_jobs</code></td>
+<td>robust identity + lifecycle + event logic</td>
+</tr>
+<tr>
+<td>one overview endpoint</td>
+<td>full API surface in <code>api/app.py</code></td>
+</tr>
+<tr>
+<td>one dashboard page</td>
+<td>many pages in <code>dashboard/src/app/*</code></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>Section 2: Current Project Atlas</h2>
+<p>Audience: builders and operators<br>
+Purpose: understand the exact current project architecture and code flow end-to-end</p>
+<hr>
+<h2>How this book is organized</h2>
+<p>This book has two parallel tracks:</p>
+<ul>
+<li>Track A (Visual): architecture diagrams and flow maps.</li>
+<li>Track B (Code Lens): annotated code walkthroughs with line-by-line intent.</li>
+</ul>
+<p>Use both together.</p>
+<hr>
+<h2>Section 1: Whole-system visual model</h2>
+<h2>1.1 Current production architecture</h2>
+<div class="mermaid">flowchart TD
+  A["companies.json\ntracked targets"] --> B["tracker.py\nmain orchestrator"]
+  B --> C1["scraper/ashby.py"]
+  B --> C2["scraper/greenhouse.py"]
+  B --> C3["scraper/lever.py"]
+  B --> C4["scraper/smartrecruiters.py"]
+  B --> C5["scraper/teamtailor.py"]
+  B --> C6["scraper/playwright_scraper.py"]
+  B --> C7["scraper/static_html.py"]
+
+  C1 --> D["db/queries.sync_jobs"]
+  C2 --> D
+  C3 --> D
+  C4 --> D
+  C5 --> D
+  C6 --> D
+  C7 --> D
+
+  D --> E["SQLite\ncompanies, job_postings, scrape_runs, job_events"]
+  E --> F["scraper/enrichment.enrich_all"]
+  F --> E
+  E --> G["analysis/nlp.extract_all_skills"]
+  G --> H["job_skills"]
+
+  E --> I["FastAPI api/app.py"]
+  H --> I
+  I --> J["dashboard/src/lib/api.ts"]
+  J --> K["dashboard pages"]
+
+  I --> L["analysis/resume_fit.py"]
+  L --> M["resume_profiles + resume_job_fits"]
+</div>
+<h2>1.2 Data lifecycle timeline</h2>
+<div class="mermaid">sequenceDiagram
+  participant O as Operator
+  participant T as tracker.py
+  participant S as ATS scrapers
+  participant Q as db/queries.py
+  participant DB as SQLite
+  participant EN as enrichment.py
+  participant NLP as nlp.py
+  participant API as FastAPI
+  participant UI as Next.js
+
+  O->>T: Run ingestion
+  T->>S: Fetch jobs per company
+  S-->>T: Normalized JobPosting list
+  T->>Q: log_run + sync_jobs
+  Q->>DB: Write companies/jobs/events/runs
+  T->>EN: enrich_all
+  EN->>DB: Fill normalized fields
+  T->>NLP: extract_all_skills
+  NLP->>DB: Populate job_skills
+  UI->>API: Request analytics data
+  API->>Q: Query stats/breakdowns
+  Q->>DB: Read query data
+  DB-->>Q: Rows
+  Q-->>API: JSON-ready dict/list
+  API-->>UI: Response
+</div>
+<hr>
+<h2>Section 2: Repository inventory</h2>
+<h2>2.1 Top-level map</h2>
+<table>
+<thead>
+<tr>
+<th>Path</th>
+<th>Role</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>tracker.py</code></td>
+<td>ingestion orchestrator</td>
+</tr>
+<tr>
+<td><code>api/app.py</code></td>
+<td>REST API surface</td>
+</tr>
+<tr>
+<td><code>db/models.py</code></td>
+<td>DB connection + schema init</td>
+</tr>
+<tr>
+<td><code>db/queries.py</code></td>
+<td>write/read query logic</td>
+</tr>
+<tr>
+<td><code>scraper/</code></td>
+<td>ATS parsers + enrichment</td>
+</tr>
+<tr>
+<td><code>analysis/</code></td>
+<td>skill extraction + resume fit</td>
+</tr>
+<tr>
+<td><code>dashboard/</code></td>
+<td>Next.js frontend</td>
+</tr>
+<tr>
+<td><code>dashboard.py</code></td>
+<td>legacy Streamlit dashboard</td>
+</tr>
+<tr>
+<td><code>scripts/</code></td>
+<td>discovery/growth/migration utilities</td>
+</tr>
+<tr>
+<td><code>DEPLOY.md</code></td>
+<td>deployment instructions</td>
+</tr>
+<tr>
+<td><code>Procfile</code></td>
+<td>backend process command</td>
+</tr>
+</tbody>
+</table>
+<h2>2.2 Runtime dependencies</h2>
+<p>From <code>requirements.txt</code> and <code>dashboard/package.json</code>:</p>
+<ul>
+<li>Python stack: <code>aiohttp</code>, <code>fastapi</code>, <code>uvicorn</code>, <code>playwright</code>, <code>pypdf</code>, <code>python-docx</code>, <code>streamlit</code>, <code>pandas</code>, <code>altair</code>.</li>
+<li>Frontend stack: <code>next@16</code>, <code>react@19</code>, <code>recharts</code>, <code>lucide-react</code>, <code>tailwindcss</code>.</li>
+</ul>
+<hr>
+<h2>Section 3: Database and schema internals</h2>
+<h2>3.1 <code>db/models.py</code> intent</h2>
+<p>Primary responsibilities:</p>
+<ol>
+<li>Resolve DB path (<code>TRACKER_DB_PATH</code> override).</li>
+<li>Open sqlite connection with WAL + FK enabled.</li>
+<li>Create base schema and additive index/column migrations.</li>
+</ol>
+<h2>3.2 Annotated code lens: <code>get_connection</code> and <code>init_db</code></h2>
+<pre><code class="language-python"># db/models.py (conceptual annotated lens)
+
+def get_connection() -&gt; sqlite3.Connection:
+    # Open SQLite file from resolved path.
+    conn = sqlite3.connect(DB_PATH)
+
+    # Return rows as dict-like objects.
+    conn.row_factory = sqlite3.Row
+
+    # WAL allows readers and writer to coexist better.
+    conn.execute(&quot;PRAGMA journal_mode=WAL&quot;)
+
+    # FK constraint enforcement protects relational integrity.
+    conn.execute(&quot;PRAGMA foreign_keys=ON&quot;)
+
+    return conn
+
+
+def init_db():
+    # Ensure DB folder exists.
+    DB_PATH.parent.mkdir(exist_ok=True)
+
+    conn = get_connection()
+    with conn:
+        # Create core tables and indexes if missing.
+        conn.executescript(&quot;... long schema ...&quot;)
+
+        # Add newly introduced columns in older DBs (migration-safe).
+        for table, columns in alterations.items():
+            for column, definition in columns:
+                if not _column_exists(conn, table, column):
+                    conn.execute(f&quot;ALTER TABLE {table} ADD COLUMN {column} {definition}&quot;)
+
+        # Ensure secondary indexes for match/query speed.
+        conn.execute(&quot;CREATE INDEX IF NOT EXISTS ...&quot;)
+
+    conn.close()
+</code></pre>
+<h2>3.3 Why this schema design</h2>
+<ul>
+<li><code>job_postings</code> as current-state table for fast active views.</li>
+<li><code>job_events</code> as immutable change history for timelines.</li>
+<li><code>scrape_runs</code> as operational telemetry.</li>
+<li><code>run_jobs</code> to relate run snapshots to job rows.</li>
+<li><code>job_skills</code> normalized many-to-many tags.</li>
+<li>resume tables for fit cache and consistency.</li>
+</ul>
+<hr>
+<h2>Section 4: Ingestion core (<code>tracker.py</code>)</h2>
+<h2>4.1 Functional role</h2>
+<p><code>tracker.py</code> is the conductor:</p>
+<ol>
+<li>Initialize DB.</li>
+<li>Load <code>companies.json</code>.</li>
+<li>Upsert company metadata.</li>
+<li>Run ATS parser per company.</li>
+<li>Sync jobs + run stats.</li>
+<li>Run enrichment pass.</li>
+<li>Run skill extraction pass.</li>
+</ol>
+<h2>4.2 Annotated code lens: scraper dispatch</h2>
+<pre><code class="language-python"># tracker.py dispatch logic (annotated)
+
+async def scrape_company(company: dict, company_id: int):
+    name = company[&quot;name&quot;]
+    ats = company[&quot;ats_type&quot;]
+
+    # Route to ATS-specific parser based on ats_type.
+    if ats == &quot;ashby&quot;:
+        jobs = await ashby_scraper.parse(name, company[&quot;ats_identifier&quot;])
+    elif ats == &quot;greenhouse&quot;:
+        jobs = await greenhouse_scraper.parse(name, company[&quot;ats_identifier&quot;])
+    elif ats == &quot;lever&quot;:
+        jobs = await lever_scraper.parse(name, company[&quot;ats_identifier&quot;])
+    elif ats == &quot;smartrecruiters&quot;:
+        jobs = await smartrecruiters_scraper.parse(name, company[&quot;ats_identifier&quot;])
+    elif ats == &quot;teamtailor&quot;:
+        jobs = await teamtailor_scraper.parse(name, company[&quot;ats_identifier&quot;])
+    elif ats == &quot;playwright&quot;:
+        jobs = await playwright_scraper.parse(name, company[&quot;ats_identifier&quot;], selectors=company.get(&quot;selectors&quot;))
+    elif ats == &quot;static&quot;:
+        jobs = await static_html_scraper.parse(name, company[&quot;ats_identifier&quot;])
+    else:
+        raise ValueError(f&quot;Unknown ATS type: {ats!r}&quot;)
+
+    # Convert standardized objects into dict rows.
+    job_dicts = [j.to_dict() for j in jobs]
+
+    # Log run first to create run_id anchor.
+    run_id = queries.log_run(company_id, len(jobs), 0, 0, status=&quot;success&quot;, batch_id=BATCH_ID)
+
+    # Sync row-level state and event deltas.
+    added, removed = queries.sync_jobs(company_id, run_id, job_dicts)
+
+    # Patch run with final add/remove counts.
+    ...
+</code></pre>
+<h2>4.3 Why <code>batch_id</code> exists</h2>
+<p>One tracker execution touches many companies. <code>batch_id</code> groups those run rows so the UI can compute net movement from a single batch.</p>
+<hr>
+<h2>Section 5: ATS scraper modules</h2>
+<h2>5.1 Scraper strategy</h2>
+<p>Mix of:</p>
+<ul>
+<li>API-native adapters (fast, structured): Greenhouse, Lever, Ashby, SmartRecruiters.</li>
+<li>feed parser: Teamtailor RSS.</li>
+<li>browser/DOM fallback: Playwright, static HTML patterns.</li>
+</ul>
+<h2>5.2 Scraper capability matrix</h2>
+<table>
+<thead>
+<tr>
+<th>Scraper</th>
+<th>Source type</th>
+<th>Strength</th>
+<th>Limitation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ashby.py</code></td>
+<td>GraphQL API</td>
+<td>structured teams + ids</td>
+<td>API behavior can change</td>
+</tr>
+<tr>
+<td><code>greenhouse.py</code></td>
+<td>REST API</td>
+<td>rich content + stable IDs</td>
+<td>board slug required</td>
+</tr>
+<tr>
+<td><code>lever.py</code></td>
+<td>REST API</td>
+<td>good metadata categories</td>
+<td>some fields optional</td>
+</tr>
+<tr>
+<td><code>smartrecruiters.py</code></td>
+<td>REST + pagination</td>
+<td>broad coverage</td>
+<td>custom field variability</td>
+</tr>
+<tr>
+<td><code>teamtailor.py</code></td>
+<td>RSS</td>
+<td>simple and stable</td>
+<td>sparse metadata</td>
+</tr>
+<tr>
+<td><code>playwright_scraper.py</code></td>
+<td>browser DOM</td>
+<td>works on custom pages</td>
+<td>selector brittleness</td>
+</tr>
+<tr>
+<td><code>static_html.py</code></td>
+<td>regex HTML</td>
+<td>lightweight fallback</td>
+<td>highly pattern-specific</td>
+</tr>
+</tbody>
+</table>
+<h2>5.3 Annotated code lens: Greenhouse parser</h2>
+<pre><code class="language-python"># scraper/greenhouse.py (annotated)
+
+BASE_URL = &quot;https://boards-api.greenhouse.io/v1/boards/{slug}/jobs?content=true&quot;
+
+async def parse(company_name: str, ats_identifier: str):
+    url = BASE_URL.format(slug=ats_identifier)
+
+    # Network call with bounded timeout.
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url, timeout=aiohttp.ClientTimeout(total=15)) as resp:
+            # Explicit board-not-found branch improves debugging.
+            if resp.status == 404:
+                raise RuntimeError(...)
+            if resp.status != 200:
+                raise RuntimeError(...)
+            data = await resp.json()
+
+    jobs = data.get(&quot;jobs&quot;) or []
+
+    # Normalize each provider row into JobPosting model.
+    return [
+      JobPosting(
+        title=j[&quot;title&quot;],
+        company=company_name,
+        external_id=str(j[&quot;id&quot;]),
+        description=j.get(&quot;content&quot;),
+        location=(j.get(&quot;location&quot;) or {}).get(&quot;name&quot;),
+        department=_clean_dept(((j.get(&quot;departments&quot;) or [{}])[0]).get(&quot;name&quot;, &quot;&quot;)) or None,
+        url=j.get(&quot;absolute_url&quot;),
+      )
+      for j in jobs
+    ]
+</code></pre>
+<hr>
+<h2>Section 6: Canonical sync algorithm (<code>db/queries.py</code>)</h2>
+<h2>6.1 Why this file matters most</h2>
+<p><code>db/queries.py</code> is both:</p>
+<ul>
+<li>write engine (state transitions), and</li>
+<li>analytics engine (all dashboard aggregates).</li>
+</ul>
+<h2>6.2 Identity and dedupe logic</h2>
+<p>Matching order inside <code>sync_jobs</code>:</p>
+<ol>
+<li><code>external_id</code></li>
+<li><code>canonical_url</code></li>
+<li><code>job_fingerprint</code></li>
+<li>normalized <code>(title, location)</code></li>
+</ol>
+<p>This order minimizes false duplicates while tolerating missing IDs.</p>
+<h2>6.3 Lifecycle logic</h2>
+<p>Current active row missing from scrape:</p>
+<ul>
+<li>first miss -&gt; <code>suspected_closed</code></li>
+<li>repeated miss -&gt; <code>closed</code> and <code>is_active=0</code></li>
+<li>close event logged in <code>job_events</code></li>
+</ul>
+<h2>6.4 Annotated code lens: closure safety</h2>
+<pre><code class="language-python"># sync_jobs closure branch (annotated concept)
+
+removed_ids = all_existing_ids - matched_ids
+for job_id in removed_ids:
+    row = existing_by_id[job_id]
+    misses = (row[&quot;consecutive_misses&quot;] or 0) + 1
+
+    # Require repeat evidence before hard-close.
+    should_close = row[&quot;posting_status&quot;] == &quot;suspected_closed&quot; or misses &gt;= 2
+
+    if should_close:
+        # Final closure state.
+        UPDATE job_postings SET is_active=0, posting_status='closed', ...
+        INSERT job_events(..., 'removed')
+    else:
+        # Transitional state; do not close yet.
+        UPDATE job_postings SET posting_status='suspected_closed', ...
+</code></pre>
+<h2>6.5 Analytics query families</h2>
+<ul>
+<li>Overview and KPI totals.</li>
+<li>Company stats and velocity.</li>
+<li>Breakdowns: sector, department, seniority, work model, role family, skills.</li>
+<li>Timeline and change views: trends, recent events, movers, sector delta.</li>
+<li>Cross tabs for dashboard heat/stack views.</li>
+<li>Health monitor query.</li>
+<li>Fit candidate and cache queries.</li>
+</ul>
+<hr>
+<h2>Section 7: Enrichment and NLP layers</h2>
+<h2>7.1 <code>scraper/enrichment.py</code></h2>
+<p>Rule-based backfill for missing fields:</p>
+<ul>
+<li>seniority inference from title keywords,</li>
+<li>work model + remote scope heuristics,</li>
+<li>normalized department buckets,</li>
+<li>role family classification,</li>
+<li>location split fields.</li>
+</ul>
+<p>Design purpose:</p>
+<ul>
+<li>make provider-specific raw fields analytically comparable.</li>
+</ul>
+<h2>7.2 Annotated code lens: department normalization</h2>
+<pre><code class="language-python"># simplified conceptual version
+
+_DEPT_RULES = [
+  ([&quot;engineer&quot;, &quot;developer&quot;, &quot;platform&quot;], &quot;Engineering&quot;),
+  ([&quot;sales&quot;, &quot;account exec&quot;], &quot;Sales&quot;),
+  ...
+]
+
+def _normalize_department(raw_dept):
+    if not raw_dept:
+        return 'Other'
+    lower = raw_dept.lower()
+    for keywords, label in _DEPT_RULES:
+        for kw in keywords:
+            if kw in lower:
+                # Guardrail example: &quot;product eng&quot; should be Engineering.
+                if label == 'Product' and 'eng' in lower:
+                    return 'Engineering'
+                return label
+    return 'Other'
+</code></pre>
+<h2>7.3 <code>analysis/nlp.py</code></h2>
+<p>Regex dictionary approach:</p>
+<ul>
+<li>canonical skill name -&gt; pattern,</li>
+<li>compile patterns once,</li>
+<li>extract per description,</li>
+<li>write to <code>job_skills</code> table.</li>
+</ul>
+<p>Why regex first:</p>
+<ul>
+<li>deterministic,</li>
+<li>inexpensive,</li>
+<li>easy to tune.</li>
+</ul>
+<hr>
+<h2>Section 8: Resume fit engine (<code>analysis/resume_fit.py</code>)</h2>
+<h2>8.1 End-to-end fit flow</h2>
+<div class="mermaid">flowchart TD
+  A["Upload resume"] --> B["Extract text (txt/pdf/docx)"]
+  B --> C["LLM parse profile JSON"]
+  C --> D["Sanitize/de-identify profile"]
+  D --> E["Candidate SQL pool"]
+  E --> F["Deterministic shortlist score"]
+  F --> G["LLM fit rationale in batches"]
+  G --> H["Cache in resume_job_fits"]
+  H --> I["Return ranked matches"]
+</div>
+<h2>8.2 Score composition</h2>
+<p>Deterministic score uses weighted factors:</p>
+<ul>
+<li>matched skills,</li>
+<li>role-family alignment,</li>
+<li>seniority compatibility,</li>
+<li>target role title overlap,</li>
+<li>sector/domain overlap,</li>
+<li>freshness bonus.</li>
+</ul>
+<p>LLM then enriches explanation fields (<code>why</code>, <code>gaps</code>, <code>resume_pointers</code>) and can adjust fit score.</p>
+<h2>8.3 Annotated code lens: safety and caching</h2>
+<pre><code class="language-python"># core idea (annotated)
+
+resume_hash = sha256(resume_text)
+profile = parse_resume_profile(resume_text)
+resume_id = upsert_resume_profile(...)
+
+pool = get_jobs_for_fit_pool(**candidate_filters(profile))
+shortlisted = shortlist_jobs(profile, pool)
+
+for job in shortlisted:
+    cached = get_cached_resume_fit(resume_id, job[&quot;id&quot;], PROMPT_VERSION)
+    if cached:
+        use cached
+    else:
+        request LLM fit batch
+        save_resume_fit(..., prompt_version=PROMPT_VERSION)
+</code></pre>
+<p>Key design decision: prompt version is part of cache key so prompt/model shifts do not silently mix old semantics.</p>
+<hr>
+<h2>Section 9: FastAPI service (<code>api/app.py</code>)</h2>
+<h2>9.1 Service shape</h2>
+<p><code>api/app.py</code> is intentionally thin:</p>
+<ul>
+<li>initialize DB,</li>
+<li>configure CORS,</li>
+<li>map routes -&gt; query functions,</li>
+<li>normalize fit errors.</li>
+</ul>
+<h2>9.2 Endpoint groups</h2>
+<ul>
+<li>Overview: <code>/api/overview</code></li>
+<li>Company: <code>/api/companies</code>, <code>/api/companies/{id}</code>, <code>/api/companies/velocity</code></li>
+<li>Jobs: <code>/api/jobs</code>, <code>/api/jobs/{id}</code>, <code>/api/jobs/filters</code>, <code>/api/jobs/trends</code>, <code>/api/jobs/freshness</code></li>
+<li>Taxonomy: <code>/api/sectors</code>, <code>/api/departments</code>, <code>/api/seniority</code>, <code>/api/work-models</code>, <code>/api/role-families</code>, <code>/api/skills</code></li>
+<li>Changes/cross tabs: <code>/api/changes/*</code>, <code>/api/cross/*</code></li>
+<li>Health: <code>/api/health</code></li>
+<li>Fit: <code>/api/fit/matches</code>, <code>/api/fit/jobs/{job_id}</code></li>
+</ul>
+<h2>9.3 Annotated code lens: fit error normalization</h2>
+<pre><code class="language-python"># intent: convert backend/runtime/model errors into user-friendly HTTP responses
+
+def _fit_error(exc: Exception) -&gt; HTTPException:
+    message = str(exc)
+
+    # Missing key -&gt; 503 not configured
+    if &quot;GROQ_API_KEY&quot; in message:
+        return HTTPException(status_code=503, detail=&quot;Resume matching is not configured yet...&quot;)
+
+    # Rate limited -&gt; 429
+    if &quot;rate_limit_exceeded&quot; in message or &quot;429&quot; in message:
+        return HTTPException(status_code=429, detail=&quot;Resume matching is temporarily rate-limited...&quot;)
+
+    # Provider outage -&gt; 503
+    if &quot;Groq API&quot; in message:
+        return HTTPException(status_code=503, detail=&quot;Resume matching is temporarily unavailable...&quot;)
+
+    # Validation/user input errors
+    return HTTPException(status_code=400, detail=message)
+</code></pre>
+<hr>
+<h2>Section 10: Frontend deep tour (<code>dashboard/</code>)</h2>
+<h2>10.1 UI shell</h2>
+<ul>
+<li><code>src/app/layout.tsx</code>: page frame + sidebar.</li>
+<li><code>src/components/Sidebar.tsx</code>: navigation and tracked count.</li>
+<li><code>src/app/globals.css</code>: theme variables and chart tooltip styling.</li>
+</ul>
+<h2>10.2 API client layer</h2>
+<p><code>src/lib/api.ts</code>:</p>
+<ul>
+<li>central fetch wrappers (<code>fetchApi</code>, <code>postFormApi</code>),</li>
+<li>TypeScript interfaces,</li>
+<li>one exported <code>api</code> object of endpoint calls.</li>
+</ul>
+<h2>10.3 Page cluster map</h2>
+<div class="mermaid">flowchart LR
+  P0["/ (Pulse)"] --> O1["overview + sector + department + role + freshness"]
+  P1["/companies"] --> O2["companies + velocity"]
+  P2["/companies/[id]"] --> O3["company detail + jobs + events"]
+  P3["/jobs"] --> O4["jobs + filters + skills + departments"]
+  P4["/changes"] --> O5["events + movers + sector delta"]
+  P5["/trends"] --> O6["job trends + cross tabs"]
+  P6["/roles"] --> O7["seniority/work model + cross"]
+  P7["/skills"] --> O8["skill ranking"]
+  P8["/coverage"] --> O9["coverage catalog"]
+  P9["/health"] --> O10["scrape health"]
+  P10["/fit"] --> O11["resume fit flow"]
+</div>
+<h2>10.4 Annotated code lens: <code>fetchApi</code></h2>
+<pre><code class="language-ts">// src/lib/api.ts
+async function fetchApi&lt;T&gt;(
+  path: string,
+  params?: Record&lt;string, string | number | string[] | number[] | undefined&gt;
+): Promise&lt;T&gt; {
+  // Build URL from base env variable and endpoint path.
+  const url = new URL(`${API_BASE}${path}`);
+
+  // Serialize query parameters.
+  if (params) {
+    Object.entries(params).forEach(([k, v]) =&gt; {
+      // Skip empty values.
+      if (v === undefined || v === null || v === &quot;&quot;) return;
+
+      // Arrays are joined as comma-separated values.
+      if (Array.isArray(v)) {
+        const values = v.map((entry) =&gt; String(entry).trim()).filter(Boolean);
+        if (values.length &gt; 0) {
+          url.searchParams.set(k, values.join(&quot;,&quot;));
+        }
+        return;
+      }
+
+      // Scalar value path.
+      url.searchParams.set(k, String(v));
+    });
+  }
+
+  // Execute request.
+  const res = await fetch(url.toString());
+
+  // Throw for non-2xx responses.
+  if (!res.ok) throw new Error(`API error: ${res.status}`);
+
+  // Parse typed JSON body.
+  return res.json();
+}
+</code></pre>
+<h2>10.5 Frontend visual behavior design</h2>
+<ul>
+<li>Most pages are client-rendered with <code>useEffect</code> fetch calls.</li>
+<li>Recharts drives chart visuals.</li>
+<li>Multi-select filter UX via <code>MultiValuePicker</code>.</li>
+<li>CSV export helper in <code>src/lib/export.ts</code>.</li>
+</ul>
+<hr>
+<h2>Section 11: Scripts atlas (<code>scripts/</code>)</h2>
+<h2>11.1 Operational categories</h2>
+<div class="mermaid">flowchart TD
+  A["Discovery"] --> A1["batch_discover.py"]
+  A --> A2["bulk_expand.py"]
+  A --> A3["sector_grind.py"]
+  A --> A4["hybrid_discover.py"]
+
+  B["Import / Orchestrate"] --> B1["import_bulk_hits.py"]
+  B --> B2["growth_run.py"]
+  B --> B3["growth_maintenance.py"]
+
+  C["Migration / Packaging"] --> C1["migrate_v2.py"]
+  C --> C2["migrate_sqlite_to_postgres.py"]
+  C --> C3["make_demo_db.py"]
+</div>
+<h2>11.2 Script-by-script quick cards</h2>
+<table>
+<thead>
+<tr>
+<th>Script</th>
+<th>Current purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>batch_discover.py</code></td>
+<td>async ATS slug probing from candidate names</td>
+</tr>
+<tr>
+<td><code>bulk_expand.py</code></td>
+<td>broad discovery and YAML config generation</td>
+</tr>
+<tr>
+<td><code>import_bulk_hits.py</code></td>
+<td>inserts hits into canonical companies</td>
+</tr>
+<tr>
+<td><code>growth_run.py</code></td>
+<td>one command for discovery + import + scrape + maintenance</td>
+</tr>
+<tr>
+<td><code>growth_maintenance.py</code></td>
+<td>quality gates and tagging</td>
+</tr>
+<tr>
+<td><code>sector_grind.py</code></td>
+<td>sector batch discovery and direct add</td>
+</tr>
+<tr>
+<td><code>hybrid_discover.py</code></td>
+<td>intended staged discovery flow</td>
+</tr>
+<tr>
+<td><code>migrate_v2.py</code></td>
+<td>schema migration helper</td>
+</tr>
+<tr>
+<td><code>migrate_sqlite_to_postgres.py</code></td>
+<td>intended DB transfer utility</td>
+</tr>
+<tr>
+<td><code>make_demo_db.py</code></td>
+<td>create lightweight demo DB</td>
+</tr>
+</tbody>
+</table>
+<h2>11.3 Annotated code lens: <code>growth_run.py</code> orchestrator pattern</h2>
+<pre><code class="language-python"># idea: run multiple lanes with optional skips and summarize results
+
+def _discover_and_import(...):
+    # 1) Run batch_discover.py -&gt; raw hits JSON
+    # 2) Add source metadata/confidence
+    # 3) Run import_bulk_hits.py
+    # 4) Return lane summary
+    ...
+
+
+def main():
+    # Parse flags (skip lanes, skip scrape, skip maintenance).
+    ...
+
+    # Run midmarket lane unless skipped.
+    ...
+
+    # Run general lane unless skipped.
+    ...
+
+    # Run tracker scrape unless skipped.
+    ...
+
+    # Run maintenance unless skipped.
+    ...
+
+    # Print final JSON summary.
+    ...
+</code></pre>
+<hr>
+<h2>Section 12: Legacy Streamlit app (<code>dashboard.py</code>)</h2>
+<h2>12.1 Why it still exists</h2>
+<p>Legacy Streamlit interface still provides:</p>
+<ul>
+<li>quick local exploration,</li>
+<li>alternate lens for overview/jobs/trends,</li>
+<li>shared query-layer verification.</li>
+</ul>
+<p>It is not the primary frontend now, but useful for fallback validation.</p>
+<hr>
+<h2>Section 13: Environment variables and runtime contracts</h2>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Used by</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>TRACKER_DB_PATH</code></td>
+<td><code>db/models.py</code></td>
+<td>override DB file path</td>
+</tr>
+<tr>
+<td><code>FRONTEND_URL</code></td>
+<td><code>api/app.py</code></td>
+<td>add CORS allowed origin</td>
+</tr>
+<tr>
+<td><code>NEXT_PUBLIC_API_URL</code></td>
+<td><code>dashboard/src/lib/api.ts</code></td>
+<td>frontend API base URL</td>
+</tr>
+<tr>
+<td><code>GROQ_API_KEY</code></td>
+<td><code>analysis/resume_fit.py</code></td>
+<td>enable LLM fit path</td>
+</tr>
+<tr>
+<td><code>LLM_MODEL</code> / <code>GROQ_MODEL</code></td>
+<td><code>analysis/resume_fit.py</code></td>
+<td>model override</td>
+</tr>
+<tr>
+<td><code>DATABASE_URL</code> / <code>TRACKER_DATABASE_URL</code></td>
+<td>migration script</td>
+<td>postgres target</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>Section 14: Current-state drift and risk register</h2>
+<p>This is based on local inspection and build checks.</p>
+<h2>14.1 Frontend contract drift</h2>
+<ul>
+<li><code>dashboard/src/app/analyst/page.tsx</code> and <code>dashboard/src/app/radar/page.tsx</code> reference API types/functions not present in <code>dashboard/src/lib/api.ts</code>.</li>
+<li>Confirmed by <code>npm run build</code> type error for missing <code>AnalystCohortResponse</code> export.</li>
+</ul>
+<h2>14.2 Backend feature gap for new pages</h2>
+<ul>
+<li>No corresponding watchlist/radar/analyst API routes in tracked <code>api/app.py</code>.</li>
+<li>No matching query functions in current <code>db/queries.py</code>.</li>
+</ul>
+<h2>14.3 Script drift</h2>
+<ul>
+<li><code>scripts/hybrid_discover.py</code> references discovery-stage query functions not present in current query module.</li>
+<li><code>scripts/migrate_sqlite_to_postgres.py</code> expects connection abstraction not present in current SQLite-only <code>db/models.py</code>.</li>
+<li><code>scripts/growth_run.py</code> sets <code>TRACKER_COMPANY_SOURCE</code>, but <code>tracker.py</code> currently does not consume that variable.</li>
+</ul>
+<h2>14.4 Query safety note</h2>
+<ul>
+<li><code>get_overview_stats</code> currently interpolates <code>company_type</code> using string formatting.</li>
+<li>Caller values are constrained in current UI paths, but parameterized SQL is safer and recommended.</li>
+</ul>
+<hr>
+<h2>Section 15: End-to-end operational cookbook</h2>
+<h2>15.1 Daily run commands</h2>
+<pre><code class="language-bash">cd /Users/imanbaghai/Desktop/startup-tracker
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+python tracker.py
+uvicorn api.app:app --reload --port 8000
+</code></pre>
+<p>New terminal:</p>
+<pre><code class="language-bash">cd /Users/imanbaghai/Desktop/startup-tracker/dashboard
+npm install
+npm run dev
+</code></pre>
+<p>Health checks:</p>
+<ul>
+<li><a href="http://localhost:8000/api/overview">http://localhost:8000/api/overview</a></li>
+<li><a href="http://localhost:3000">http://localhost:3000</a></li>
+</ul>
+<h2>15.2 Change analysis routine</h2>
+<ol>
+<li>Open Changes page.</li>
+<li>Validate opened vs closed totals.</li>
+<li>Inspect movers by 7d/30d windows.</li>
+<li>Cross-check with Health page for scrape failures.</li>
+</ol>
+<hr>
+<h2>Section 16: File-by-file walkthrough index</h2>
+<p>Use this index to read source quickly.</p>
+<h3>16.1 Backend core</h3>
+<ul>
+<li><code>tracker.py</code></li>
+<li><code>db/models.py</code></li>
+<li><code>db/queries.py</code></li>
+<li><code>api/app.py</code></li>
+</ul>
+<h3>16.2 Analysis</h3>
+<ul>
+<li><code>analysis/nlp.py</code></li>
+<li><code>analysis/resume_fit.py</code></li>
+</ul>
+<h3>16.3 Scrapers</h3>
+<ul>
+<li><code>scraper/base.py</code></li>
+<li><code>scraper/ashby.py</code></li>
+<li><code>scraper/greenhouse.py</code></li>
+<li><code>scraper/lever.py</code></li>
+<li><code>scraper/smartrecruiters.py</code></li>
+<li><code>scraper/teamtailor.py</code></li>
+<li><code>scraper/playwright_scraper.py</code></li>
+<li><code>scraper/static_html.py</code></li>
+<li><code>scraper/workable.py</code> (present, not wired in main dispatch)</li>
+<li><code>scraper/workday.py</code> (present, not wired in main dispatch)</li>
+<li><code>scraper/enrichment.py</code></li>
+</ul>
+<h3>16.4 Frontend route pages</h3>
+<ul>
+<li><code>dashboard/src/app/page.tsx</code> (Pulse)</li>
+<li><code>dashboard/src/app/companies/page.tsx</code></li>
+<li><code>dashboard/src/app/companies/[id]/page.tsx</code></li>
+<li><code>dashboard/src/app/jobs/page.tsx</code></li>
+<li><code>dashboard/src/app/changes/page.tsx</code></li>
+<li><code>dashboard/src/app/trends/page.tsx</code></li>
+<li><code>dashboard/src/app/roles/page.tsx</code></li>
+<li><code>dashboard/src/app/skills/page.tsx</code></li>
+<li><code>dashboard/src/app/coverage/page.tsx</code></li>
+<li><code>dashboard/src/app/compare/page.tsx</code></li>
+<li><code>dashboard/src/app/health/page.tsx</code></li>
+<li><code>dashboard/src/app/fit/page.tsx</code></li>
+<li><code>dashboard/src/app/radar/page.tsx</code> (contract drift)</li>
+<li><code>dashboard/src/app/analyst/page.tsx</code> (contract drift)</li>
+</ul>
+<h3>16.5 Frontend infra</h3>
+<ul>
+<li><code>dashboard/src/app/layout.tsx</code></li>
+<li><code>dashboard/src/app/globals.css</code></li>
+<li><code>dashboard/src/components/Sidebar.tsx</code></li>
+<li><code>dashboard/src/components/MultiValuePicker.tsx</code></li>
+<li><code>dashboard/src/lib/api.ts</code></li>
+<li><code>dashboard/src/lib/format.ts</code></li>
+<li><code>dashboard/src/lib/export.ts</code></li>
+</ul>
+<h3>16.6 Scripts</h3>
+<ul>
+<li>all files under <code>scripts/</code> (discovery, maintenance, migration utilities)</li>
+</ul>
+<hr>
+<h2>Section 17: Suggested hardening roadmap</h2>
+<p>Priority 1 (contract alignment):</p>
+<ol>
+<li>Add missing API types/functions in <code>dashboard/src/lib/api.ts</code> for analyst/radar, or remove routes from nav until backend exists.</li>
+<li>Implement missing backend/query support for watchlists/radar/analyst, or park pages.</li>
+</ol>
+<p>Priority 2 (script hygiene):</p>
+<ol>
+<li>Either restore discovery-stage query functions used by <code>hybrid_discover.py</code> or archive script.</li>
+<li>Align <code>migrate_sqlite_to_postgres.py</code> with actual connection layer.</li>
+<li>Wire <code>TRACKER_COMPANY_SOURCE</code> in tracker or remove option from <code>growth_run.py</code>.</li>
+</ol>
+<p>Priority 3 (safety and quality):</p>
+<ol>
+<li>Parameterize <code>get_overview_stats</code> SQL.</li>
+<li>Add tests around <code>sync_jobs</code> lifecycle transitions.</li>
+<li>Add API integration tests for top endpoints.</li>
+</ol>
+<hr>
+<h2>Section 18: Visual quick-reference cards</h2>
+<h2>18.1 Architecture card</h2>
+<div class="mermaid">flowchart LR
+  Scrape --> Normalize --> Store --> Serve --> Visualize
+</div>
+<h2>18.2 Core state card</h2>
+<div class="mermaid">stateDiagram-v2
+  [*] --> active
+  active --> suspected_closed: missing once
+  suspected_closed --> active: seen again
+  suspected_closed --> closed: missing again
+  closed --> [*]
+</div>
+<h2>18.3 Data confidence card</h2>
+<div class="mermaid">flowchart TD
+  A["External ATS data"] --> B["Raw job row"]
+  B --> C["Identity matching"]
+  C --> D["Lifecycle status"]
+  D --> E["Enrichment taxonomy"]
+  E --> F["Analytics outputs"]
+</div>
+<hr>
+<h2>Appendix A: fully commented mini replicas of key core patterns</h2>
+<p>These are learning replicas (not full production code) used to teach intent.</p>
+<h3>A.1 Query filter helper pattern</h3>
+<pre><code class="language-python"># Helper: split comma-separated strings or arrays into clean list.
+def _split_filter_values(value) -&gt; list[str]:
+    # None -&gt; no filters.
+    if value is None:
+        return []
+
+    # If value already list-like, stringify each element.
+    if isinstance(value, (list, tuple, set)):
+        raw_values = [str(item) for item in value]
+    else:
+        # Otherwise split CSV string.
+        raw_values = str(value).split(&quot;,&quot;)
+
+    # Trim whitespace and remove empties.
+    return [item.strip() for item in raw_values if str(item).strip()]
+</code></pre>
+<h3>A.2 API route wrapper pattern</h3>
+<pre><code class="language-python"># Thin endpoint wrapper:
+# - parse query params
+# - call query function
+# - return JSON-ready result
+
+@app.get(&quot;/api/seniority&quot;)
+def seniority(company_type: Optional[str] = None):
+    return queries.get_seniority_breakdown(company_type=company_type)
+</code></pre>
+<h3>A.3 Frontend fetch pattern</h3>
+<pre><code class="language-ts">// Frontend endpoint call pattern:
+// 1) build URL
+// 2) attach params
+// 3) fetch
+// 4) throw on non-OK
+// 5) parse JSON
+
+const data = await fetchApi&lt;OverviewStats&gt;(&quot;/api/overview&quot;, { company_type: &quot;startup&quot; });
+</code></pre>
+<hr>
+<h2>Appendix B: build verification snapshot</h2>
+<p>Observed locally during atlas creation:</p>
+<ul>
+<li>Core backend and most dashboard pages are wired.</li>
+<li>Full dashboard production build currently fails at missing analyst/radar API type exports.</li>
+</ul>
+<p>Use this as a known baseline while planning next fixes.</p>
+<hr>
+<h2>Section 1 Addendum: Tutorial Side-by-Side Code Companion</h2>
+<p>This addendum is the “read code like a map” version of the tutorial.<br>
+Each row gives:</p>
+<ul>
+<li>Code snippet</li>
+<li>What it does</li>
+<li>What output/result you should see</li>
+</ul>
+<h3>A1. Tutorial Mission Matrix</h3>
+<table>
+<thead>
+<tr>
+<th>Mission</th>
+<th>Code focus</th>
+<th>What it does</th>
+<th>Expected output</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Mission 2</td>
+<td><code>db/models.py</code></td>
+<td>Creates schema and DB connection defaults</td>
+<td><code>DB created</code> + file in <code>data/tracker.db</code></td>
+</tr>
+<tr>
+<td>Mission 3</td>
+<td><code>scraper/base.py</code>, <code>scraper/greenhouse.py</code></td>
+<td>Pulls jobs from Greenhouse and normalizes fields</td>
+<td>job count + sample title</td>
+</tr>
+<tr>
+<td>Mission 4</td>
+<td><code>db/queries.py::sync_jobs</code></td>
+<td>Dedupe, insert, close missing jobs, log events</td>
+<td><code>added/removed</code> metrics update</td>
+</tr>
+<tr>
+<td>Mission 5</td>
+<td><code>tracker.py</code></td>
+<td>End-to-end scrape -&gt; sync run</td>
+<td>one line per company with found/added/removed</td>
+</tr>
+<tr>
+<td>Mission 6</td>
+<td><code>api/app.py</code></td>
+<td>Exposes <code>/api/overview</code></td>
+<td>JSON response in browser</td>
+</tr>
+<tr>
+<td>Mission 7</td>
+<td><code>dashboard/src/app/page.tsx</code></td>
+<td>Fetches API and renders values</td>
+<td>visible cards/text in browser</td>
+</tr>
+<tr>
+<td>Mission 8</td>
+<td><code>enrichment.py</code>, <code>nlp.py</code></td>
+<td>Backfill metadata and extract basic skills</td>
+<td><code>enriched: N</code>, <code>skills: M</code></td>
+</tr>
+</tbody>
+</table>
+<h3>A2. Tutorial DB Layer (side-by-side)</h3>
+<h4>Code</h4>
+<pre><code class="language-python"># db/models.py
+DB_PATH = Path(&quot;data/tracker.db&quot;)
+
+conn = sqlite3.connect(DB_PATH)
+conn.row_factory = sqlite3.Row
+conn.execute(&quot;PRAGMA journal_mode=WAL&quot;)
+conn.execute(&quot;PRAGMA foreign_keys=ON&quot;)
+</code></pre>
+<h4>What it does</h4>
+<ul>
+<li>Picks local DB file path.</li>
+<li>Opens SQLite connection.</li>
+<li>Enables dict-like row access.</li>
+<li>Enables WAL mode for better read/write behavior.</li>
+<li>Turns on foreign key protection.</li>
+</ul>
+<h4>Output/result</h4>
+<ul>
+<li>A SQLite DB file appears at <code>data/tracker.db</code>.</li>
+<li>Tables can reference each other safely.</li>
+</ul>
+<h3>A3. Tutorial Scraper Layer (side-by-side)</h3>
+<h4>Code</h4>
+<pre><code class="language-python"># scraper/greenhouse.py
+url = f&quot;https://boards-api.greenhouse.io/v1/boards/{slug}/jobs?content=true&quot;
+...
+jobs.append(
+  JobPosting(
+    title=row.get(&quot;title&quot;, &quot;&quot;),
+    external_id=str(row.get(&quot;id&quot;)) if row.get(&quot;id&quot;) else None,
+    location=(row.get(&quot;location&quot;) or {}).get(&quot;name&quot;),
+    department=((row.get(&quot;departments&quot;) or [{}])[0]).get(&quot;name&quot;),
+    url=row.get(&quot;absolute_url&quot;),
+  )
+)
+</code></pre>
+<h4>What it does</h4>
+<ul>
+<li>Calls Greenhouse board API.</li>
+<li>Converts raw provider fields into common <code>JobPosting</code> shape.</li>
+<li>Keeps stable <code>external_id</code> for dedupe during sync.</li>
+</ul>
+<h4>Output/result</h4>
+<p>Example shape returned (list item):</p>
+<pre><code class="language-json">{
+  &quot;title&quot;: &quot;Software Engineer, Backend&quot;,
+  &quot;company&quot;: &quot;Stripe&quot;,
+  &quot;external_id&quot;: &quot;1234567&quot;,
+  &quot;location&quot;: &quot;San Francisco, CA&quot;,
+  &quot;department&quot;: &quot;Engineering&quot;,
+  &quot;url&quot;: &quot;https://boards.greenhouse.io/...&quot;
+}
+</code></pre>
+<h3>A4. Tutorial Sync Engine (side-by-side)</h3>
+<h4>Code</h4>
+<pre><code class="language-python"># db/queries.py::sync_jobs (core logic)
+if ext_id and ext_id in by_external_id:
+    existing_id = by_external_id[ext_id]
+...
+if existing_id:
+    UPDATE job_postings SET last_seen_at=..., is_active=1
+else:
+    INSERT INTO job_postings(...)
+    INSERT INTO job_events(..., 'added')
+...
+if row['id'] not in matched_ids:
+    UPDATE job_postings SET is_active=0, posting_status='closed'
+    INSERT INTO job_events(..., 'removed')
+</code></pre>
+<h4>What it does</h4>
+<ul>
+<li>Matches scraped job to existing active row.</li>
+<li>Updates existing row if matched.</li>
+<li>Inserts new row if not matched.</li>
+<li>Closes rows not seen this run.</li>
+<li>Creates <code>added/removed</code> events for timeline analytics.</li>
+</ul>
+<h4>Output/result</h4>
+<ul>
+<li>Accurate active job set.</li>
+<li>Change history in <code>job_events</code>.</li>
+<li>Run metrics in <code>scrape_runs</code>.</li>
+</ul>
+<h3>A5. Tutorial API Layer (side-by-side)</h3>
+<h4>Code</h4>
+<pre><code class="language-python">@app.get('/api/overview')
+def overview(company_type: Optional[str] = None):
+    return queries.get_overview_stats(company_type=company_type)
+</code></pre>
+<h4>What it does</h4>
+<ul>
+<li>Accepts optional company type filter.</li>
+<li>Calls query-layer aggregation function.</li>
+<li>Returns JSON payload directly.</li>
+</ul>
+<h4>Output/result</h4>
+<p>Example response:</p>
+<pre><code class="language-json">{
+  &quot;total_companies&quot;: 2,
+  &quot;total_active_jobs&quot;: 145,
+  &quot;last_run&quot;: &quot;2026-04-18 20:10:51&quot;,
+  &quot;net_added&quot;: 0,
+  &quot;net_removed&quot;: 0
+}
+</code></pre>
+<h3>A6. Tutorial Frontend Layer (side-by-side)</h3>
+<h4>Code</h4>
+<pre><code class="language-tsx">useEffect(() =&gt; {
+  fetch(&quot;http://localhost:8000/api/overview&quot;)
+    .then((r) =&gt; r.json())
+    .then(setData)
+}, [])
+</code></pre>
+<h4>What it does</h4>
+<ul>
+<li>Calls API once on page load.</li>
+<li>Stores response in component state.</li>
+<li>React re-renders with loaded values.</li>
+</ul>
+<h4>Output/result</h4>
+<ul>
+<li>Loading state first.</li>
+<li>Then totals rendered on page.</li>
+</ul>
+<h3>A7. Tutorial full-run output examples</h3>
+<p>Expected command outputs:</p>
+<pre><code class="language-bash">python3 tracker.py
+# Stripe: found=92 added=92 removed=0
+# Notion: found=53 added=53 removed=0
+</code></pre>
+<pre><code class="language-bash">python3 - &lt;&lt;'PY'
+from scraper.enrichment import enrich_all
+from analysis.nlp import extract_all_skills
+print('enriched:', enrich_all())
+print('skills:', extract_all_skills())
+PY
+# enriched: 145
+# skills: 38
+</code></pre>
+<hr>
+<h2>Section 2 Addendum: Full Project Side-by-Side Code Companion</h2>
+<p>This is the deep companion for the real repository code.</p>
+<h3>B1. Core module matrix (code -&gt; behavior -&gt; output)</h3>
+<table>
+<thead>
+<tr>
+<th>Module</th>
+<th>Key function(s)</th>
+<th>What it does</th>
+<th>Output shape</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>tracker.py</code></td>
+<td><code>run</code>, <code>scrape_company</code></td>
+<td>orchestrates scrape/sync/enrich/skills</td>
+<td>console run summary</td>
+</tr>
+<tr>
+<td><code>db/models.py</code></td>
+<td><code>get_connection</code>, <code>init_db</code></td>
+<td>DB connection + schema + additive migrations</td>
+<td>SQLite DB with latest columns/indexes</td>
+</tr>
+<tr>
+<td><code>db/queries.py</code></td>
+<td><code>sync_jobs</code>, analytics queries</td>
+<td>canonical state + read models</td>
+<td>dict/list responses for API</td>
+</tr>
+<tr>
+<td><code>api/app.py</code></td>
+<td>route handlers</td>
+<td>endpoint contracts</td>
+<td>JSON over HTTP</td>
+</tr>
+<tr>
+<td><code>analysis/nlp.py</code></td>
+<td><code>extract_all_skills</code></td>
+<td>regex skill tagging</td>
+<td><code>job_skills</code> rows</td>
+</tr>
+<tr>
+<td><code>analysis/resume_fit.py</code></td>
+<td>fit pipeline</td>
+<td>resume profile + scoring + LLM rationale + cache</td>
+<td>match payloads</td>
+</tr>
+<tr>
+<td><code>dashboard/src/lib/api.ts</code></td>
+<td><code>fetchApi</code>, <code>api.*</code></td>
+<td>typed frontend API access</td>
+<td>TS-typed responses</td>
+</tr>
+</tbody>
+</table>
+<h3>B2. <code>tracker.py</code> side-by-side</h3>
+<h4>Code (focus)</h4>
+<pre><code class="language-python">tasks = [scrape_company(c, company_ids[c['name']]) for c in companies]
+results = await asyncio.gather(*tasks, return_exceptions=True)
+...
+from scraper.enrichment import enrich_all
+enriched = enrich_all()
+...
+from analysis.nlp import extract_all_skills
+skills = extract_all_skills()
+</code></pre>
+<h4>What it does</h4>
+<ul>
+<li>Scrapes all configured companies concurrently.</li>
+<li>Applies lifecycle sync per company.</li>
+<li>Runs post-processing passes after ingestion.</li>
+</ul>
+<h4>Output/result</h4>
+<p>Terminal run table:</p>
+<pre><code class="language-text">Company                   ATS          Jobs   New  Gone
+------------------------------------------------------
+Stripe                    greenhouse     92   +12   -3
+...
+TOTAL                                  1240  +87  -44
+Enriched 1132 jobs
+Extracted 429 skill tags
+</code></pre>
+<h3>B3. <code>db/queries.py</code> sync side-by-side (deep)</h3>
+<h4>Code (identity match order)</h4>
+<pre><code class="language-python">if ext_id and ext_id in by_ext_id:
+    existing_id = by_ext_id[ext_id]
+elif canonical_url and canonical_url in by_canonical_url:
+    existing_id = by_canonical_url[canonical_url]
+elif fingerprint in by_fingerprint:
+    existing_id = by_fingerprint[fingerprint]
+elif (title_key, location_key) in by_title_location:
+    existing_id = by_title_location[(title_key, location_key)]
+</code></pre>
+<h4>What it does</h4>
+<ul>
+<li>Uses strongest identifiers first.</li>
+<li>Falls back to weaker but useful title+location composite.</li>
+<li>Reduces duplicate insertions and preserves continuity.</li>
+</ul>
+<h4>Output/result</h4>
+<ul>
+<li>Stable job identity through title or URL changes.</li>
+<li>Better add/remove accuracy.</li>
+</ul>
+<h4>Code (two-step close)</h4>
+<pre><code class="language-python">misses = (row['consecutive_misses'] or 0) + 1
+should_close = row['posting_status'] == 'suspected_closed' or misses &gt;= 2
+</code></pre>
+<h4>What it does</h4>
+<ul>
+<li>Prevents false removals from one-off scrape misses.</li>
+</ul>
+<h4>Output/result</h4>
+<ul>
+<li>First miss: <code>suspected_closed</code></li>
+<li>Repeat miss: <code>closed</code> + <code>removed</code> event</li>
+</ul>
+<h3>B4. NLP pipeline (<code>analysis/nlp.py</code>) side-by-side</h3>
+<h4>Code</h4>
+<pre><code class="language-python">_SKILLS = {
+  'Python': r'\\bPython\\b',
+  'Kubernetes': r'\\bKubernetes\\b|\\bk8s\\b',
+  'LLM': r'\\bLLMs?\\b|\\blarge language model\\b',
+  ...
+}
+_COMPILED = {name: re.compile(pattern, re.IGNORECASE) for name, pattern in _SKILLS.items()}
+
+for name, pattern in _COMPILED.items():
+    if pattern.search(text):
+        found.append(name)
+</code></pre>
+<h4>What it does</h4>
+<ul>
+<li>Maintains canonical skill dictionary.</li>
+<li>Compiles regex once.</li>
+<li>Checks each job description for matches.</li>
+<li>Writes discovered skills to <code>job_skills</code>.</li>
+</ul>
+<h4>Output/result</h4>
+<p>Example extraction:</p>
+<p>Input text:</p>
+<pre><code class="language-text">We need Python, SQL, and Kubernetes experience. LLM evaluation experience is a plus.
+</code></pre>
+<p>Output list:</p>
+<pre><code class="language-json">[&quot;Python&quot;, &quot;SQL&quot;, &quot;Kubernetes&quot;, &quot;LLM&quot;]
+</code></pre>
+<h4>Code (<code>extract_all_skills</code>)</h4>
+<pre><code class="language-python">rows = conn.execute(&quot;&quot;&quot;
+  SELECT jp.id, jp.description
+  FROM job_postings jp
+  LEFT JOIN job_skills js ON js.job_id = jp.id
+  WHERE jp.description IS NOT NULL
+    AND js.job_id IS NULL
+  GROUP BY jp.id
+&quot;&quot;&quot;).fetchall()
+</code></pre>
+<h4>What it does</h4>
+<ul>
+<li>Processes only untagged rows (incremental behavior).</li>
+<li>Avoids redundant re-processing of previously-tagged jobs.</li>
+</ul>
+<h4>Output/result</h4>
+<ul>
+<li>Faster repeated runs.</li>
+<li>Predictable growth of skill table.</li>
+</ul>
+<h3>B5. AI/LLM fit pipeline (<code>analysis/resume_fit.py</code>) side-by-side (deep)</h3>
+<h4>Stage 1: Resume text extraction</h4>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>What it does</th>
+<th>Output</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>extract_resume_text</code></td>
+<td>loads txt/md/pdf/docx text</td>
+<td>plain string resume text</td>
+</tr>
+<tr>
+<td>PDF path</td>
+<td>uses <code>pypdf.PdfReader</code></td>
+<td>concatenated page text</td>
+</tr>
+<tr>
+<td>DOCX path</td>
+<td>uses <code>python-docx</code></td>
+<td>concatenated paragraph text</td>
+</tr>
+</tbody>
+</table>
+<h4>Stage 2: LLM profile parse</h4>
+<h4>Code</h4>
+<pre><code class="language-python">prompt = {
+  &quot;task&quot;: &quot;Extract a structured resume profile for job matching.&quot;,
+  &quot;rules&quot;: [...],
+  &quot;schema&quot;: {...},
+  &quot;resume_text&quot;: resume_text[:24000],
+}
+profile = _chat_json([
+  {&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You extract resume facts into strict JSON...&quot;},
+  {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: json.dumps(prompt)},
+])
+</code></pre>
+<h4>What it does</h4>
+<ul>
+<li>Sends controlled extraction prompt to model.</li>
+<li>Forces strict JSON response format.</li>
+<li>Limits text size to reduce latency and token cost.</li>
+</ul>
+<h4>Output/result</h4>
+<p>Example parsed profile:</p>
+<pre><code class="language-json">{
+  &quot;headline&quot;: &quot;Backend engineer with distributed systems and ML platform experience.&quot;,
+  &quot;target_roles&quot;: [&quot;Senior Backend Engineer&quot;, &quot;Platform Engineer&quot;],
+  &quot;role_families&quot;: [&quot;software_engineering&quot;, &quot;ml_ai&quot;],
+  &quot;seniority&quot;: &quot;senior&quot;,
+  &quot;skills&quot;: [&quot;Python&quot;, &quot;Go&quot;, &quot;Kubernetes&quot;, &quot;PostgreSQL&quot;, &quot;LLM&quot;],
+  &quot;domains&quot;: [&quot;Fintech&quot;, &quot;Developer Tools&quot;],
+  &quot;strengths&quot;: [&quot;Built high-scale APIs&quot;, &quot;Led platform reliability work&quot;],
+  &quot;remote_preference&quot;: &quot;remote_preferred&quot;
+}
+</code></pre>
+<h4>Stage 3: Profile sanitization / de-identification</h4>
+<h4>Code</h4>
+<pre><code class="language-python">clean = {key: profile.get(key) for key in PROFILE_ALLOWED_KEYS if key in profile}
+clean['headline'] = _redact_pii_text(clean.get('headline') or '')
+clean['skills'] = _clean_string_list(clean.get('skills'), limit=80)
+</code></pre>
+<h4>What it does</h4>
+<ul>
+<li>Keeps only matching-relevant keys.</li>
+<li>Redacts direct PII patterns (email/phone/urls/name-like forms).</li>
+<li>Normalizes array lengths and contents.</li>
+</ul>
+<h4>Output/result</h4>
+<ul>
+<li>Safe compact profile persisted in <code>resume_profiles</code>.</li>
+</ul>
+<h4>Stage 4: Candidate pool SQL narrowing</h4>
+<h4>Code</h4>
+<pre><code class="language-python">pool = queries.get_jobs_for_fit_pool(
+  skills=..., role_families=..., seniorities=..., title_terms=..., domains=...
+)
+</code></pre>
+<h4>What it does</h4>
+<ul>
+<li>Reduces job universe before expensive LLM fit.</li>
+<li>Uses OR-based candidate clauses to increase recall.</li>
+</ul>
+<h4>Output/result</h4>
+<ul>
+<li>Candidate list (often hundreds) instead of full table.</li>
+</ul>
+<h4>Stage 5: Deterministic scoring</h4>
+<h4>Code</h4>
+<pre><code class="language-python">score += min(len(overlap) * 8.0, 40.0)
+if row.get('role_family') in profile_roles: score += 25.0
+if _seniority_compatible(...): score += 15.0
+score += _title_similarity(...) * 12.0
+if _sector_match(...): score += 5.0
+score += _freshness_score(...)
+</code></pre>
+<h4>What it does</h4>
+<ul>
+<li>Creates stable base ranking independent of LLM variability.</li>
+</ul>
+<h4>Output/result</h4>
+<ul>
+<li><code>deterministic_score</code> in <code>0..100</code> with matched skill list.</li>
+</ul>
+<h4>Stage 6: LLM fit rationale batch</h4>
+<h4>Code</h4>
+<pre><code class="language-python">packet = {
+  'task': 'Evaluate resume fit for each job. Return only valid JSON.',
+  'response_schema': {'fits': [{...}]},
+  'resume_profile': profile,
+  'jobs': [_job_packet(job) for job in jobs],
+}
+fits = _request_fit_batch(profile, chunk)
+</code></pre>
+<h4>What it does</h4>
+<ul>
+<li>Requests model explanations per shortlisted chunk (size 8).</li>
+<li>Uses strict output schema to simplify parser and UI rendering.</li>
+</ul>
+<h4>Output/result</h4>
+<p>Per-job fit object:</p>
+<pre><code class="language-json">{
+  &quot;job_id&quot;: 18273,
+  &quot;fit_score&quot;: 84,
+  &quot;verdict&quot;: &quot;strong fit&quot;,
+  &quot;why&quot;: [&quot;Strong overlap in backend and platform skills&quot;],
+  &quot;gaps&quot;: [&quot;Less explicit payments domain depth&quot;],
+  &quot;resume_pointers&quot;: [&quot;Add quantified impact for API latency/reliability work&quot;],
+  &quot;location_note&quot;: &quot;Location was not scored. Job location: New York, NY.&quot;,
+  &quot;location_blocker&quot;: false
+}
+</code></pre>
+<h4>Stage 7: Cache + merge</h4>
+<h4>Code</h4>
+<pre><code class="language-python">cached = queries.get_cached_resume_fit(resume_id, job['id'], PROMPT_VERSION)
+if cached: ... else: queries.save_resume_fit(...)
+</code></pre>
+<h4>What it does</h4>
+<ul>
+<li>Prevents paying for repeated identical comparisons.</li>
+<li>Keeps deterministic score and LLM rationale aligned by prompt version.</li>
+</ul>
+<h4>Output/result</h4>
+<ul>
+<li>Faster repeated fit queries.</li>
+<li>Stable historical fit records.</li>
+</ul>
+<h3>B6. API route side-by-side (whole app)</h3>
+<table>
+<thead>
+<tr>
+<th>Route family</th>
+<th>Code shape</th>
+<th>What it does</th>
+<th>Output</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>overview</td>
+<td><code>return queries.get_overview_stats(...)</code></td>
+<td>KPI cards</td>
+<td>dict</td>
+</tr>
+<tr>
+<td>jobs</td>
+<td><code>return queries.get_active_jobs(...)</code></td>
+<td>filtered feed</td>
+<td>list of jobs</td>
+</tr>
+<tr>
+<td>changes</td>
+<td><code>return queries.get_recent_events(...)</code></td>
+<td>activity timeline</td>
+<td>list events</td>
+</tr>
+<tr>
+<td>trends</td>
+<td><code>return queries.get_job_count_over_time()</code></td>
+<td>time series</td>
+<td>list points</td>
+</tr>
+<tr>
+<td>fit</td>
+<td>parse upload -&gt; call analysis funcs</td>
+<td>resume comparison</td>
+<td>fit payload</td>
+</tr>
+</tbody>
+</table>
+<h3>B7. Next.js visuals assembly (deep)</h3>
+<p>This section explains how visuals are made in the frontend, from data to chart.</p>
+<h4>B7.1 Visual pipeline map</h4>
+<div class="mermaid">flowchart TD
+  A["Page component"] --> B["useEffect fetch calls"]
+  B --> C["api.ts (typed client)"]
+  C --> D["FastAPI endpoint"]
+  D --> E["db/queries SQL"]
+  E --> D --> C --> F["React state"] --> G["Recharts components"] --> H["Rendered chart"]
+</div>
+<h4>B7.2 API client and query param shaping</h4>
+<h4>Code</h4>
+<pre><code class="language-ts">if (Array.isArray(v)) {
+  const values = v.map((entry) =&gt; String(entry).trim()).filter(Boolean);
+  if (values.length &gt; 0) {
+    url.searchParams.set(k, values.join(&quot;,&quot;));
+  }
+}
+</code></pre>
+<h4>What it does</h4>
+<ul>
+<li>Converts multi-select filters into comma-separated query params.</li>
+<li>Backend <code>_split_filter_values</code> turns those back into arrays.</li>
+</ul>
+<h4>Output/result</h4>
+<ul>
+<li>Works for filter UIs like skills/department/sector multi-pickers.</li>
+</ul>
+<h4>B7.3 React state-to-visual binding</h4>
+<h4>Code</h4>
+<pre><code class="language-tsx">const [sectors, setSectors] = useState&lt;SectorRow[]&gt;([])
+useEffect(() =&gt; {
+  api.sectors().then(setSectors)
+}, [])
+
+&lt;BarChart data={sectors}&gt;
+  &lt;Bar dataKey=&quot;job_count&quot; /&gt;
+&lt;/BarChart&gt;
+</code></pre>
+<h4>What it does</h4>
+<ul>
+<li>Stores API rows in component state.</li>
+<li>Passes same rows directly to chart as <code>data</code>.</li>
+<li><code>dataKey</code> maps chart axis/bar to object fields.</li>
+</ul>
+<h4>Output/result</h4>
+<ul>
+<li>Chart updates automatically when state changes.</li>
+</ul>
+<h4>B7.4 Recharts key pieces (how to read)</h4>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Role</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ResponsiveContainer</code></td>
+<td>auto-resize chart to container</td>
+</tr>
+<tr>
+<td><code>BarChart</code> / <code>LineChart</code> / <code>PieChart</code></td>
+<td>chart type container</td>
+</tr>
+<tr>
+<td><code>XAxis</code> / <code>YAxis</code></td>
+<td>axis configuration</td>
+</tr>
+<tr>
+<td><code>Bar</code> / <code>Line</code> / <code>Pie</code></td>
+<td>data series</td>
+</tr>
+<tr>
+<td><code>Tooltip</code></td>
+<td>hover details</td>
+</tr>
+<tr>
+<td><code>Legend</code></td>
+<td>series labels</td>
+</tr>
+<tr>
+<td><code>Cell</code></td>
+<td>per-bar/per-slice color customization</td>
+</tr>
+</tbody>
+</table>
+<h4>B7.5 Styling system for visuals</h4>
+<p><code>globals.css</code> defines color tokens:</p>
+<pre><code class="language-css">:root {
+  --background: #0f1117;
+  --card: #1a1d27;
+  --card-border: #2a2d3a;
+  --accent: #6366f1;
+  --muted: #9ca3af;
+}
+</code></pre>
+<p>Then chart components use these tokens or aligned hex palettes.</p>
+<h4>B7.6 Example: Pulse page visual assembly</h4>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>Code</th>
+<th>Effect</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>api.overview(ct).then(setOverview)</code></td>
+<td>loads KPI totals</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>api.sectors().then(setSectors)</code></td>
+<td>loads sector bars</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>api.departments(ct).then(setDepartments)</code></td>
+<td>loads dept chart</td>
+</tr>
+<tr>
+<td>4</td>
+<td>conditional render if no <code>overview</code></td>
+<td>loading state</td>
+</tr>
+<tr>
+<td>5</td>
+<td><code>KpiCard</code> components</td>
+<td>metric cards</td>
+</tr>
+<tr>
+<td>6</td>
+<td><code>BarChart</code> + <code>PieChart</code></td>
+<td>visual distributions</td>
+</tr>
+<tr>
+<td>7</td>
+<td><code>scope</code> toggle state</td>
+<td>startup-only vs all data</td>
+</tr>
+</tbody>
+</table>
+<h3>B8. Output contracts by domain (reference)</h3>
+<h4>B8.1 Overview output</h4>
+<pre><code class="language-json">{
+  &quot;total_companies&quot;: 432,
+  &quot;total_active_jobs&quot;: 11876,
+  &quot;last_run&quot;: &quot;2026-04-18 20:42:09&quot;,
+  &quot;net_added&quot;: 231,
+  &quot;net_removed&quot;: 174
+}
+</code></pre>
+<h4>B8.2 Job row output</h4>
+<pre><code class="language-json">{
+  &quot;id&quot;: 9182,
+  &quot;company_id&quot;: 51,
+  &quot;title&quot;: &quot;Senior Data Engineer&quot;,
+  &quot;company_name&quot;: &quot;ExampleCo&quot;,
+  &quot;sector&quot;: &quot;Data &amp; Analytics&quot;,
+  &quot;seniority&quot;: &quot;senior&quot;,
+  &quot;work_model&quot;: &quot;hybrid&quot;,
+  &quot;normalized_department&quot;: &quot;Engineering&quot;,
+  &quot;role_family&quot;: &quot;data&quot;,
+  &quot;is_active&quot;: 1
+}
+</code></pre>
+<h4>B8.3 Fit match output</h4>
+<pre><code class="language-json">{
+  &quot;job&quot;: {&quot;id&quot;: 9182, &quot;title&quot;: &quot;Senior Data Engineer&quot;, &quot;company_name&quot;: &quot;ExampleCo&quot;},
+  &quot;deterministic_score&quot;: 79.5,
+  &quot;fit_score&quot;: 84,
+  &quot;verdict&quot;: &quot;strong fit&quot;,
+  &quot;why&quot;: [&quot;...&quot;],
+  &quot;gaps&quot;: [&quot;...&quot;],
+  &quot;resume_pointers&quot;: [&quot;...&quot;],
+  &quot;location_note&quot;: &quot;Location was not scored...&quot;,
+  &quot;location_blocker&quot;: false,
+  &quot;cached&quot;: true
+}
+</code></pre>
+<h3>B9. Full project + tutorial crosswalk matrix</h3>
+<table>
+<thead>
+<tr>
+<th>Tutorial concept</th>
+<th>Full project equivalent</th>
+<th>Why it matters</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>one scraper</td>
+<td>multiple ATS adapters</td>
+<td>improves coverage</td>
+</tr>
+<tr>
+<td>simple sync</td>
+<td>multi-identifier + lifecycle</td>
+<td>improves data quality</td>
+</tr>
+<tr>
+<td>one endpoint</td>
+<td>full endpoint families</td>
+<td>supports many dashboards</td>
+</tr>
+<tr>
+<td>one page</td>
+<td>multi-page analytics UI</td>
+<td>role-specific workflows</td>
+</tr>
+<tr>
+<td>basic regex skills</td>
+<td>larger canonical skill dictionary</td>
+<td>better signal depth</td>
+</tr>
+<tr>
+<td>no fit cache</td>
+<td>versioned fit cache tables</td>
+<td>faster repeated queries</td>
+</tr>
+</tbody>
+</table>
+<h3>B10. Suggested learning sequence for deep understanding</h3>
+<ol>
+<li>Read tutorial mission matrix and run commands once.</li>
+<li>Read full-project module matrix.</li>
+<li>Study NLP and AI side-by-side sections.</li>
+<li>Study Next.js visual pipeline section.</li>
+<li>Trace one page fully: <code>api.ts</code> -&gt; endpoint -&gt; query -&gt; SQL -&gt; back to chart.</li>
+<li>Repeat for fit flow.</li>
+</ol>
+<h3>B11. 1:1 Visual Output Atlas (Screenshots + Code + Output)</h3>
+<p>This section is the exact map from screen pixels to code and data.</p>
+<p>How to read each card:</p>
+<ol>
+<li>Screenshot: what the browser shows.</li>
+<li>Frontend code: where the page fetches and renders.</li>
+<li>Backend code: which route/query supplies the data.</li>
+<li>Live output: real JSON returned by this running project.</li>
+</ol>
+<div class="mermaid">flowchart LR
+  A["Next.js page"] --> B["api.ts client call"] --> C["FastAPI route"] --> D["db/queries SQL"] --> E["JSON payload"] --> F["React state"] --> G["Recharts/table UI"]
+</div>
+<h4>B11.1 Pulse (<code>/</code>) — <code>01-pulse.png</code></h4>
+<img src="/Users/imanbaghai/Desktop/startup-tracker/docs/screenshots/01-pulse.png" alt="Pulse page screenshot" style="width:100%; border:1px solid #d1d5db; border-radius:8px;" />
+<p><strong>Frontend code (fetch + render)</strong></p>
+<pre><code class="language-tsx">// dashboard/src/app/page.tsx (lines 46-53)
+// On scope change, fetch every dataset needed for KPI cards and charts.
+useEffect(() =&gt; {
+  const ct = scope === &quot;startup&quot; ? &quot;startup&quot; : undefined;
+  api.overview(ct).then(setOverview);
+  api.sectors().then(setSectors);
+  api.departments(ct).then(setDepartments);
+  api.roleFamilies(ct).then(setRoleFamilies);
+  api.jobFreshness(ct).then(setFreshness);
+}, [scope]);
+
+// dashboard/src/app/page.tsx (lines 95-198)
+// Recharts reads state arrays directly:
+// - sectors -&gt; BarChart (dataKey job_count)
+// - departments -&gt; BarChart or PieChart
+// - roleFamilies -&gt; BarChart
+// - freshness -&gt; BarChart
+</code></pre>
+<p><strong>Backend route + query</strong></p>
+<ul>
+<li>Route: <code>api/app.py</code> line <code>45</code> (<code>/api/overview</code>)</li>
+<li>Query: <code>db/queries.py</code> line <code>1051</code> (<code>get_overview_stats</code>)</li>
+</ul>
+<p><strong>Live output sample</strong></p>
+<pre><code class="language-json">{
+  &quot;total_companies&quot;: 527,
+  &quot;total_active_jobs&quot;: 32386,
+  &quot;last_run&quot;: &quot;2026-04-14 19:26:38&quot;,
+  &quot;net_added&quot;: 27,
+  &quot;net_removed&quot;: 416
+}
+</code></pre>
+<hr>
+<h4>B11.2 Companies (<code>/companies</code>) — <code>02-companies.png</code></h4>
+<img src="/Users/imanbaghai/Desktop/startup-tracker/docs/screenshots/02-companies.png" alt="Companies page screenshot" style="width:100%; border:1px solid #d1d5db; border-radius:8px;" />
+<p><strong>Frontend code</strong></p>
+<pre><code class="language-tsx">// dashboard/src/app/companies/page.tsx (lines 28-35)
+// Load company rows + 7-day velocity map once.
+useEffect(() =&gt; {
+  api.companies().then(setCompanies);
+  api.companyVelocity(7).then((rows) =&gt; {
+    const map: Record&lt;number, number&gt; = {};
+    rows.forEach((r) =&gt; { map[r.company_id] = r.net; });
+    setVelocity(map);
+  });
+}, []);
+</code></pre>
+<p><strong>Backend</strong></p>
+<ul>
+<li><code>/api/companies</code> -&gt; <code>get_company_stats</code> (<code>db/queries.py:312</code>)</li>
+<li><code>/api/companies/velocity</code> -&gt; <code>get_company_velocity</code> (<code>db/queries.py:855</code>)</li>
+</ul>
+<p><strong>Live output sample</strong></p>
+<pre><code class="language-json">[
+  {
+    &quot;id&quot;: 6207,
+    &quot;name&quot;: &quot;Anduril Industries&quot;,
+    &quot;company_type&quot;: &quot;startup&quot;,
+    &quot;active_jobs&quot;: 1821,
+    &quot;last_scraped&quot;: &quot;2026-04-14 19:26:19&quot;
+  }
+]
+</code></pre>
+<hr>
+<h4>B11.3 Job Feed (<code>/jobs</code>) — <code>03-jobs.png</code></h4>
+<img src="/Users/imanbaghai/Desktop/startup-tracker/docs/screenshots/03-jobs.png" alt="Jobs page screenshot" style="width:100%; border:1px solid #d1d5db; border-radius:8px;" />
+<p><strong>Frontend code</strong></p>
+<pre><code class="language-tsx">// dashboard/src/app/jobs/page.tsx (lines 39-69)
+// Load filter dictionaries + metadata for chips and pickers.
+useEffect(() =&gt; {
+  void Promise.all([
+    api.skills(undefined, 95),
+    api.departments(),
+    api.jobFreshness(),
+    api.companies(),
+    api.jobFilters(),
+  ]).then(...);
+}, []);
+
+// dashboard/src/app/jobs/page.tsx (lines 84-100)
+// Refetch jobs every time filters change.
+useEffect(() =&gt; {
+  return api.jobs(filters).then(setJobs);
+}, [filters]);
+</code></pre>
+<p><strong>Backend</strong></p>
+<ul>
+<li><code>/api/jobs</code> -&gt; <code>get_active_jobs</code> (<code>db/queries.py:370</code>)</li>
+<li><code>/api/jobs/filters</code> -&gt; <code>get_filter_options</code> (<code>db/queries.py:966</code>)</li>
+</ul>
+<p><strong>Live output sample</strong></p>
+<pre><code class="language-json">[
+  {
+    &quot;id&quot;: 44080,
+    &quot;title&quot;: &quot;Associate Principle Engineer&quot;,
+    &quot;company_name&quot;: &quot;Saviynt&quot;,
+    &quot;seniority&quot;: &quot;mid&quot;,
+    &quot;work_model&quot;: &quot;onsite&quot;,
+    &quot;normalized_department&quot;: &quot;Sales&quot;,
+    &quot;role_family&quot;: &quot;sales&quot;
+  }
+]
+</code></pre>
+<hr>
+<h4>B11.4 Changes (<code>/changes</code>) — <code>04-changes.png</code></h4>
+<img src="/Users/imanbaghai/Desktop/startup-tracker/docs/screenshots/04-changes.png" alt="Changes page screenshot" style="width:100%; border:1px solid #d1d5db; border-radius:8px;" />
+<p><strong>Frontend code</strong></p>
+<pre><code class="language-tsx">// dashboard/src/app/changes/page.tsx (lines 27-37)
+useEffect(() =&gt; {
+  api.changeEvents({ limit: 500, event_type: typeFilter || undefined }).then(setEvents);
+}, [typeFilter]);
+
+useEffect(() =&gt; {
+  api.movers(days).then(setMovers);
+}, [days]);
+
+useEffect(() =&gt; {
+  api.sectorDelta().then(setSectorDelta);
+}, []);
+</code></pre>
+<p><strong>Backend</strong></p>
+<ul>
+<li><code>/api/changes/events</code> -&gt; <code>get_recent_events</code> (<code>db/queries.py:1103</code>)</li>
+<li><code>/api/changes/movers</code> -&gt; <code>get_fastest_movers</code> (<code>db/queries.py:1134</code>)</li>
+<li><code>/api/changes/sector-delta</code> -&gt; <code>get_sector_delta</code> (<code>db/queries.py:1220</code>)</li>
+</ul>
+<p><strong>Live output sample</strong></p>
+<pre><code class="language-json">[
+  {
+    &quot;event_type&quot;: &quot;removed&quot;,
+    &quot;created_at&quot;: &quot;2026-04-14 19:26:38&quot;,
+    &quot;title&quot;: &quot;Accounts Payable Specialist&quot;,
+    &quot;company&quot;: &quot;WHOOP&quot;
+  }
+]
+</code></pre>
+<hr>
+<h4>B11.5 Trends (<code>/trends</code>) — <code>05-trends.png</code></h4>
+<img src="/Users/imanbaghai/Desktop/startup-tracker/docs/screenshots/05-trends.png" alt="Trends page screenshot" style="width:100%; border:1px solid #d1d5db; border-radius:8px;" />
+<p><strong>Frontend code</strong></p>
+<pre><code class="language-tsx">// dashboard/src/app/trends/page.tsx (lines 56-60)
+useEffect(() =&gt; {
+  api.jobTrends().then(setRaw);
+  api.deptSectorCross().then(setCrossTab);
+  api.remoteSectorCross(&quot;startup&quot;).then(setRemoteMix);
+}, []);
+
+// Then useMemo pivots raw arrays into chart-ready series (lines 62-121)
+// and renders LineChart/AreaChart/BarChart blocks (lines 142-248).
+</code></pre>
+<p><strong>Backend</strong></p>
+<ul>
+<li><code>/api/jobs/trends</code> -&gt; <code>get_job_count_over_time</code> (<code>db/queries.py:983</code>)</li>
+<li><code>/api/cross/dept-sector</code> -&gt; <code>get_dept_sector_cross</code> (<code>db/queries.py:1245</code>)</li>
+<li><code>/api/cross/remote-sector</code> -&gt; <code>get_remote_mix_by_sector</code> (<code>db/queries.py:800</code>)</li>
+</ul>
+<p><strong>Live output sample</strong></p>
+<pre><code class="language-json">[
+  {
+    &quot;company&quot;: &quot;Harvey&quot;,
+    &quot;sector&quot;: &quot;AI &amp; Machine Learning&quot;,
+    &quot;date&quot;: &quot;2026-04-04&quot;,
+    &quot;job_count&quot;: 212
+  }
+]
+</code></pre>
+<hr>
+<h4>B11.6 Skills (<code>/skills</code>) — <code>06-skills.png</code></h4>
+<img src="/Users/imanbaghai/Desktop/startup-tracker/docs/screenshots/06-skills.png" alt="Skills page screenshot" style="width:100%; border:1px solid #d1d5db; border-radius:8px;" />
+<p><strong>Frontend code</strong></p>
+<pre><code class="language-tsx">// dashboard/src/app/skills/page.tsx (lines 21-25)
+useEffect(() =&gt; {
+  api.skills(undefined, 30).then(setAllSkills);
+  api.skills(&quot;startup&quot;, 25).then(setStartupSkills);
+  api.skills(&quot;bigco&quot;, 25).then(setBigcoSkills);
+}, []);
+</code></pre>
+<p><strong>Backend</strong></p>
+<ul>
+<li><code>/api/skills</code> -&gt; <code>get_skill_counts</code> (<code>db/queries.py:1197</code>)</li>
+<li>Data source table is populated by NLP extraction: <code>analysis/nlp.py:149</code></li>
+</ul>
+<p><strong>Live output sample</strong></p>
+<pre><code class="language-json">[
+  { &quot;skill&quot;: &quot;Go&quot;, &quot;count&quot;: 7072 },
+  { &quot;skill&quot;: &quot;Python&quot;, &quot;count&quot;: 5959 },
+  { &quot;skill&quot;: &quot;AWS&quot;, &quot;count&quot;: 3967 }
+]
+</code></pre>
+<hr>
+<h4>B11.7 Roles (<code>/roles</code>) — <code>07-roles.png</code></h4>
+<img src="/Users/imanbaghai/Desktop/startup-tracker/docs/screenshots/07-roles.png" alt="Roles page screenshot" style="width:100%; border:1px solid #d1d5db; border-radius:8px;" />
+<p><strong>Frontend code</strong></p>
+<pre><code class="language-tsx">// dashboard/src/app/roles/page.tsx (lines 60-68)
+useEffect(() =&gt; {
+  api.seniority(&quot;startup&quot;).then((d) =&gt; setSenStartup(sortSeniority(d)));
+  api.seniority(&quot;bigco&quot;).then((d) =&gt; setSenBigco(sortSeniority(d)));
+  api.workModels(&quot;startup&quot;).then((d) =&gt; setWmStartup(mapWorkModelLabels(d)));
+  api.workModels(&quot;bigco&quot;).then((d) =&gt; setWmBigco(mapWorkModelLabels(d)));
+  api.senioritySectorCross().then(setSeniorityCross);
+  api.departments(&quot;startup&quot;).then(setDeptStartup);
+  api.departments(&quot;bigco&quot;).then(setDeptBigco);
+}, []);
+</code></pre>
+<p><strong>Backend</strong></p>
+<ul>
+<li><code>/api/seniority</code> -&gt; <code>get_seniority_breakdown</code> (<code>db/queries.py:1157</code>)</li>
+<li><code>/api/work-models</code> -&gt; <code>get_work_model_breakdown</code> (<code>db/queries.py:1177</code>)</li>
+<li><code>/api/cross/seniority-sector</code> -&gt; <code>get_seniority_sector_cross</code> (query module)</li>
+</ul>
+<p><strong>Live output sample</strong></p>
+<pre><code class="language-json">[
+  { &quot;seniority&quot;: &quot;mid&quot;, &quot;count&quot;: 10127 },
+  { &quot;seniority&quot;: &quot;senior&quot;, &quot;count&quot;: 5675 },
+  { &quot;seniority&quot;: &quot;manager&quot;, &quot;count&quot;: 3081 }
+]
+</code></pre>
+<hr>
+<h4>B11.8 Coverage (<code>/coverage</code>) — <code>08-coverage.png</code></h4>
+<img src="/Users/imanbaghai/Desktop/startup-tracker/docs/screenshots/08-coverage.png" alt="Coverage page screenshot" style="width:100%; border:1px solid #d1d5db; border-radius:8px;" />
+<p><strong>Frontend code</strong></p>
+<pre><code class="language-tsx">// dashboard/src/app/coverage/page.tsx (lines 17-19)
+useEffect(() =&gt; {
+  api.companies().then(setCompanies);
+}, []);
+
+// UI groups startups by sector and toggles grid/list views (lines 58-69, 142-182).
+</code></pre>
+<p><strong>Backend</strong></p>
+<ul>
+<li><code>/api/companies</code> -&gt; <code>get_company_stats</code> (<code>db/queries.py:312</code>)</li>
+</ul>
+<p><strong>Live output sample</strong></p>
+<pre><code class="language-json">[
+  {
+    &quot;id&quot;: 3670,
+    &quot;name&quot;: &quot;SpaceX&quot;,
+    &quot;company_type&quot;: &quot;bigco&quot;,
+    &quot;sector&quot;: &quot;Robotics &amp; Hardware&quot;,
+    &quot;active_jobs&quot;: 1546
+  }
+]
+</code></pre>
+<hr>
+<h4>B11.9 Health (<code>/health</code>) — <code>09-health.png</code></h4>
+<img src="/Users/imanbaghai/Desktop/startup-tracker/docs/screenshots/09-health.png" alt="Health page screenshot" style="width:100%; border:1px solid #d1d5db; border-radius:8px;" />
+<p><strong>Frontend code</strong></p>
+<pre><code class="language-tsx">// dashboard/src/app/health/page.tsx (lines 41-46)
+useEffect(() =&gt; {
+  api.health().then((data) =&gt; {
+    setRows(data);
+    setLoading(false);
+  });
+}, []);
+
+// statusBadge classifies rows into OK/Error/Stale and drives KPI cards.
+</code></pre>
+<p><strong>Backend</strong></p>
+<ul>
+<li><code>/api/health</code> -&gt; <code>get_scraper_health</code> (<code>db/queries.py:936</code>)</li>
+</ul>
+<p><strong>Live output sample</strong></p>
+<pre><code class="language-json">[
+  {
+    &quot;id&quot;: 6211,
+    &quot;name&quot;: &quot;Unify&quot;,
+    &quot;status&quot;: &quot;failed&quot;,
+    &quot;jobs_found&quot;: 0,
+    &quot;active_jobs&quot;: 9,
+    &quot;error_msg&quot;: &quot;Lever scrape failed for 'Unify': &quot;
+  }
+]
+</code></pre>
+<hr>
+<h4>B11.10 Resume Fit (<code>/fit</code>) — <code>10-fit.png</code></h4>
+<img src="/Users/imanbaghai/Desktop/startup-tracker/docs/screenshots/10-fit.png" alt="Fit page screenshot" style="width:100%; border:1px solid #d1d5db; border-radius:8px;" />
+<p><strong>Frontend code</strong></p>
+<pre><code class="language-tsx">// dashboard/src/app/fit/page.tsx (lines 94-124)
+// If jobId is present -&gt; compare one job.
+// Otherwise -&gt; search top N matches.
+if (trimmedJobId) {
+  const data = await api.fitJob(numericJobId, file);
+  setResult(data);
+} else {
+  const data = await api.fitMatches(file, { company_type: companyType || undefined, limit });
+  setResult(data);
+}
+</code></pre>
+<p><strong>Backend</strong></p>
+<ul>
+<li><code>/api/fit/matches</code> -&gt; <code>analyze_resume_matches</code> (<code>analysis/resume_fit.py:70</code>)</li>
+<li><code>/api/fit/jobs/{job_id}</code> -&gt; <code>analyze_single_job</code> (<code>analysis/resume_fit.py:109</code>)</li>
+</ul>
+<p><strong>Live output sample (current environment)</strong></p>
+<pre><code class="language-json">{
+  &quot;detail&quot;: &quot;Resume matching is not configured yet. Try again later.&quot;
+}
+</code></pre>
+<hr>
+<h4>B11.11 Company Detail (<code>/companies/{id}</code>) — <code>11-company-detail.png</code></h4>
+<img src="/Users/imanbaghai/Desktop/startup-tracker/docs/screenshots/11-company-detail.png" alt="Company detail screenshot" style="width:100%; border:1px solid #d1d5db; border-radius:8px;" />
+<p><strong>Frontend code</strong></p>
+<pre><code class="language-tsx">// dashboard/src/app/companies/[id]/page.tsx (lines 45-58)
+// Load detail card, full job list, velocity, and then activity events.
+Promise.all([
+  api.companyDetail(id),
+  api.jobs({ company_id: id }),
+  api.companyVelocity(7),
+]).then(([det, jobList, vel]) =&gt; {
+  setDetail(det);
+  setJobs(jobList);
+  ...
+  return api.changeEvents({ company_name: det.name, limit: 20 });
+});
+</code></pre>
+<p><strong>Backend</strong></p>
+<ul>
+<li><code>/api/companies/{id}</code> -&gt; <code>get_company_detail</code> (<code>db/queries.py:875</code>) + company skills/departments queries</li>
+<li><code>/api/jobs?company_id=...</code> -&gt; <code>get_active_jobs</code> (<code>db/queries.py:370</code>)</li>
+<li><code>/api/changes/events?company_name=...</code> -&gt; <code>get_recent_events</code> (<code>db/queries.py:1103</code>)</li>
+</ul>
+<p><strong>Live output sample (Anduril Industries id=6207)</strong></p>
+<pre><code class="language-json">{
+  &quot;id&quot;: 6207,
+  &quot;name&quot;: &quot;Anduril Industries&quot;,
+  &quot;active_jobs&quot;: 1821,
+  &quot;top_skills&quot;: [
+    { &quot;skill&quot;: &quot;Computer Vision&quot;, &quot;count&quot;: 1821 },
+    { &quot;skill&quot;: &quot;Python&quot;, &quot;count&quot;: 471 }
+  ]
+}
+</code></pre>
+<hr>
+<h3>B12. Deep NLP + AI Side-by-Side (Code -&gt; Behavior -&gt; Output)</h3>
+<p>This section focuses on the two most “intelligent” paths in this app.</p>
+<h4>B12.1 NLP skill extractor (<code>analysis/nlp.py</code>) in plain language</h4>
+<table>
+<thead>
+<tr>
+<th>Code segment</th>
+<th>What it does</th>
+<th>Output</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>_SKILLS</code> dictionary (<code>analysis/nlp.py:13</code>)</td>
+<td>Defines canonical skills and matching regex rules</td>
+<td>consistent skill labels like <code>Python</code>, <code>Kubernetes</code>, <code>LLM</code></td>
+</tr>
+<tr>
+<td><code>_COMPILED</code> (<code>analysis/nlp.py:132</code>)</td>
+<td>Compiles regex once for speed</td>
+<td>faster repeated extraction</td>
+</tr>
+<tr>
+<td><code>extract_skills</code> (<code>analysis/nlp.py:135</code>)</td>
+<td>scans one job description and returns matched skills</td>
+<td>list of strings</td>
+</tr>
+<tr>
+<td><code>extract_all_skills</code> (<code>analysis/nlp.py:149</code>)</td>
+<td>finds unprocessed jobs, extracts skills, writes <code>job_skills</code></td>
+<td>integer total of inserted skill tags</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Side-by-side code and output</strong></p>
+<pre><code class="language-python"># analysis/nlp.py (commented teaching replica)
+# 1) For each known skill pattern...
+for name, pattern in _COMPILED.items():
+    # 2) ...if the pattern appears in text, keep canonical skill name.
+    if pattern.search(text):
+        found.append(name)
+
+# 3) Return canonical list, e.g. [&quot;Python&quot;, &quot;SQL&quot;, &quot;Kubernetes&quot;].
+</code></pre>
+<p>Input text example:</p>
+<pre><code class="language-text">We need Python, SQL, and Kubernetes experience. LLM evaluation is a plus.
+</code></pre>
+<p>Output list:</p>
+<pre><code class="language-json">[&quot;Python&quot;, &quot;SQL&quot;, &quot;Kubernetes&quot;, &quot;LLM&quot;]
+</code></pre>
+<p>This output later powers the Skills page bars (<code>06-skills.png</code>).</p>
+<h4>B12.2 AI resume fit engine (<code>analysis/resume_fit.py</code>) in plain language</h4>
+<table>
+<thead>
+<tr>
+<th>Stage</th>
+<th>Function(s)</th>
+<th>What happens</th>
+<th>Output</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1. Read file</td>
+<td><code>extract_resume_text</code> (<code>line 49</code>)</td>
+<td>reads <code>.txt/.md/.pdf/.docx</code> into plain text</td>
+<td><code>resume_text</code> string</td>
+</tr>
+<tr>
+<td>2. Parse profile</td>
+<td><code>parse_resume_profile</code> (<code>line 136</code>)</td>
+<td>LLM turns resume into strict JSON profile</td>
+<td>structured profile</td>
+</tr>
+<tr>
+<td>3. Sanitize</td>
+<td><code>sanitize_resume_profile</code> (<code>line 380</code>)</td>
+<td>removes direct PII and normalizes fields</td>
+<td>safe compact profile</td>
+</tr>
+<tr>
+<td>4. Build candidate pool</td>
+<td><code>_candidate_filters</code> (<code>line 182</code>) + <code>get_jobs_for_fit_pool</code> (<code>db/queries.py:600</code>)</td>
+<td>creates broad SQL filters from profile</td>
+<td>candidate job list</td>
+</tr>
+<tr>
+<td>5. Deterministic score</td>
+<td><code>_score_job</code> (<code>line 301</code>)</td>
+<td>computes stable base score from skill overlap, role family, seniority, title, sector, freshness</td>
+<td><code>deterministic_score</code></td>
+</tr>
+<tr>
+<td>6. LLM rationale</td>
+<td><code>_request_fit_batch</code> (<code>line 268</code>)</td>
+<td>asks model for <code>why</code>, <code>gaps</code>, <code>resume_pointers</code></td>
+<td>fit objects per job</td>
+</tr>
+<tr>
+<td>7. Cache results</td>
+<td><code>get_cached_resume_fit</code> + <code>save_resume_fit</code> (<code>db/queries.py:708</code>, <code>726</code>)</td>
+<td>reuses previous fit for same resume+job+prompt version</td>
+<td>faster repeated calls</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Deterministic score code + meaning</strong></p>
+<pre><code class="language-python"># analysis/resume_fit.py (lines 308-325)
+score = 0.0
+score += min(len(overlap) * 8.0, 40.0)      # matched skills
+if role_family_match: score += 25.0         # role family compatibility
+if seniority_match: score += 15.0           # level compatibility
+score += title_similarity * 12.0            # title token overlap
+if sector_match: score += 5.0               # domain/sector overlap
+score += freshness_bonus                     # recency bonus
+</code></pre>
+<p><strong>Live API output in this environment</strong></p>
+<pre><code class="language-json">{
+  &quot;detail&quot;: &quot;Resume matching is not configured yet. Try again later.&quot;
+}
+</code></pre>
+<p>Meaning: backend flow is wired, but <code>GROQ_API_KEY</code> is missing, so LLM calls are intentionally blocked.</p>
+<hr>
+<h3>B13. How Visual Design Choices Compile in Node.js / Next.js</h3>
+<p>This is the exact “how does UI become pixels” path.</p>
+<h4>B13.1 Build-time and runtime chain</h4>
+<ol>
+<li><code>npm run dev</code> starts Next.js dev server.</li>
+<li>Next.js reads file-system routes from <code>dashboard/src/app/*</code>.</li>
+<li><code>&quot;use client&quot;</code> pages are compiled for browser execution.</li>
+<li>Tailwind classes in JSX are transformed into generated CSS.</li>
+<li><code>globals.css</code> variables (<code>dashboard/src/app/globals.css:3-27</code>) become theme tokens.</li>
+<li>Browser loads page JS, runs <code>useEffect</code>, fetches API JSON.</li>
+<li>React state updates trigger re-render.</li>
+<li>Recharts receives arrays and draws SVG charts.</li>
+</ol>
+<div class="mermaid">sequenceDiagram
+  participant Dev as You
+  participant Next as Next.js (Node)
+  participant Browser as Browser
+  participant API as FastAPI
+  participant DB as SQLite
+
+  Dev->>Next: npm run dev
+  Browser->>Next: GET /trends
+  Next-->>Browser: HTML + JS + CSS
+  Browser->>API: /api/jobs/trends
+  API->>DB: SQL query
+  DB-->>API: rows
+  API-->>Browser: JSON
+  Browser->>Browser: setState + render chart SVG
+</div>
+<h4>B13.2 Design tokens -&gt; visual output</h4>
+<p><code>dashboard/src/app/globals.css</code> defines the palette that every page uses:</p>
+<pre><code class="language-css">:root {
+  --background: #0f1117;
+  --foreground: #e5e7eb;
+  --card: #1a1d27;
+  --card-border: #2a2d3a;
+  --accent: #6366f1;
+}
+</code></pre>
+<p>So when JSX says <code>className=&quot;bg-card border border-card-border&quot;</code>, the resulting visual card is consistent across all pages.</p>
+<h4>B13.3 Chart grammar (why each chart looks the way it does)</h4>
+<ul>
+<li>Data array becomes the chart’s <code>data</code> prop.</li>
+<li><code>dataKey</code> selects which field maps to axis/series.</li>
+<li><code>Cell</code> or fixed <code>fill</code> controls bar/slice colors.</li>
+<li><code>Tooltip</code> style object gives dark tooltip theme.</li>
+<li><code>ResponsiveContainer</code> makes charts fit card width on desktop/mobile.</li>
+</ul>
+<p>Example from Pulse page:</p>
+<pre><code class="language-tsx">&lt;BarChart data={sectors} layout=&quot;vertical&quot;&gt;
+  &lt;YAxis dataKey=&quot;sector&quot; /&gt;
+  &lt;Bar dataKey=&quot;job_count&quot; /&gt;
+&lt;/BarChart&gt;
+</code></pre>
+<p>Translation: one horizontal bar per sector, bar length = <code>job_count</code>.</p>
+<hr>
+<h3>B14. Recreate These 1:1 Screenshots Yourself</h3>
+<p>Use the same script and viewport used for this book.</p>
+<pre><code class="language-bash">cd /Users/imanbaghai/Desktop/startup-tracker
+node /tmp/startuptracker-pdf/capture_app_screenshots.js
+</code></pre>
+<p>Generated files:</p>
+<ul>
+<li><code>/Users/imanbaghai/Desktop/startup-tracker/docs/screenshots/01-pulse.png</code></li>
+<li><code>/Users/imanbaghai/Desktop/startup-tracker/docs/screenshots/02-companies.png</code></li>
+<li><code>/Users/imanbaghai/Desktop/startup-tracker/docs/screenshots/03-jobs.png</code></li>
+<li><code>/Users/imanbaghai/Desktop/startup-tracker/docs/screenshots/04-changes.png</code></li>
+<li><code>/Users/imanbaghai/Desktop/startup-tracker/docs/screenshots/05-trends.png</code></li>
+<li><code>/Users/imanbaghai/Desktop/startup-tracker/docs/screenshots/06-skills.png</code></li>
+<li><code>/Users/imanbaghai/Desktop/startup-tracker/docs/screenshots/07-roles.png</code></li>
+<li><code>/Users/imanbaghai/Desktop/startup-tracker/docs/screenshots/08-coverage.png</code></li>
+<li><code>/Users/imanbaghai/Desktop/startup-tracker/docs/screenshots/09-health.png</code></li>
+<li><code>/Users/imanbaghai/Desktop/startup-tracker/docs/screenshots/10-fit.png</code></li>
+<li><code>/Users/imanbaghai/Desktop/startup-tracker/docs/screenshots/11-company-detail.png</code></li>
+</ul>
+
+</body>
+</html>
