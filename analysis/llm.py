@@ -57,14 +57,27 @@ USER_AGENT = "Mozilla/5.0 MosaicTracker/1.0"
 DEFAULT_TIMEOUT = 120
 
 
+def _clean_env(raw: Optional[str]) -> str:
+    """Strip whitespace plus any non-Latin-1 characters before the value goes
+    into an HTTP header. Common copy-paste hazard: pasting a key from a web
+    page can pull in U+2028 LINE SEPARATOR or other invisible Unicode that
+    Python's http client (Latin-1 by spec) refuses to encode.
+    """
+    if not raw:
+        return ""
+    s = raw.strip()
+    # Drop anything outside the Latin-1 range. API keys are ASCII by design.
+    return s.encode("ascii", errors="ignore").decode("ascii")
+
+
 def _config(strict: bool = True) -> dict:
     """Resolve LLM config. Raises only when `strict=True` and a call is imminent."""
-    api_base = (os.getenv("LLM_API_BASE") or "").strip().rstrip("/")
-    api_key = (os.getenv("LLM_API_KEY") or "").strip()
-    model = (os.getenv("LLM_MODEL") or os.getenv("GROQ_MODEL") or "").strip()
+    api_base = _clean_env(os.getenv("LLM_API_BASE")).rstrip("/")
+    api_key = _clean_env(os.getenv("LLM_API_KEY"))
+    model = _clean_env(os.getenv("LLM_MODEL") or os.getenv("GROQ_MODEL"))
 
     # Backwards-compat: original setup only had GROQ_API_KEY + (optional) GROQ_MODEL.
-    legacy_groq = (os.getenv("GROQ_API_KEY") or "").strip()
+    legacy_groq = _clean_env(os.getenv("GROQ_API_KEY"))
     if not api_base and legacy_groq:
         api_base = "https://api.groq.com/openai/v1"
     if not api_key and legacy_groq:

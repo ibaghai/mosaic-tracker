@@ -45,7 +45,13 @@ class ApolloError(RuntimeError):
 # ── Configuration ─────────────────────────────────────────────────────────────
 
 def _api_key() -> Optional[str]:
-    key = os.getenv("APOLLO_API_KEY", "").strip()
+    # Strip whitespace AND non-ASCII bytes before the value goes into an HTTP
+    # header. Common copy-paste hazard: pasting a key from a web page can pull
+    # in U+2028 LINE SEPARATOR or other invisible Unicode that Python's http
+    # client (Latin-1 by spec) refuses to encode and crashes the request with
+    # "'latin-1' codec can't encode character '\\u2028'".
+    raw = os.getenv("APOLLO_API_KEY", "")
+    key = raw.strip().encode("ascii", errors="ignore").decode("ascii")
     return key or None
 
 
