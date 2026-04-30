@@ -460,8 +460,32 @@ async def outreach_generate(
         archetype_list = [a.strip() for a in archetypes.split(",") if a.strip()]
         enrich_top = max(0, min(enrich_top, 3))
 
-        # 1. Parse JD (cheap; Groq).
-        parsed_jd = jd_parse_mod.parse_jd(job["description"], job_title=job["title"])
+        # 1. Parse JD (cheap; Groq). Some jobs in the DB have empty/missing
+        # `description` — the scraper didn't capture the body. Rather than
+        # 400 the user with "jd_text is empty", fall back to an empty parsed
+        # shape so outreach generation can still run with just title +
+        # company. The LLM in step 4 handles a sparse parsed_jd gracefully.
+        jd_text = (job.get("description") or "").strip()
+        if len(jd_text) < 50:
+            parsed_jd = {
+                "role_title": job.get("title"),
+                "level": None,
+                "function": None,
+                "sub_function": None,
+                "reports_to_phrase": None,
+                "reports_to_target": None,
+                "team_or_org": None,
+                "geography": {"type": None, "locations": []},
+                "stack_signals": [],
+                "scope_signals": [],
+                "key_responsibilities": [],
+                "must_have_skills": [],
+                "nice_to_have_skills": [],
+                "company_name_in_jd": None,
+                "_jd_missing": True,
+            }
+        else:
+            parsed_jd = jd_parse_mod.parse_jd(jd_text, job_title=job["title"])
 
         # 2. Optional resume profile, for grounding the outreach + tailoring.
         resume_text: Optional[str] = None
@@ -566,6 +590,7 @@ async def outreach_generate(
                 "reports_to_target": parsed_jd.get("reports_to_target"),
                 "team_or_org": parsed_jd.get("team_or_org"),
                 "must_have_skills": parsed_jd.get("must_have_skills") or [],
+                "jd_missing": parsed_jd.get("_jd_missing", False),
             },
             "people_by_archetype": archetype_results,
             "drafts": drafts,

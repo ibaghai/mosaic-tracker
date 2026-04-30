@@ -76,7 +76,12 @@ export function ReachOutPanel({
           {err && <p className="text-red text-xs">⚠ {err}</p>}
           {data && (
             <>
-              {data.parsed_jd && (
+              {data.parsed_jd?.jd_missing ? (
+                <div className="text-xs bg-yellow-400/10 border border-yellow-400/30 rounded-lg p-2 text-yellow-300">
+                  ⚠ This job has no description in the tracker — outreach is using
+                  the role title and company only. Drafts may read more generic.
+                </div>
+              ) : data.parsed_jd && (
                 <div className="text-xs text-muted">
                   Parsed: {data.parsed_jd.level} {data.parsed_jd.function}
                   {data.parsed_jd.team_or_org ? ` · ${data.parsed_jd.team_or_org}` : ""}
