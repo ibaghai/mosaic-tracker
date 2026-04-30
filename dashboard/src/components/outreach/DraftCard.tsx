@@ -14,10 +14,17 @@ export function DraftCard({
   onUpdate?: () => void;
 }) {
   const { user, requireLogin } = useAuth();
+  // All hooks declared up front — react-hooks/rules-of-hooks doesn't allow
+  // hooks after a conditional return. The `_error` short-circuit and the
+  // remaining body branch happen *after* every hook has been called.
   const [draft, setDraft] = useState<OutreachDraft>(initial);
   const [copied, setCopied] = useState(false);
   const [editing, setEditing] = useState(false);
   const [editedBody, setEditedBody] = useState<string | null>(null);
+  const [launchedVia, setLaunchedVia] = useState<"gmail" | "mail" | "linkedin" | null>(null);
+  const [marking, setMarking] = useState(false);
+  const [pipelineNudge, setPipelineNudge] = useState<JobStatus | null>(null);
+  const [nudgeBusy, setNudgeBusy] = useState(false);
 
   if (draft._error) {
     return <p className="text-xs text-red">[{draft.archetype}] {draft._error}</p>;
@@ -49,11 +56,6 @@ export function DraftCard({
   const gmailHref = email
     ? `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
     : null;
-
-  // Track which channel was last clicked, to pre-fill `sent_via` when the
-  // user clicks "Mark sent". Defaults to whichever launcher they used last.
-  const [launchedVia, setLaunchedVia] = useState<"gmail" | "mail" | "linkedin" | null>(null);
-  const [marking, setMarking] = useState(false);
 
   // True = the draft exists in the DB. False = ephemeral, generated this
   // session and only persisted if the user clicks Save / Mark sent.
@@ -119,11 +121,9 @@ export function DraftCard({
     }
   };
 
-  // After a positive/interview reply, suggest bumping the linked job's
-  // pipeline status. State holds the suggested next status (or null).
-  const [pipelineNudge, setPipelineNudge] = useState<JobStatus | null>(null);
-  const [nudgeBusy, setNudgeBusy] = useState(false);
-
+  // After a positive/interview reply, we may suggest bumping the linked
+  // job's pipeline status. (`pipelineNudge` / `nudgeBusy` are declared with
+  // the rest of the hooks at the top of the component.)
   const suggestNudge = (category: "positive" | "neutral" | "negative" | "interview") => {
     // We can't read the current job status from here without an extra request,
     // so we suggest the obvious next step:

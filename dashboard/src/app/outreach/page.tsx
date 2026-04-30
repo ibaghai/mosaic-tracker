@@ -107,14 +107,11 @@ function OutreachInner() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status, archetype, overdueOnly, companyIds, jobId, user]);
 
-  // Anonymous: render a friendly empty state instead of the empty filter UI.
-  if (!authLoading && !user) {
-    return <AnonymousOutreachEmptyState />;
-  }
-
   const counts = data?.counts;
-  const drafts = data?.drafts ?? [];
+  const drafts = useMemo(() => data?.drafts ?? [], [data?.drafts]);
 
+  // useMemo declared above the anonymous early-return so hook call order
+  // stays stable across renders (react-hooks/rules-of-hooks).
   const groupedByCompany = useMemo(() => {
     const groups = new Map<string, { company_name: string; company_id?: number; drafts: OutreachDraft[] }>();
     for (const d of drafts) {
@@ -131,12 +128,17 @@ function OutreachInner() {
     return Array.from(groups.values());
   }, [drafts]);
 
+  // Anonymous: render a friendly empty state instead of the empty filter UI.
+  if (!authLoading && !user) {
+    return <AnonymousOutreachEmptyState />;
+  }
+
   return (
     <div className="space-y-6">
       <div>
         <h2 className="text-2xl font-bold">My Outreach</h2>
         <p className="text-muted text-sm mt-1">
-          Every draft you've generated, with lifecycle tracking. Mark sends from the per-job
+          Every draft you&apos;ve generated, with lifecycle tracking. Mark sends from the per-job
           panel and replies will be flagged here when overdue.
         </p>
       </div>
@@ -305,7 +307,7 @@ function AnonymousOutreachEmptyState() {
 
       <div className="bg-card border border-card-border rounded-xl p-6 space-y-4">
         <p className="text-sm">
-          You're browsing as a guest. <Link href="/login" className="text-accent-light hover:underline">Sign in</Link>{" "}
+          You&apos;re browsing as a guest. <Link href="/login" className="text-accent-light hover:underline">Sign in</Link>{" "}
           to start tracking your outreach pipeline here.
         </p>
         <p className="text-xs text-muted">
@@ -313,7 +315,7 @@ function AnonymousOutreachEmptyState() {
           <Link href="/jobs" className="text-accent-light hover:underline">/jobs</Link> or{" "}
           <Link href="/fit" className="text-accent-light hover:underline">/fit</Link>{" "}
           and click <em>Reach out</em>. To save and follow up on those drafts later,
-          you'll need to sign in.
+          you&apos;ll need to sign in.
         </p>
       </div>
     </div>

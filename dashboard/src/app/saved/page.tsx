@@ -50,7 +50,7 @@ export default function SavedSearchesPage() {
         <h2 className="text-2xl font-bold">Saved Searches</h2>
         <p className="text-muted text-sm mt-1">
           Snapshots of filter combinations you cared about. Open them from each
-          surface's "Load saved" dropdown — or jump back here to delete one.
+          surface&apos;s &ldquo;Load saved&rdquo; dropdown — or jump back here to delete one.
         </p>
       </div>
 
@@ -61,7 +61,7 @@ export default function SavedSearchesPage() {
 
       {!loading && searches.length === 0 && (
         <div className="bg-card border border-card-border rounded-xl p-8 text-center text-muted">
-          <p className="text-sm">You haven't saved any searches yet.</p>
+          <p className="text-sm">You haven&apos;t saved any searches yet.</p>
           <p className="text-xs mt-2">
             Go to <Link href="/jobs" className="text-accent-light hover:underline">/jobs</Link>,
             set some filters, and click <em>Save search</em>.
