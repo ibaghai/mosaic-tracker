@@ -1,0 +1,978 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2575.7">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px 'Helvetica Light'}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px 'Helvetica Light'; min-height: 14.0px}
+  </style>
+</head>
+<body>
+<p class="p1"># Startup Tracker Visual Textbook (Beginner Edition)</p>
+<p class="p2"><br></p>
+<p class="p1">Version: 2026-04-18 <span class="Apple-converted-space"> </span></p>
+<p class="p1">Audience: People with little or no technical background</p>
+<p class="p2"><br></p>
+<p class="p1">---</p>
+<p class="p2"><br></p>
+<p class="p1">## How to Use This Book</p>
+<p class="p2"><br></p>
+<p class="p1">This book is designed so you can:</p>
+<p class="p1">1. Understand what this app does in plain English.</p>
+<p class="p1">2. See the system visually.</p>
+<p class="p1">3. Rebuild a working version step by step by hand.</p>
+<p class="p1">4. Know what to do every day to operate it.</p>
+<p class="p2"><br></p>
+<p class="p1">Use it like a workbook:</p>
+<p class="p1">- Read one phase.</p>
+<p class="p1">- Copy the commands exactly.</p>
+<p class="p1">- Run the "Check" step before moving on.</p>
+<p class="p2"><br></p>
+<p class="p1">---</p>
+<p class="p2"><br></p>
+<p class="p1">## Visual Legend</p>
+<p class="p2"><br></p>
+<p class="p1">- `Goal`: what this phase gives you.</p>
+<p class="p1">- `Do This`: exact steps.</p>
+<p class="p1">- `Check`: how to confirm you did it right.</p>
+<p class="p1">- `If Stuck`: the fastest fix.</p>
+<p class="p2"><br></p>
+<p class="p1">---</p>
+<p class="p2"><br></p>
+<p class="p1">## Part 1: What This App Is</p>
+<p class="p2"><br></p>
+<p class="p1">## 1.1 One-Sentence Summary</p>
+<p class="p2"><br></p>
+<p class="p1">This app tracks job openings from many startup career pages, stores changes over time, and shows charts so you can see who is hiring, where, and for what roles.</p>
+<p class="p2"><br></p>
+<p class="p1">## 1.2 Big Picture (Visual)</p>
+<p class="p2"><br></p>
+<p class="p1">```mermaid</p>
+<p class="p1">flowchart LR</p>
+<p class="p1"><span class="Apple-converted-space">  </span>A["Company career pages"] --&gt; B["Scrapers (collect jobs)"]</p>
+<p class="p1"><span class="Apple-converted-space">  </span>B --&gt; C["Database (store jobs + history)"]</p>
+<p class="p1"><span class="Apple-converted-space">  </span>C --&gt; D["API (serve data)"]</p>
+<p class="p1"><span class="Apple-converted-space">  </span>D --&gt; E["Dashboard (charts + tables)"]</p>
+<p class="p1"><span class="Apple-converted-space">  </span>C --&gt; F["Resume Fit (optional)"]</p>
+<p class="p1">```</p>
+<p class="p2"><br></p>
+<p class="p1">## 1.3 Real-World Analogy</p>
+<p class="p2"><br></p>
+<p class="p1">Think of this app like a weather station:</p>
+<p class="p1">- Scrapers = sensors collecting data.</p>
+<p class="p1">- Database = weather archive.</p>
+<p class="p1">- API = newsroom desk.</p>
+<p class="p1">- Dashboard = weather map on TV.</p>
+<p class="p2"><br></p>
+<p class="p1">---</p>
+<p class="p2"><br></p>
+<p class="p1">## Part 2: What Each Layer Does</p>
+<p class="p2"><br></p>
+<p class="p1">## 2.1 Layer Map</p>
+<p class="p2"><br></p>
+<p class="p1">```mermaid</p>
+<p class="p1">flowchart TD</p>
+<p class="p1"><span class="Apple-converted-space">  </span>A["Input Lists\ncompanies.json + candidate files"] --&gt; B["Ingestion\ntracker.py + scripts/"]</p>
+<p class="p1"><span class="Apple-converted-space">  </span>B --&gt; C["Normalization\nenrichment + skill extraction"]</p>
+<p class="p1"><span class="Apple-converted-space">  </span>C --&gt; D["Storage\nSQLite tables"]</p>
+<p class="p1"><span class="Apple-converted-space">  </span>D --&gt; E["Backend\nFastAPI endpoints"]</p>
+<p class="p1"><span class="Apple-converted-space">  </span>E --&gt; F["Frontend\nNext.js dashboard"]</p>
+<p class="p1">```</p>
+<p class="p2"><br></p>
+<p class="p1">## 2.2 File Map (Simple)</p>
+<p class="p2"><br></p>
+<p class="p1">| Folder/File | Job |</p>
+<p class="p1">|---|---|</p>
+<p class="p1">| `tracker.py` | Main run: scrape + sync + enrich + skills |</p>
+<p class="p1">| `scraper/` | Website-specific collectors |</p>
+<p class="p1">| `db/models.py` | DB connection + schema |</p>
+<p class="p1">| `db/queries.py` | Read/write logic |</p>
+<p class="p1">| `api/app.py` | HTTP endpoints |</p>
+<p class="p1">| `dashboard/` | Web UI |</p>
+<p class="p1">| `analysis/resume_fit.py` | Resume matching |</p>
+<p class="p1">| `scripts/` | Discovery + ops utilities |</p>
+<p class="p2"><br></p>
+<p class="p1">---</p>
+<p class="p2"><br></p>
+<p class="p1">## Part 3: Rebuild It By Hand (Beginner Path)</p>
+<p class="p2"><br></p>
+<p class="p1">This section is a **guided rebuild** of the app architecture. <span class="Apple-converted-space"> </span></p>
+<p class="p1">You can do this even if you are new, by following exactly.</p>
+<p class="p2"><br></p>
+<p class="p1">## Phase 0: Install Tools</p>
+<p class="p2"><br></p>
+<p class="p1">### Goal</p>
+<p class="p1">Have the tools needed to run Python backend + Next.js frontend.</p>
+<p class="p2"><br></p>
+<p class="p1">### Do This</p>
+<p class="p2"><br></p>
+<p class="p1">Open Terminal and run:</p>
+<p class="p2"><br></p>
+<p class="p1">```bash</p>
+<p class="p1">python3 --version</p>
+<p class="p1">node --version</p>
+<p class="p1">npm --version</p>
+<p class="p1">```</p>
+<p class="p2"><br></p>
+<p class="p1">If missing:</p>
+<p class="p1">- Install Python 3.11+ from [python.org](https://www.python.org/downloads/)</p>
+<p class="p1">- Install Node LTS from [nodejs.org](https://nodejs.org/)</p>
+<p class="p2"><br></p>
+<p class="p1">### Check</p>
+<p class="p1">You should see version numbers, not "command not found".</p>
+<p class="p2"><br></p>
+<p class="p1">### If Stuck</p>
+<p class="p1">Restart Terminal after installing.</p>
+<p class="p2"><br></p>
+<p class="p1">---</p>
+<p class="p2"><br></p>
+<p class="p1">## Phase 1: Start Project Folder</p>
+<p class="p2"><br></p>
+<p class="p1">### Goal</p>
+<p class="p1">Create a workspace you can run locally.</p>
+<p class="p2"><br></p>
+<p class="p1">### Do This</p>
+<p class="p2"><br></p>
+<p class="p1">```bash</p>
+<p class="p1">cd ~/Desktop</p>
+<p class="p1">mkdir my-startup-tracker</p>
+<p class="p1">cd my-startup-tracker</p>
+<p class="p1">mkdir -p api db scraper analysis dashboard/src/app dashboard/src/lib scripts data</p>
+<p class="p1">```</p>
+<p class="p2"><br></p>
+<p class="p1">### Check</p>
+<p class="p2"><br></p>
+<p class="p1">```bash</p>
+<p class="p1">find . -maxdepth 2 -type d | sort</p>
+<p class="p1">```</p>
+<p class="p2"><br></p>
+<p class="p1">You should see the folders you created.</p>
+<p class="p2"><br></p>
+<p class="p1">---</p>
+<p class="p2"><br></p>
+<p class="p1">## Phase 2: Python Environment</p>
+<p class="p2"><br></p>
+<p class="p1">### Goal</p>
+<p class="p1">Install Python packages in an isolated environment.</p>
+<p class="p2"><br></p>
+<p class="p1">### Do This</p>
+<p class="p2"><br></p>
+<p class="p1">```bash</p>
+<p class="p1">python3 -m venv .venv</p>
+<p class="p1">source .venv/bin/activate</p>
+<p class="p1">pip install --upgrade pip</p>
+<p class="p1">pip install aiohttp fastapi uvicorn pypdf python-docx python-multipart</p>
+<p class="p1">```</p>
+<p class="p2"><br></p>
+<p class="p1">### Check</p>
+<p class="p2"><br></p>
+<p class="p1">```bash</p>
+<p class="p1">python -c "import fastapi, aiohttp; print('ok')"</p>
+<p class="p1">```</p>
+<p class="p2"><br></p>
+<p class="p1">Expected output: `ok`</p>
+<p class="p2"><br></p>
+<p class="p1">---</p>
+<p class="p2"><br></p>
+<p class="p1">## Phase 3: Create the Database Layer</p>
+<p class="p2"><br></p>
+<p class="p1">### Goal</p>
+<p class="p1">Create a SQLite DB with key tables.</p>
+<p class="p2"><br></p>
+<p class="p1">### Do This</p>
+<p class="p2"><br></p>
+<p class="p1">Create `db/models.py` (minimum starter):</p>
+<p class="p2"><br></p>
+<p class="p1">```python</p>
+<p class="p1">import sqlite3</p>
+<p class="p1">from pathlib import Path</p>
+<p class="p2"><br></p>
+<p class="p1">DB_PATH = Path("data/tracker.db")</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">def get_connection():</p>
+<p class="p1"><span class="Apple-converted-space">    </span>DB_PATH.parent.mkdir(parents=True, exist_ok=True)</p>
+<p class="p1"><span class="Apple-converted-space">    </span>conn = sqlite3.connect(DB_PATH)</p>
+<p class="p1"><span class="Apple-converted-space">    </span>conn.row_factory = sqlite3.Row</p>
+<p class="p1"><span class="Apple-converted-space">    </span>conn.execute("PRAGMA journal_mode=WAL")</p>
+<p class="p1"><span class="Apple-converted-space">    </span>conn.execute("PRAGMA foreign_keys=ON")</p>
+<p class="p1"><span class="Apple-converted-space">    </span>return conn</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">def init_db():</p>
+<p class="p1"><span class="Apple-converted-space">    </span>conn = get_connection()</p>
+<p class="p1"><span class="Apple-converted-space">    </span>with conn:</p>
+<p class="p1"><span class="Apple-converted-space">        </span>conn.executescript(</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"""</p>
+<p class="p1"><span class="Apple-converted-space">            </span>CREATE TABLE IF NOT EXISTS companies (</p>
+<p class="p1"><span class="Apple-converted-space">                </span>id INTEGER PRIMARY KEY AUTOINCREMENT,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>name TEXT NOT NULL UNIQUE,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>ats_type TEXT NOT NULL,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>ats_identifier TEXT,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>sector TEXT,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>company_type TEXT DEFAULT 'startup'</p>
+<p class="p1"><span class="Apple-converted-space">            </span>);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>CREATE TABLE IF NOT EXISTS job_postings (</p>
+<p class="p1"><span class="Apple-converted-space">                </span>id INTEGER PRIMARY KEY AUTOINCREMENT,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>company_id INTEGER NOT NULL REFERENCES companies(id),</p>
+<p class="p1"><span class="Apple-converted-space">                </span>title TEXT NOT NULL,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>location TEXT,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>department TEXT,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>url TEXT,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>external_id TEXT,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>first_seen_at DATETIME DEFAULT (datetime('now')),</p>
+<p class="p1"><span class="Apple-converted-space">                </span>last_seen_at DATETIME DEFAULT (datetime('now')),</p>
+<p class="p1"><span class="Apple-converted-space">                </span>is_active BOOLEAN DEFAULT 1</p>
+<p class="p1"><span class="Apple-converted-space">            </span>);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>CREATE TABLE IF NOT EXISTS scrape_runs (</p>
+<p class="p1"><span class="Apple-converted-space">                </span>id INTEGER PRIMARY KEY AUTOINCREMENT,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>company_id INTEGER NOT NULL REFERENCES companies(id),</p>
+<p class="p1"><span class="Apple-converted-space">                </span>run_at DATETIME DEFAULT (datetime('now')),</p>
+<p class="p1"><span class="Apple-converted-space">                </span>jobs_found INTEGER DEFAULT 0,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>jobs_added INTEGER DEFAULT 0,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>jobs_removed INTEGER DEFAULT 0,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>status TEXT DEFAULT 'success'</p>
+<p class="p1"><span class="Apple-converted-space">            </span>);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>CREATE TABLE IF NOT EXISTS job_events (</p>
+<p class="p1"><span class="Apple-converted-space">                </span>id INTEGER PRIMARY KEY AUTOINCREMENT,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>job_id INTEGER NOT NULL REFERENCES job_postings(id),</p>
+<p class="p1"><span class="Apple-converted-space">                </span>run_id INTEGER NOT NULL REFERENCES scrape_runs(id),</p>
+<p class="p1"><span class="Apple-converted-space">                </span>event_type TEXT NOT NULL,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>created_at DATETIME DEFAULT (datetime('now'))</p>
+<p class="p1"><span class="Apple-converted-space">            </span>);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"""</p>
+<p class="p1"><span class="Apple-converted-space">        </span>)</p>
+<p class="p1"><span class="Apple-converted-space">    </span>conn.close()</p>
+<p class="p1">```</p>
+<p class="p2"><br></p>
+<p class="p1">### Check</p>
+<p class="p2"><br></p>
+<p class="p1">```bash</p>
+<p class="p1">python - &lt;&lt;'PY'</p>
+<p class="p1">from db.models import init_db</p>
+<p class="p1">init_db()</p>
+<p class="p1">print('db initialized')</p>
+<p class="p1">PY</p>
+<p class="p1">```</p>
+<p class="p2"><br></p>
+<p class="p1">---</p>
+<p class="p2"><br></p>
+<p class="p1">## Phase 4: Create a Simple Scraper Contract</p>
+<p class="p2"><br></p>
+<p class="p1">### Goal</p>
+<p class="p1">Standardize job data shape.</p>
+<p class="p2"><br></p>
+<p class="p1">### Do This</p>
+<p class="p2"><br></p>
+<p class="p1">Create `scraper/base.py`:</p>
+<p class="p2"><br></p>
+<p class="p1">```python</p>
+<p class="p1">from dataclasses import dataclass</p>
+<p class="p1">from typing import Optional</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">@dataclass</p>
+<p class="p1">class JobPosting:</p>
+<p class="p1"><span class="Apple-converted-space">    </span>title: str</p>
+<p class="p1"><span class="Apple-converted-space">    </span>company: str</p>
+<p class="p1"><span class="Apple-converted-space">    </span>external_id: Optional[str] = None</p>
+<p class="p1"><span class="Apple-converted-space">    </span>location: Optional[str] = None</p>
+<p class="p1"><span class="Apple-converted-space">    </span>department: Optional[str] = None</p>
+<p class="p1"><span class="Apple-converted-space">    </span>url: Optional[str] = None</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>def to_dict(self):</p>
+<p class="p1"><span class="Apple-converted-space">        </span>return {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"title": self.title,</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"company": self.company,</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"external_id": self.external_id,</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"location": self.location,</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"department": self.department,</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"url": self.url,</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1">```</p>
+<p class="p2"><br></p>
+<p class="p1">### Why</p>
+<p class="p1">Every scraper should return the same data format.</p>
+<p class="p2"><br></p>
+<p class="p1">---</p>
+<p class="p2"><br></p>
+<p class="p1">## Phase 5: Add One Working Scraper (Greenhouse)</p>
+<p class="p2"><br></p>
+<p class="p1">### Goal</p>
+<p class="p1">Collect jobs from one ATS provider end-to-end.</p>
+<p class="p2"><br></p>
+<p class="p1">### Do This</p>
+<p class="p2"><br></p>
+<p class="p1">Create `scraper/greenhouse.py`:</p>
+<p class="p2"><br></p>
+<p class="p1">```python</p>
+<p class="p1">import aiohttp</p>
+<p class="p1">from scraper.base import JobPosting</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">async def parse(company_name: str, slug: str):</p>
+<p class="p1"><span class="Apple-converted-space">    </span>url = f"https://boards-api.greenhouse.io/v1/boards/{slug}/jobs?content=true"</p>
+<p class="p1"><span class="Apple-converted-space">    </span>async with aiohttp.ClientSession() as session:</p>
+<p class="p1"><span class="Apple-converted-space">        </span>async with session.get(url, timeout=aiohttp.ClientTimeout(total=15)) as resp:</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if resp.status != 200:</p>
+<p class="p1"><span class="Apple-converted-space">                </span>return []</p>
+<p class="p1"><span class="Apple-converted-space">            </span>data = await resp.json()</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>jobs = []</p>
+<p class="p1"><span class="Apple-converted-space">    </span>for row in data.get("jobs") or []:</p>
+<p class="p1"><span class="Apple-converted-space">        </span>jobs.append(</p>
+<p class="p1"><span class="Apple-converted-space">            </span>JobPosting(</p>
+<p class="p1"><span class="Apple-converted-space">                </span>title=row.get("title", ""),</p>
+<p class="p1"><span class="Apple-converted-space">                </span>company=company_name,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>external_id=str(row.get("id")) if row.get("id") else None,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>location=(row.get("location") or {}).get("name"),</p>
+<p class="p1"><span class="Apple-converted-space">                </span>department=((row.get("departments") or [{}])[0]).get("name"),</p>
+<p class="p1"><span class="Apple-converted-space">                </span>url=row.get("absolute_url"),</p>
+<p class="p1"><span class="Apple-converted-space">            </span>)</p>
+<p class="p1"><span class="Apple-converted-space">        </span>)</p>
+<p class="p1"><span class="Apple-converted-space">    </span>return [j for j in jobs if j.title]</p>
+<p class="p1">```</p>
+<p class="p2"><br></p>
+<p class="p1">### Check</p>
+<p class="p1">You can test later from `tracker.py`.</p>
+<p class="p2"><br></p>
+<p class="p1">---</p>
+<p class="p2"><br></p>
+<p class="p1">## Phase 6: Add Query Functions (Write + Read)</p>
+<p class="p2"><br></p>
+<p class="p1">### Goal</p>
+<p class="p1">Store companies/jobs and read summary data.</p>
+<p class="p2"><br></p>
+<p class="p1">### Do This</p>
+<p class="p2"><br></p>
+<p class="p1">Create `db/queries.py`:</p>
+<p class="p2"><br></p>
+<p class="p1">```python</p>
+<p class="p1">from db.models import get_connection</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">def upsert_company(company: dict) -&gt; int:</p>
+<p class="p1"><span class="Apple-converted-space">    </span>conn = get_connection()</p>
+<p class="p1"><span class="Apple-converted-space">    </span>with conn:</p>
+<p class="p1"><span class="Apple-converted-space">        </span>conn.execute(</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"""</p>
+<p class="p1"><span class="Apple-converted-space">            </span>INSERT INTO companies(name, ats_type, ats_identifier, sector, company_type)</p>
+<p class="p1"><span class="Apple-converted-space">            </span>VALUES (?, ?, ?, ?, ?)</p>
+<p class="p1"><span class="Apple-converted-space">            </span>ON CONFLICT(name) DO UPDATE SET</p>
+<p class="p1"><span class="Apple-converted-space">              </span>ats_type=excluded.ats_type,</p>
+<p class="p1"><span class="Apple-converted-space">              </span>ats_identifier=excluded.ats_identifier,</p>
+<p class="p1"><span class="Apple-converted-space">              </span>sector=excluded.sector,</p>
+<p class="p1"><span class="Apple-converted-space">              </span>company_type=excluded.company_type</p>
+<p class="p1"><span class="Apple-converted-space">            </span>""",</p>
+<p class="p1"><span class="Apple-converted-space">            </span>(</p>
+<p class="p1"><span class="Apple-converted-space">                </span>company["name"],</p>
+<p class="p1"><span class="Apple-converted-space">                </span>company["ats_type"],</p>
+<p class="p1"><span class="Apple-converted-space">                </span>company.get("ats_identifier"),</p>
+<p class="p1"><span class="Apple-converted-space">                </span>company.get("sector"),</p>
+<p class="p1"><span class="Apple-converted-space">                </span>company.get("company_type", "startup"),</p>
+<p class="p1"><span class="Apple-converted-space">            </span>),</p>
+<p class="p1"><span class="Apple-converted-space">        </span>)</p>
+<p class="p1"><span class="Apple-converted-space">        </span>row = conn.execute("SELECT id FROM companies WHERE name = ?", (company["name"],)).fetchone()</p>
+<p class="p1"><span class="Apple-converted-space">    </span>conn.close()</p>
+<p class="p1"><span class="Apple-converted-space">    </span>return row["id"]</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">def log_run(company_id: int, jobs_found: int, jobs_added: int, jobs_removed: int, status: str = "success") -&gt; int:</p>
+<p class="p1"><span class="Apple-converted-space">    </span>conn = get_connection()</p>
+<p class="p1"><span class="Apple-converted-space">    </span>with conn:</p>
+<p class="p1"><span class="Apple-converted-space">        </span>cur = conn.execute(</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"""</p>
+<p class="p1"><span class="Apple-converted-space">            </span>INSERT INTO scrape_runs(company_id, jobs_found, jobs_added, jobs_removed, status)</p>
+<p class="p1"><span class="Apple-converted-space">            </span>VALUES (?, ?, ?, ?, ?)</p>
+<p class="p1"><span class="Apple-converted-space">            </span>""",</p>
+<p class="p1"><span class="Apple-converted-space">            </span>(company_id, jobs_found, jobs_added, jobs_removed, status),</p>
+<p class="p1"><span class="Apple-converted-space">        </span>)</p>
+<p class="p1"><span class="Apple-converted-space">        </span>run_id = cur.lastrowid</p>
+<p class="p1"><span class="Apple-converted-space">    </span>conn.close()</p>
+<p class="p1"><span class="Apple-converted-space">    </span>return run_id</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">def sync_jobs(company_id: int, run_id: int, scraped_jobs: list[dict]):</p>
+<p class="p1"><span class="Apple-converted-space">    </span>conn = get_connection()</p>
+<p class="p1"><span class="Apple-converted-space">    </span>existing = conn.execute(</p>
+<p class="p1"><span class="Apple-converted-space">        </span>"SELECT id, external_id, title FROM job_postings WHERE company_id=? AND is_active=1",</p>
+<p class="p1"><span class="Apple-converted-space">        </span>(company_id,),</p>
+<p class="p1"><span class="Apple-converted-space">    </span>).fetchall()</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>by_ext = {r["external_id"]: r["id"] for r in existing if r["external_id"]}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>by_title = {r["title"].strip().lower(): r["id"] for r in existing}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>matched = set()</p>
+<p class="p1"><span class="Apple-converted-space">    </span>added = 0</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>with conn:</p>
+<p class="p1"><span class="Apple-converted-space">        </span>for job in scraped_jobs:</p>
+<p class="p1"><span class="Apple-converted-space">            </span>existing_id = None</p>
+<p class="p1"><span class="Apple-converted-space">            </span>ext = job.get("external_id")</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if ext and ext in by_ext:</p>
+<p class="p1"><span class="Apple-converted-space">                </span>existing_id = by_ext[ext]</p>
+<p class="p1"><span class="Apple-converted-space">            </span>elif job.get("title", "").strip().lower() in by_title:</p>
+<p class="p1"><span class="Apple-converted-space">                </span>existing_id = by_title[job["title"].strip().lower()]</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>if existing_id:</p>
+<p class="p1"><span class="Apple-converted-space">                </span>matched.add(existing_id)</p>
+<p class="p1"><span class="Apple-converted-space">                </span>conn.execute(</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>"UPDATE job_postings SET last_seen_at=datetime('now'), is_active=1 WHERE id=?",</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>(existing_id,),</p>
+<p class="p1"><span class="Apple-converted-space">                </span>)</p>
+<p class="p1"><span class="Apple-converted-space">            </span>else:</p>
+<p class="p1"><span class="Apple-converted-space">                </span>cur = conn.execute(</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>"""</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>INSERT INTO job_postings(company_id, title, location, department, url, external_id, is_active)</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>VALUES (?, ?, ?, ?, ?, ?, 1)</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>""",</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>(</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>company_id,</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>job["title"],</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>job.get("location"),</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>job.get("department"),</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>job.get("url"),</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>job.get("external_id"),</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>),</p>
+<p class="p1"><span class="Apple-converted-space">                </span>)</p>
+<p class="p1"><span class="Apple-converted-space">                </span>job_id = cur.lastrowid</p>
+<p class="p1"><span class="Apple-converted-space">                </span>conn.execute(</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>"INSERT INTO job_events(job_id, run_id, event_type) VALUES (?, ?, 'added')",</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>(job_id, run_id),</p>
+<p class="p1"><span class="Apple-converted-space">                </span>)</p>
+<p class="p1"><span class="Apple-converted-space">                </span>added += 1</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>removed = 0</p>
+<p class="p1"><span class="Apple-converted-space">        </span>for row in existing:</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if row["id"] not in matched:</p>
+<p class="p1"><span class="Apple-converted-space">                </span>conn.execute("UPDATE job_postings SET is_active=0 WHERE id=?", (row["id"],))</p>
+<p class="p1"><span class="Apple-converted-space">                </span>conn.execute(</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>"INSERT INTO job_events(job_id, run_id, event_type) VALUES (?, ?, 'removed')",</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>(row["id"], run_id),</p>
+<p class="p1"><span class="Apple-converted-space">                </span>)</p>
+<p class="p1"><span class="Apple-converted-space">                </span>removed += 1</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>conn.execute("UPDATE scrape_runs SET jobs_added=?, jobs_removed=? WHERE id=?", (added, removed, run_id))</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>conn.close()</p>
+<p class="p1"><span class="Apple-converted-space">    </span>return added, removed</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">def get_overview_stats(company_type=None):</p>
+<p class="p1"><span class="Apple-converted-space">    </span>conn = get_connection()</p>
+<p class="p1"><span class="Apple-converted-space">    </span>params = []</p>
+<p class="p1"><span class="Apple-converted-space">    </span>company_where = ""</p>
+<p class="p1"><span class="Apple-converted-space">    </span>join_where = " WHERE jp.is_active=1"</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>if company_type:</p>
+<p class="p1"><span class="Apple-converted-space">        </span>company_where = " WHERE company_type = ?"</p>
+<p class="p1"><span class="Apple-converted-space">        </span>join_where += " AND c.company_type = ?"</p>
+<p class="p1"><span class="Apple-converted-space">        </span>params.append(company_type)</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>total_companies = conn.execute(</p>
+<p class="p1"><span class="Apple-converted-space">        </span>f"SELECT COUNT(*) FROM companies{company_where}",</p>
+<p class="p1"><span class="Apple-converted-space">        </span>params if company_type else (),</p>
+<p class="p1"><span class="Apple-converted-space">    </span>).fetchone()[0]</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>total_active_jobs = conn.execute(</p>
+<p class="p1"><span class="Apple-converted-space">        </span>f"SELECT COUNT(*) FROM job_postings jp JOIN companies c ON c.id=jp.company_id{join_where}",</p>
+<p class="p1"><span class="Apple-converted-space">        </span>params if company_type else (),</p>
+<p class="p1"><span class="Apple-converted-space">    </span>).fetchone()[0]</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>last_run = conn.execute("SELECT MAX(run_at) FROM scrape_runs").fetchone()[0]</p>
+<p class="p1"><span class="Apple-converted-space">    </span>conn.close()</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>return {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>"total_companies": total_companies,</p>
+<p class="p1"><span class="Apple-converted-space">        </span>"total_active_jobs": total_active_jobs,</p>
+<p class="p1"><span class="Apple-converted-space">        </span>"last_run": last_run,</p>
+<p class="p1"><span class="Apple-converted-space">        </span>"net_added": 0,</p>
+<p class="p1"><span class="Apple-converted-space">        </span>"net_removed": 0,</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1">```</p>
+<p class="p2"><br></p>
+<p class="p1">---</p>
+<p class="p2"><br></p>
+<p class="p1">## Phase 7: Create the Main Runner</p>
+<p class="p2"><br></p>
+<p class="p1">### Goal</p>
+<p class="p1">Run one full scrape and save data.</p>
+<p class="p2"><br></p>
+<p class="p1">### Do This</p>
+<p class="p2"><br></p>
+<p class="p1">Create `companies.json`:</p>
+<p class="p2"><br></p>
+<p class="p1">```json</p>
+<p class="p1">[</p>
+<p class="p1"><span class="Apple-converted-space">  </span>{</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"name": "Stripe",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"ats_type": "greenhouse",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"ats_identifier": "stripe",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"sector": "Fintech &amp; Payments",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"company_type": "bigco"</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1">]</p>
+<p class="p1">```</p>
+<p class="p2"><br></p>
+<p class="p1">Create `tracker.py`:</p>
+<p class="p2"><br></p>
+<p class="p1">```python</p>
+<p class="p1">import asyncio</p>
+<p class="p1">import json</p>
+<p class="p1">from pathlib import Path</p>
+<p class="p2"><br></p>
+<p class="p1">from db.models import init_db</p>
+<p class="p1">from db import queries</p>
+<p class="p1">import scraper.greenhouse as greenhouse</p>
+<p class="p2"><br></p>
+<p class="p1">COMPANIES_FILE = Path("companies.json")</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">def load_companies():</p>
+<p class="p1"><span class="Apple-converted-space">    </span>with open(COMPANIES_FILE) as f:</p>
+<p class="p1"><span class="Apple-converted-space">        </span>return json.load(f)</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">async def run():</p>
+<p class="p1"><span class="Apple-converted-space">    </span>init_db()</p>
+<p class="p1"><span class="Apple-converted-space">    </span>companies = load_companies()</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>for c in companies:</p>
+<p class="p1"><span class="Apple-converted-space">        </span>company_id = queries.upsert_company(c)</p>
+<p class="p1"><span class="Apple-converted-space">        </span>jobs = await greenhouse.parse(c["name"], c["ats_identifier"])</p>
+<p class="p1"><span class="Apple-converted-space">        </span>run_id = queries.log_run(company_id, len(jobs), 0, 0)</p>
+<p class="p1"><span class="Apple-converted-space">        </span>added, removed = queries.sync_jobs(company_id, run_id, [j.to_dict() for j in jobs])</p>
+<p class="p1"><span class="Apple-converted-space">        </span>print(f"{c['name']}: found={len(jobs)} added={added} removed={removed}")</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">if __name__ == "__main__":</p>
+<p class="p1"><span class="Apple-converted-space">    </span>asyncio.run(run())</p>
+<p class="p1">```</p>
+<p class="p2"><br></p>
+<p class="p1">### Check</p>
+<p class="p2"><br></p>
+<p class="p1">```bash</p>
+<p class="p1">python tracker.py</p>
+<p class="p1">```</p>
+<p class="p2"><br></p>
+<p class="p1">You should see one line of results with found/added/removed counts.</p>
+<p class="p2"><br></p>
+<p class="p1">---</p>
+<p class="p2"><br></p>
+<p class="p1">## Phase 8: Add the API</p>
+<p class="p2"><br></p>
+<p class="p1">### Goal</p>
+<p class="p1">Make your data available to a web app.</p>
+<p class="p2"><br></p>
+<p class="p1">### Do This</p>
+<p class="p2"><br></p>
+<p class="p1">Create `api/app.py`:</p>
+<p class="p2"><br></p>
+<p class="p1">```python</p>
+<p class="p1">from fastapi import FastAPI</p>
+<p class="p1">from typing import Optional</p>
+<p class="p2"><br></p>
+<p class="p1">from db.models import init_db</p>
+<p class="p1">from db import queries</p>
+<p class="p2"><br></p>
+<p class="p1">app = FastAPI(title="Startup Tracker API")</p>
+<p class="p1">init_db()</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">@app.get("/api/overview")</p>
+<p class="p1">def overview(company_type: Optional[str] = None):</p>
+<p class="p1"><span class="Apple-converted-space">    </span>return queries.get_overview_stats(company_type=company_type)</p>
+<p class="p1">```</p>
+<p class="p2"><br></p>
+<p class="p1">Run API:</p>
+<p class="p2"><br></p>
+<p class="p1">```bash</p>
+<p class="p1">uvicorn api.app:app --reload --port 8000</p>
+<p class="p1">```</p>
+<p class="p2"><br></p>
+<p class="p1">### Check</p>
+<p class="p1">Open in browser:</p>
+<p class="p2"><br></p>
+<p class="p1">[http://localhost:8000/api/overview](http://localhost:8000/api/overview)</p>
+<p class="p2"><br></p>
+<p class="p1">You should see JSON.</p>
+<p class="p2"><br></p>
+<p class="p1">---</p>
+<p class="p2"><br></p>
+<p class="p1">## Phase 9: Add a Very Simple Dashboard</p>
+<p class="p2"><br></p>
+<p class="p1">### Goal</p>
+<p class="p1">Show data in a browser UI.</p>
+<p class="p2"><br></p>
+<p class="p1">### Do This</p>
+<p class="p2"><br></p>
+<p class="p1">```bash</p>
+<p class="p1">cd dashboard</p>
+<p class="p1">npm init -y</p>
+<p class="p1">npm install next react react-dom</p>
+<p class="p1">npm install -D typescript @types/react @types/react-dom @types/node</p>
+<p class="p1">npx next@latest telemetry disable</p>
+<p class="p1">```</p>
+<p class="p2"><br></p>
+<p class="p1">Create `dashboard/package.json` scripts (edit):</p>
+<p class="p2"><br></p>
+<p class="p1">```json</p>
+<p class="p1">{</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"scripts": {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"dev": "next dev",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"build": "next build",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"start": "next start"</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1">}</p>
+<p class="p1">```</p>
+<p class="p2"><br></p>
+<p class="p1">Create `dashboard/src/app/page.tsx`:</p>
+<p class="p2"><br></p>
+<p class="p1">```tsx</p>
+<p class="p1">"use client";</p>
+<p class="p2"><br></p>
+<p class="p1">import { useEffect, useState } from "react";</p>
+<p class="p2"><br></p>
+<p class="p1">export default function Page() {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const [data, setData] = useState&lt;any&gt;(null);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>useEffect(() =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>fetch("http://localhost:8000/api/overview")</p>
+<p class="p1"><span class="Apple-converted-space">      </span>.then((r) =&gt; r.json())</p>
+<p class="p1"><span class="Apple-converted-space">      </span>.then(setData);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}, []);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>return (</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;main style={{ padding: 24, fontFamily: "sans-serif" }}&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;h1&gt;Startup Tracker&lt;/h1&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>{!data ? (</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;p&gt;Loading...&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>) : (</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;p&gt;Total companies: {data.total_companies}&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;p&gt;Total active jobs: {data.total_active_jobs}&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;p&gt;Last run: {data.last_run || "Never"}&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>)}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/main&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>);</p>
+<p class="p1">}</p>
+<p class="p1">```</p>
+<p class="p2"><br></p>
+<p class="p1">Start frontend:</p>
+<p class="p2"><br></p>
+<p class="p1">```bash</p>
+<p class="p1">npm run dev</p>
+<p class="p1">```</p>
+<p class="p2"><br></p>
+<p class="p1">### Check</p>
+<p class="p1">Open [http://localhost:3000](http://localhost:3000)</p>
+<p class="p2"><br></p>
+<p class="p1">---</p>
+<p class="p2"><br></p>
+<p class="p1">## Phase 10: Expand to Full App (This Repo)</p>
+<p class="p2"><br></p>
+<p class="p1">Now map your mini version to the full production-style version:</p>
+<p class="p2"><br></p>
+<p class="p1">| Mini Build | Full Repo Equivalent |</p>
+<p class="p1">|---|---|</p>
+<p class="p1">| one scraper | many scrapers in `scraper/*.py` |</p>
+<p class="p1">| one endpoint | many in `api/app.py` |</p>
+<p class="p1">| one page | many in `dashboard/src/app/*` |</p>
+<p class="p1">| simple sync | advanced lifecycle sync in `db/queries.py` |</p>
+<p class="p1">| no enrichment | enrichment + skill extraction pipeline |</p>
+<p class="p2"><br></p>
+<p class="p1">---</p>
+<p class="p2"><br></p>
+<p class="p1">## Part 4: Visual Flows You Should Understand</p>
+<p class="p2"><br></p>
+<p class="p1">## 4.1 Daily Run Timeline</p>
+<p class="p2"><br></p>
+<p class="p1">```mermaid</p>
+<p class="p1">sequenceDiagram</p>
+<p class="p1"><span class="Apple-converted-space">  </span>participant U as You</p>
+<p class="p1"><span class="Apple-converted-space">  </span>participant T as tracker.py</p>
+<p class="p1"><span class="Apple-converted-space">  </span>participant S as Scrapers</p>
+<p class="p1"><span class="Apple-converted-space">  </span>participant D as Database</p>
+<p class="p1"><span class="Apple-converted-space">  </span>participant E as Enrichment</p>
+<p class="p1"><span class="Apple-converted-space">  </span>participant N as Skill Extraction</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>U-&gt;&gt;T: run tracker</p>
+<p class="p1"><span class="Apple-converted-space">  </span>T-&gt;&gt;S: fetch jobs from ATS</p>
+<p class="p1"><span class="Apple-converted-space">  </span>S--&gt;&gt;T: raw jobs</p>
+<p class="p1"><span class="Apple-converted-space">  </span>T-&gt;&gt;D: upsert + sync + events</p>
+<p class="p1"><span class="Apple-converted-space">  </span>T-&gt;&gt;E: normalize fields</p>
+<p class="p1"><span class="Apple-converted-space">  </span>E--&gt;&gt;D: update job metadata</p>
+<p class="p1"><span class="Apple-converted-space">  </span>T-&gt;&gt;N: extract skills</p>
+<p class="p1"><span class="Apple-converted-space">  </span>N--&gt;&gt;D: job_skills tags</p>
+<p class="p1">```</p>
+<p class="p2"><br></p>
+<p class="p1">## 4.2 Job Open/Close Logic</p>
+<p class="p2"><br></p>
+<p class="p1">```mermaid</p>
+<p class="p1">flowchart TD</p>
+<p class="p1"><span class="Apple-converted-space">  </span>A["Job scraped this run?"] --&gt;|Yes| B["Mark active + update last_seen"]</p>
+<p class="p1"><span class="Apple-converted-space">  </span>A --&gt;|No| C["Mark suspected closed or closed"]</p>
+<p class="p1"><span class="Apple-converted-space">  </span>C --&gt; D["Emit removed event when closed"]</p>
+<p class="p1">```</p>
+<p class="p2"><br></p>
+<p class="p1">## 4.3 API-to-UI Flow</p>
+<p class="p2"><br></p>
+<p class="p1">```mermaid</p>
+<p class="p1">flowchart LR</p>
+<p class="p1"><span class="Apple-converted-space">  </span>A["Browser Page"] --&gt; B["dashboard/src/lib/api.ts"]</p>
+<p class="p1"><span class="Apple-converted-space">  </span>B --&gt; C["FastAPI endpoint"]</p>
+<p class="p1"><span class="Apple-converted-space">  </span>C --&gt; D["db/queries.py SQL"]</p>
+<p class="p1"><span class="Apple-converted-space">  </span>D --&gt; E["SQLite"]</p>
+<p class="p1"><span class="Apple-converted-space">  </span>E --&gt; D --&gt; C --&gt; B --&gt; A</p>
+<p class="p1">```</p>
+<p class="p2"><br></p>
+<p class="p1">---</p>
+<p class="p2"><br></p>
+<p class="p1">## Part 5: Plain-English Explanation of Key Features</p>
+<p class="p2"><br></p>
+<p class="p1">## 5.1 Overview Page</p>
+<p class="p2"><br></p>
+<p class="p1">Shows:</p>
+<p class="p1">- How many companies are tracked.</p>
+<p class="p1">- How many jobs are active.</p>
+<p class="p1">- What changed recently.</p>
+<p class="p2"><br></p>
+<p class="p1">## 5.2 Companies Page</p>
+<p class="p2"><br></p>
+<p class="p1">Shows each company with:</p>
+<p class="p1">- active job count,</p>
+<p class="p1">- sector,</p>
+<p class="p1">- funding stage,</p>
+<p class="p1">- change velocity.</p>
+<p class="p2"><br></p>
+<p class="p1">## 5.3 Changes Page</p>
+<p class="p2"><br></p>
+<p class="p1">Shows timeline of openings/closures. <span class="Apple-converted-space"> </span></p>
+<p class="p1">This is powered by `job_events`.</p>
+<p class="p2"><br></p>
+<p class="p1">## 5.4 Jobs Page</p>
+<p class="p2"><br></p>
+<p class="p1">Search and filter jobs by:</p>
+<p class="p1">- sector,</p>
+<p class="p1">- skills,</p>
+<p class="p1">- department,</p>
+<p class="p1">- work model,</p>
+<p class="p1">- company type.</p>
+<p class="p2"><br></p>
+<p class="p1">## 5.5 Resume Fit (Optional)</p>
+<p class="p2"><br></p>
+<p class="p1">Upload resume, get:</p>
+<p class="p1">- best matching jobs,</p>
+<p class="p1">- score,</p>
+<p class="p1">- strengths/gaps pointers.</p>
+<p class="p2"><br></p>
+<p class="p1">---</p>
+<p class="p2"><br></p>
+<p class="p1">## Part 6: Scripts Explained Like a Playbook</p>
+<p class="p2"><br></p>
+<p class="p1">| Script | Use It When | Input | Output |</p>
+<p class="p1">|---|---|---|---|</p>
+<p class="p1">| `scripts/batch_discover.py` | You have new company names to test | txt names | JSON ATS hits |</p>
+<p class="p1">| `scripts/import_bulk_hits.py` | You want to add discovered hits to DB | hits JSON | new companies in DB |</p>
+<p class="p1">| `scripts/growth_run.py` | You want one-command growth cycle | candidate files | discovery + import + scrape + maintenance |</p>
+<p class="p1">| `scripts/growth_maintenance.py` | You want to apply quality tags | DB state | tag updates |</p>
+<p class="p1">| `scripts/make_demo_db.py` | You need lightweight demo DB | existing DB | trimmed demo DB |</p>
+<p class="p2"><br></p>
+<p class="p1">---</p>
+<p class="p2"><br></p>
+<p class="p1">## Part 7: Daily Operations (Beginner Checklist)</p>
+<p class="p2"><br></p>
+<p class="p1">## 7.1 Morning Checklist</p>
+<p class="p2"><br></p>
+<p class="p1">1. Start API.</p>
+<p class="p1">2. Start dashboard.</p>
+<p class="p1">3. Run tracker.</p>
+<p class="p1">4. Open Health page.</p>
+<p class="p1">5. Confirm no major scraper failures.</p>
+<p class="p2"><br></p>
+<p class="p1">Commands:</p>
+<p class="p2"><br></p>
+<p class="p1">```bash</p>
+<p class="p1">source .venv/bin/activate</p>
+<p class="p1">python tracker.py</p>
+<p class="p1">uvicorn api.app:app --reload --port 8000</p>
+<p class="p1">```</p>
+<p class="p2"><br></p>
+<p class="p1">New terminal:</p>
+<p class="p2"><br></p>
+<p class="p1">```bash</p>
+<p class="p1">cd dashboard</p>
+<p class="p1">npm run dev</p>
+<p class="p1">```</p>
+<p class="p2"><br></p>
+<p class="p1">## 7.2 Weekly Checklist</p>
+<p class="p2"><br></p>
+<p class="p1">1. Run growth discovery scripts.</p>
+<p class="p1">2. Import valid hits.</p>
+<p class="p1">3. Re-run tracker.</p>
+<p class="p1">4. Check Trends and Changes pages.</p>
+<p class="p2"><br></p>
+<p class="p1">---</p>
+<p class="p2"><br></p>
+<p class="p1">## Part 8: Troubleshooting (Very Practical)</p>
+<p class="p2"><br></p>
+<p class="p1">## 8.1 "API not loading"</p>
+<p class="p2"><br></p>
+<p class="p1">- Make sure backend is running on port 8000.</p>
+<p class="p1">- Open [http://localhost:8000/api/overview](http://localhost:8000/api/overview)</p>
+<p class="p1">- If it fails, check terminal error and restart.</p>
+<p class="p2"><br></p>
+<p class="p1">## 8.2 "Dashboard shows blank"</p>
+<p class="p2"><br></p>
+<p class="p1">- Confirm frontend is running on port 3000.</p>
+<p class="p1">- Confirm `NEXT_PUBLIC_API_URL` points to backend if not localhost.</p>
+<p class="p2"><br></p>
+<p class="p1">## 8.3 "No jobs found"</p>
+<p class="p2"><br></p>
+<p class="p1">- ATS slug may be wrong.</p>
+<p class="p1">- Test with known slug in Greenhouse first.</p>
+<p class="p1">- Confirm internet access.</p>
+<p class="p2"><br></p>
+<p class="p1">## 8.4 "Build/type errors"</p>
+<p class="p2"><br></p>
+<p class="p1">In the current repo state, some newer pages (`analyst`, `radar`) are ahead of API typings/endpoints and may fail full build until backend/type contracts are aligned.</p>
+<p class="p2"><br></p>
+<p class="p1">---</p>
+<p class="p2"><br></p>
+<p class="p1">## Part 9: Why the Design Looks Like This</p>
+<p class="p2"><br></p>
+<p class="p1">## 9.1 Why SQLite first</p>
+<p class="p2"><br></p>
+<p class="p1">- Easy local setup.</p>
+<p class="p1">- Great for analytics prototyping.</p>
+<p class="p1">- No server admin needed.</p>
+<p class="p2"><br></p>
+<p class="p1">## 9.2 Why many small scraper files</p>
+<p class="p2"><br></p>
+<p class="p1">- Each ATS changes independently.</p>
+<p class="p1">- Easier debugging and safer updates.</p>
+<p class="p2"><br></p>
+<p class="p1">## 9.3 Why event log + active table</p>
+<p class="p2"><br></p>
+<p class="p1">- Active table gives fast current views.</p>
+<p class="p1">- Event log gives accurate history and trend charts.</p>
+<p class="p2"><br></p>
+<p class="p1">## 9.4 Why deterministic score + LLM fit</p>
+<p class="p2"><br></p>
+<p class="p1">- Deterministic score gives stable ranking.</p>
+<p class="p1">- LLM adds human-readable advice.</p>
+<p class="p2"><br></p>
+<p class="p1">---</p>
+<p class="p2"><br></p>
+<p class="p1">## Part 10: Full-App Visual Blueprint (Reference)</p>
+<p class="p2"><br></p>
+<p class="p1">```mermaid</p>
+<p class="p1">flowchart TD</p>
+<p class="p1"><span class="Apple-converted-space">  </span>A["companies.json"] --&gt; B["tracker.py"]</p>
+<p class="p1"><span class="Apple-converted-space">  </span>B --&gt; C1["ashby.py"]</p>
+<p class="p1"><span class="Apple-converted-space">  </span>B --&gt; C2["greenhouse.py"]</p>
+<p class="p1"><span class="Apple-converted-space">  </span>B --&gt; C3["lever.py"]</p>
+<p class="p1"><span class="Apple-converted-space">  </span>B --&gt; C4["smartrecruiters.py"]</p>
+<p class="p1"><span class="Apple-converted-space">  </span>B --&gt; C5["teamtailor.py"]</p>
+<p class="p1"><span class="Apple-converted-space">  </span>B --&gt; C6["playwright_scraper.py"]</p>
+<p class="p1"><span class="Apple-converted-space">  </span>B --&gt; C7["static_html.py"]</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>C1 --&gt; D["db/queries.sync_jobs"]</p>
+<p class="p1"><span class="Apple-converted-space">  </span>C2 --&gt; D</p>
+<p class="p1"><span class="Apple-converted-space">  </span>C3 --&gt; D</p>
+<p class="p1"><span class="Apple-converted-space">  </span>C4 --&gt; D</p>
+<p class="p1"><span class="Apple-converted-space">  </span>C5 --&gt; D</p>
+<p class="p1"><span class="Apple-converted-space">  </span>C6 --&gt; D</p>
+<p class="p1"><span class="Apple-converted-space">  </span>C7 --&gt; D</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>D --&gt; E["job_postings + scrape_runs + job_events"]</p>
+<p class="p1"><span class="Apple-converted-space">  </span>E --&gt; F["scraper/enrichment.py"]</p>
+<p class="p1"><span class="Apple-converted-space">  </span>F --&gt; E</p>
+<p class="p1"><span class="Apple-converted-space">  </span>E --&gt; G["analysis/nlp.py"]</p>
+<p class="p1"><span class="Apple-converted-space">  </span>G --&gt; H["job_skills"]</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>E --&gt; I["api/app.py"]</p>
+<p class="p1"><span class="Apple-converted-space">  </span>H --&gt; I</p>
+<p class="p1"><span class="Apple-converted-space">  </span>I --&gt; J["dashboard/src/lib/api.ts"]</p>
+<p class="p1"><span class="Apple-converted-space">  </span>J --&gt; K["dashboard/src/app/*"]</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>E --&gt; L["analysis/resume_fit.py"]</p>
+<p class="p1"><span class="Apple-converted-space">  </span>L --&gt; M["resume_profiles + resume_job_fits"]</p>
+<p class="p1">```</p>
+<p class="p2"><br></p>
+<p class="p1">---</p>
+<p class="p2"><br></p>
+<p class="p1">## Part 11: "Copy This" Commands for This Existing Repo</p>
+<p class="p2"><br></p>
+<p class="p1">If you want to run the full repo as-is:</p>
+<p class="p2"><br></p>
+<p class="p1">```bash</p>
+<p class="p1">cd /Users/imanbaghai/Desktop/startup-tracker</p>
+<p class="p1">python3 -m venv .venv</p>
+<p class="p1">source .venv/bin/activate</p>
+<p class="p1">pip install -r requirements.txt</p>
+<p class="p1">python tracker.py</p>
+<p class="p1">uvicorn api.app:app --reload --port 8000</p>
+<p class="p1">```</p>
+<p class="p2"><br></p>
+<p class="p1">New terminal:</p>
+<p class="p2"><br></p>
+<p class="p1">```bash</p>
+<p class="p1">cd /Users/imanbaghai/Desktop/startup-tracker/dashboard</p>
+<p class="p1">npm install</p>
+<p class="p1">npm run dev</p>
+<p class="p1">```</p>
+<p class="p2"><br></p>
+<p class="p1">Then open:</p>
+<p class="p1">- API: [http://localhost:8000/api/overview](http://localhost:8000/api/overview)</p>
+<p class="p1">- Dashboard: [http://localhost:3000](http://localhost:3000)</p>
+<p class="p2"><br></p>
+<p class="p1">---</p>
+<p class="p2"><br></p>
+<p class="p1">## Part 12: Beginner Success Milestones</p>
+<p class="p2"><br></p>
+<p class="p1">You are done with this textbook when you can:</p>
+<p class="p1">1. Explain the 5 layers (scrape, store, serve, visualize, analyze).</p>
+<p class="p1">2. Run `tracker.py` and see job counts update.</p>
+<p class="p1">3. Open `/api/overview` and understand the JSON.</p>
+<p class="p1">4. Open dashboard and explain each major page.</p>
+<p class="p1">5. Add one new company and see it appear after a run.</p>
+<p class="p2"><br></p>
+<p class="p1">---</p>
+<p class="p2"><br></p>
+<p class="p1">## Part 13: Next Step Paths</p>
+<p class="p2"><br></p>
+<p class="p1">Choose one learning path:</p>
+<p class="p2"><br></p>
+<p class="p1">### Path A (Operator)</p>
+<p class="p1">- Focus on daily runs, health checks, and growth scripts.</p>
+<p class="p2"><br></p>
+<p class="p1">### Path B (Analyst)</p>
+<p class="p1">- Focus on trends, changes, and cohort analysis.</p>
+<p class="p2"><br></p>
+<p class="p1">### Path C (Builder)</p>
+<p class="p1">- Add one new scraper adapter.</p>
+<p class="p1">- Add one new API endpoint.</p>
+<p class="p1">- Add one new dashboard chart.</p>
+<p class="p2"><br></p>
+<p class="p1">---</p>
+<p class="p2"><br></p>
+<p class="p1">## Appendix: Current Repo Reality Notes</p>
+<p class="p2"><br></p>
+<p class="p1">These are practical notes about the current state of this repository:</p>
+<p class="p1">- The core scrape -&gt; DB -&gt; API -&gt; dashboard flow is solid.</p>
+<p class="p1">- Some newer frontend pages (`analyst`, `radar`) are ahead of the exported API types/endpoints and may fail full production build until contracts are aligned.</p>
+<p class="p1">- Some growth/discovery scripts reference functions not present in the current `db/queries.py` file.</p>
+<p class="p2"><br></p>
+<p class="p1">This does not block learning the architecture or running the core pipeline.</p>
+<p class="p2"><br></p>
+</body>
+</html>

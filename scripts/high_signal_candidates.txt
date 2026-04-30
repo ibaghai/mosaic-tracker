@@ -1,0 +1,69 @@
+Adobe
+Adyen
+Akamai
+Alation
+Alteryx
+Anduril Industries
+Anyscale
+Apollo.io
+Atlassian
+AuditBoard
+Beamery
+BigPanda
+BitGo
+Cerebras
+Chainalysis
+Chronosphere
+Circle
+Clipboard Health
+Clio
+Codeium
+Coupa
+DeepL
+Deel
+Docker
+eBay
+G2
+Gemini
+GitHub
+Grammarly
+IBM
+Intuit
+Kong
+Lemonade
+LinkedIn
+Liquid Death
+Looker
+Lucid Software
+Meesho
+Mercor
+MongoDB
+Mural
+Neo4j
+Netskope
+Octopus Energy
+OpenSea
+Palo Alto Networks
+Patreon
+PostHog
+PsiQuantum
+Retool
+Roblox
+Sentry
+ServiceTitan
+Shein
+Snap
+Snyk
+Substack
+Talkdesk
+Telnyx
+Tesla
+The Browser Company
+Thinkific
+TruEra
+Typeface
+Uber
+Vimeo
+Zapier
+Zeta Global
+Zip

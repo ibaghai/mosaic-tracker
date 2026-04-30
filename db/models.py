@@ -2,6 +2,10 @@ import sqlite3
 import os
 from pathlib import Path
 
+from db.env_loader import load_env_local
+
+load_env_local()
+
 _DEFAULT_DB_PATH = Path(__file__).parent.parent / "data" / "tracker.db"
 DB_PATH = Path(os.getenv("TRACKER_DB_PATH", str(_DEFAULT_DB_PATH)))
 
@@ -161,6 +165,122 @@ def init_db():
             );
             CREATE INDEX IF NOT EXISTS idx_resume_job_fits_resume ON resume_job_fits(resume_id);
             CREATE INDEX IF NOT EXISTS idx_resume_job_fits_job ON resume_job_fits(job_id);
+
+            CREATE TABLE IF NOT EXISTS people (
+                id                  INTEGER PRIMARY KEY AUTOINCREMENT,
+                apollo_id           TEXT,
+                name                TEXT NOT NULL,
+                title               TEXT,
+                company_id          INTEGER REFERENCES companies(id) ON DELETE SET NULL,
+                company_name        TEXT,
+                linkedin_url        TEXT,
+                email               TEXT,
+                email_status        TEXT,
+                phone               TEXT,
+                bio_summary         TEXT,
+                seniority           TEXT,
+                departments_json    TEXT,
+                tenure_start_date   DATE,
+                archetype           TEXT,
+                last_verified_at    DATETIME,
+                source              TEXT,
+                raw_payload_json    TEXT,
+                created_at          DATETIME DEFAULT (datetime('now')),
+                updated_at          DATETIME DEFAULT (datetime('now'))
+            );
+            CREATE INDEX IF NOT EXISTS idx_people_company ON people(company_id);
+            CREATE INDEX IF NOT EXISTS idx_people_apollo_id ON people(apollo_id);
+            CREATE INDEX IF NOT EXISTS idx_people_archetype ON people(archetype);
+            CREATE UNIQUE INDEX IF NOT EXISTS idx_people_apollo_unique
+                ON people(apollo_id) WHERE apollo_id IS NOT NULL;
+
+            CREATE TABLE IF NOT EXISTS outreach_drafts (
+                id              INTEGER PRIMARY KEY AUTOINCREMENT,
+                person_id       INTEGER NOT NULL REFERENCES people(id) ON DELETE CASCADE,
+                job_id          INTEGER NOT NULL REFERENCES job_postings(id) ON DELETE CASCADE,
+                resume_id       INTEGER REFERENCES resume_profiles(id) ON DELETE SET NULL,
+                archetype       TEXT,
+                subject         TEXT,
+                message         TEXT NOT NULL,
+                rationale_json  TEXT,
+                tone            TEXT,
+                provider        TEXT NOT NULL,
+                model           TEXT NOT NULL,
+                prompt_version  TEXT NOT NULL,
+                user_edits      TEXT,
+                created_at      DATETIME DEFAULT (datetime('now'))
+            );
+            CREATE INDEX IF NOT EXISTS idx_outreach_drafts_job ON outreach_drafts(job_id);
+            CREATE INDEX IF NOT EXISTS idx_outreach_drafts_person ON outreach_drafts(person_id);
+
+            CREATE TABLE IF NOT EXISTS tailored_resumes (
+                id                  INTEGER PRIMARY KEY AUTOINCREMENT,
+                resume_id           INTEGER NOT NULL REFERENCES resume_profiles(id) ON DELETE CASCADE,
+                job_id              INTEGER NOT NULL REFERENCES job_postings(id) ON DELETE CASCADE,
+                tailored_text       TEXT NOT NULL,
+                diff_summary_json   TEXT,
+                provider            TEXT NOT NULL,
+                model               TEXT NOT NULL,
+                prompt_version      TEXT NOT NULL,
+                created_at          DATETIME DEFAULT (datetime('now')),
+                UNIQUE(resume_id, job_id, prompt_version)
+            );
+            CREATE INDEX IF NOT EXISTS idx_tailored_resumes_resume ON tailored_resumes(resume_id);
+            CREATE INDEX IF NOT EXISTS idx_tailored_resumes_job ON tailored_resumes(job_id);
+
+            CREATE TABLE IF NOT EXISTS users (
+                id              INTEGER PRIMARY KEY AUTOINCREMENT,
+                email           TEXT NOT NULL UNIQUE COLLATE NOCASE,
+                password_hash   TEXT NOT NULL,
+                created_at      DATETIME DEFAULT (datetime('now')),
+                last_login_at   DATETIME
+            );
+
+            CREATE TABLE IF NOT EXISTS sessions (
+                id              INTEGER PRIMARY KEY AUTOINCREMENT,
+                token_hash      TEXT NOT NULL UNIQUE,
+                user_id         INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+                created_at      DATETIME DEFAULT (datetime('now')),
+                expires_at      DATETIME NOT NULL,
+                last_used_at    DATETIME DEFAULT (datetime('now'))
+            );
+            CREATE INDEX IF NOT EXISTS idx_sessions_user ON sessions(user_id);
+            CREATE INDEX IF NOT EXISTS idx_sessions_expires ON sessions(expires_at);
+
+            CREATE TABLE IF NOT EXISTS saved_searches (
+                id              INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id         INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+                surface         TEXT NOT NULL,           -- "jobs" | "outreach" | "pipeline" | ...
+                name            TEXT NOT NULL,
+                params_json     TEXT NOT NULL,
+                created_at      DATETIME DEFAULT (datetime('now')),
+                last_run_at     DATETIME,
+                UNIQUE(user_id, surface, name)
+            );
+            CREATE INDEX IF NOT EXISTS idx_saved_searches_user ON saved_searches(user_id);
+
+            CREATE TABLE IF NOT EXISTS user_job_status (
+                id            INTEGER PRIMARY KEY AUTOINCREMENT,
+                job_id        INTEGER NOT NULL UNIQUE REFERENCES job_postings(id) ON DELETE CASCADE,
+                status        TEXT NOT NULL,
+                notes         TEXT,
+                action_at     DATETIME DEFAULT (datetime('now')),
+                outcome       TEXT,
+                outcome_at    DATETIME,
+                updated_at    DATETIME DEFAULT (datetime('now'))
+            );
+            CREATE INDEX IF NOT EXISTS idx_user_job_status_status ON user_job_status(status);
+
+            CREATE TABLE IF NOT EXISTS apollo_api_calls (
+                id              INTEGER PRIMARY KEY AUTOINCREMENT,
+                endpoint        TEXT NOT NULL,
+                request_summary TEXT,
+                credits_used    INTEGER,
+                status_code     INTEGER,
+                error_msg       TEXT,
+                called_at       DATETIME DEFAULT (datetime('now'))
+            );
+            CREATE INDEX IF NOT EXISTS idx_apollo_api_calls_called_at ON apollo_api_calls(called_at);
         """)
 
         alterations = {
@@ -171,6 +291,7 @@ def init_db():
                 ("source_confidence", "REAL"),
                 ("verification_status", "TEXT DEFAULT 'verified'"),
                 ("last_verified_at", "DATETIME"),
+                ("apollo_organization_id", "TEXT"),
             ],
             "job_postings": [
                 ("external_id", "TEXT"),
@@ -199,6 +320,32 @@ def init_db():
             "scrape_runs": [
                 ("batch_id", "TEXT"),
             ],
+            "outreach_drafts": [
+                # Lifecycle: draft (default) → sent → replied / no_reply / bounced
+                ("status", "TEXT DEFAULT 'draft'"),
+                ("sent_at", "DATETIME"),
+                ("sent_via", "TEXT"),  # gmail | mail | linkedin | manual
+                ("replied_at", "DATETIME"),
+                ("reply_text", "TEXT"),
+                ("reply_category", "TEXT"),  # positive | neutral | negative | interview
+                ("follow_up_due_at", "DATETIME"),
+                # Multi-tenant scope. Backfilled NULL on first migration; rows
+                # without a user_id are hidden (we wipe in init_db on first run
+                # of the auth migration).
+                ("user_id", "INTEGER REFERENCES users(id) ON DELETE CASCADE"),
+            ],
+            "user_job_status": [
+                ("user_id", "INTEGER REFERENCES users(id) ON DELETE CASCADE"),
+            ],
+            "resume_profiles": [
+                ("user_id", "INTEGER REFERENCES users(id) ON DELETE CASCADE"),
+            ],
+            "tailored_resumes": [
+                ("user_id", "INTEGER REFERENCES users(id) ON DELETE CASCADE"),
+            ],
+            "resume_job_fits": [
+                ("user_id", "INTEGER REFERENCES users(id) ON DELETE CASCADE"),
+            ],
         }
 
         for table, columns in alterations.items():
@@ -222,4 +369,71 @@ def init_db():
             CREATE INDEX IF NOT EXISTS idx_job_postings_role_family
             ON job_postings(role_family)
         """)
+        conn.execute("""
+            CREATE INDEX IF NOT EXISTS idx_outreach_drafts_status
+            ON outreach_drafts(status, sent_at)
+        """)
+
+        # ── Auth migration ──────────────────────────────────────────────────
+        # When the auth feature lands, every user-scoped table grows a user_id
+        # column (above) and any pre-auth rows are abandoned. Detection: if
+        # outreach_drafts has any rows whose user_id is NULL, this is the
+        # first time we've seen the auth migration on this DB → wipe the
+        # legacy rows. Idempotent: once all rows are scoped, the wipe is a
+        # no-op.
+        legacy = conn.execute(
+            "SELECT 1 FROM outreach_drafts WHERE user_id IS NULL LIMIT 1"
+        ).fetchone()
+        if legacy:
+            conn.executescript("""
+                DELETE FROM outreach_drafts;
+                DELETE FROM user_job_status;
+                DELETE FROM resume_job_fits;
+                DELETE FROM tailored_resumes;
+                DELETE FROM resume_profiles;
+            """)
+
+        # The original user_job_status had `job_id INTEGER UNIQUE` — fine for
+        # a single-user app, broken once two users want to save the same job.
+        # Recreate with `UNIQUE(user_id, job_id)` if the old constraint is
+        # still in place. SQLite doesn't allow dropping a column constraint
+        # in place, so we rebuild the table. Safe because the wipe above just
+        # cleared all rows.
+        cols = conn.execute("PRAGMA table_info(user_job_status)").fetchall()
+        idx_list = conn.execute("PRAGMA index_list(user_job_status)").fetchall()
+        # Look for an auto-created unique index on (job_id) alone.
+        legacy_unique = False
+        for idx in idx_list:
+            if not idx[2]:  # not UNIQUE
+                continue
+            cols_in_idx = conn.execute(
+                f"PRAGMA index_info({idx[1]!r})"
+            ).fetchall()
+            names = [c[2] for c in cols_in_idx]
+            if names == ["job_id"]:
+                legacy_unique = True
+                break
+        if legacy_unique:
+            conn.executescript("""
+                CREATE TABLE user_job_status_new (
+                    id            INTEGER PRIMARY KEY AUTOINCREMENT,
+                    job_id        INTEGER NOT NULL REFERENCES job_postings(id) ON DELETE CASCADE,
+                    status        TEXT NOT NULL,
+                    notes         TEXT,
+                    action_at     DATETIME DEFAULT (datetime('now')),
+                    outcome       TEXT,
+                    outcome_at    DATETIME,
+                    updated_at    DATETIME DEFAULT (datetime('now')),
+                    user_id       INTEGER REFERENCES users(id) ON DELETE CASCADE,
+                    UNIQUE(user_id, job_id)
+                );
+                INSERT INTO user_job_status_new
+                    (id, job_id, status, notes, action_at, outcome, outcome_at, updated_at, user_id)
+                SELECT id, job_id, status, notes, action_at, outcome, outcome_at, updated_at, user_id
+                FROM user_job_status;
+                DROP TABLE user_job_status;
+                ALTER TABLE user_job_status_new RENAME TO user_job_status;
+                CREATE INDEX IF NOT EXISTS idx_user_job_status_status ON user_job_status(status);
+                CREATE INDEX IF NOT EXISTS idx_user_job_status_user ON user_job_status(user_id);
+            """)
     conn.close()

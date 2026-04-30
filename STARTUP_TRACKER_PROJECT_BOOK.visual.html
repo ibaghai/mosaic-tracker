@@ -1,0 +1,1063 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Startup Tracker Project Atlas</title>
+  <style>
+    @page { size: Letter; margin: 0.55in; }
+    :root {
+      --fg: #111827;
+      --muted: #4b5563;
+      --line: #e5e7eb;
+      --bg-soft: #f8fafc;
+      --accent: #0f766e;
+      --accent2: #1d4ed8;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+      color: var(--fg);
+      line-height: 1.5;
+      font-size: 11px;
+    }
+    h1 {
+      font-size: 30px;
+      line-height: 1.2;
+      margin: 0 0 10px;
+      color: #0f172a;
+      border-bottom: 2px solid #cbd5e1;
+      padding-bottom: 8px;
+    }
+    h2 {
+      font-size: 18px;
+      margin: 22px 0 8px;
+      color: var(--accent2);
+      border-left: 4px solid var(--accent);
+      padding-left: 8px;
+    }
+    h3 {
+      font-size: 14px;
+      margin: 14px 0 6px;
+      color: #0f172a;
+    }
+    p { margin: 8px 0; }
+    ul, ol { margin: 8px 0 8px 20px; }
+    li { margin: 3px 0; }
+    hr { border: 0; border-top: 1px solid var(--line); margin: 20px 0; }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 10px 0;
+      font-size: 10.5px;
+    }
+    th, td {
+      border: 1px solid var(--line);
+      padding: 6px 8px;
+      vertical-align: top;
+    }
+    th {
+      background: linear-gradient(180deg, #f8fafc, #eef2ff);
+      text-align: left;
+    }
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 10px;
+      background: #f3f4f6;
+      padding: 1px 4px;
+      border-radius: 4px;
+    }
+    pre {
+      background: #0b1220;
+      color: #e5e7eb;
+      border-radius: 8px;
+      padding: 10px;
+      overflow: auto;
+      font-size: 9.5px;
+      line-height: 1.35;
+      border: 1px solid #1f2937;
+    }
+    pre code { background: transparent; padding: 0; color: inherit; }
+    a { color: var(--accent2); text-decoration: none; }
+    .mermaid {
+      margin: 14px 0;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: linear-gradient(180deg, #ffffff, #f8fafc);
+    }
+    blockquote {
+      margin: 10px 0;
+      padding: 8px 10px;
+      border-left: 3px solid #94a3b8;
+      color: var(--muted);
+      background: #f8fafc;
+    }
+  </style>
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({ startOnLoad: true, theme: 'default', securityLevel: 'loose' });
+    window.__MERMAID_READY__ = true;
+  </script>
+</head>
+<body>
+<h1>Startup Tracker Project Atlas (Current Repo Deep Dive)</h1>
+<p>Audience: builders and operators<br>
+Purpose: understand the exact current project architecture and code flow end-to-end</p>
+<hr>
+<h2>How this book is organized</h2>
+<p>This book has two parallel tracks:</p>
+<ul>
+<li>Track A (Visual): architecture diagrams and flow maps.</li>
+<li>Track B (Code Lens): annotated code walkthroughs with line-by-line intent.</li>
+</ul>
+<p>Use both together.</p>
+<hr>
+<h2>Section 1: Whole-system visual model</h2>
+<h2>1.1 Current production architecture</h2>
+<div class="mermaid">flowchart TD
+  A["companies.json\ntracked targets"] --> B["tracker.py\nmain orchestrator"]
+  B --> C1["scraper/ashby.py"]
+  B --> C2["scraper/greenhouse.py"]
+  B --> C3["scraper/lever.py"]
+  B --> C4["scraper/smartrecruiters.py"]
+  B --> C5["scraper/teamtailor.py"]
+  B --> C6["scraper/playwright_scraper.py"]
+  B --> C7["scraper/static_html.py"]
+
+  C1 --> D["db/queries.sync_jobs"]
+  C2 --> D
+  C3 --> D
+  C4 --> D
+  C5 --> D
+  C6 --> D
+  C7 --> D
+
+  D --> E["SQLite\ncompanies, job_postings, scrape_runs, job_events"]
+  E --> F["scraper/enrichment.enrich_all"]
+  F --> E
+  E --> G["analysis/nlp.extract_all_skills"]
+  G --> H["job_skills"]
+
+  E --> I["FastAPI api/app.py"]
+  H --> I
+  I --> J["dashboard/src/lib/api.ts"]
+  J --> K["dashboard pages"]
+
+  I --> L["analysis/resume_fit.py"]
+  L --> M["resume_profiles + resume_job_fits"]
+</div>
+<h2>1.2 Data lifecycle timeline</h2>
+<div class="mermaid">sequenceDiagram
+  participant O as Operator
+  participant T as tracker.py
+  participant S as ATS scrapers
+  participant Q as db/queries.py
+  participant DB as SQLite
+  participant EN as enrichment.py
+  participant NLP as nlp.py
+  participant API as FastAPI
+  participant UI as Next.js
+
+  O->>T: Run ingestion
+  T->>S: Fetch jobs per company
+  S-->>T: Normalized JobPosting list
+  T->>Q: log_run + sync_jobs
+  Q->>DB: Write companies/jobs/events/runs
+  T->>EN: enrich_all
+  EN->>DB: Fill normalized fields
+  T->>NLP: extract_all_skills
+  NLP->>DB: Populate job_skills
+  UI->>API: Request analytics data
+  API->>Q: Query stats/breakdowns
+  Q->>DB: Read query data
+  DB-->>Q: Rows
+  Q-->>API: JSON-ready dict/list
+  API-->>UI: Response
+</div>
+<hr>
+<h2>Section 2: Repository inventory</h2>
+<h2>2.1 Top-level map</h2>
+<table>
+<thead>
+<tr>
+<th>Path</th>
+<th>Role</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>tracker.py</code></td>
+<td>ingestion orchestrator</td>
+</tr>
+<tr>
+<td><code>api/app.py</code></td>
+<td>REST API surface</td>
+</tr>
+<tr>
+<td><code>db/models.py</code></td>
+<td>DB connection + schema init</td>
+</tr>
+<tr>
+<td><code>db/queries.py</code></td>
+<td>write/read query logic</td>
+</tr>
+<tr>
+<td><code>scraper/</code></td>
+<td>ATS parsers + enrichment</td>
+</tr>
+<tr>
+<td><code>analysis/</code></td>
+<td>skill extraction + resume fit</td>
+</tr>
+<tr>
+<td><code>dashboard/</code></td>
+<td>Next.js frontend</td>
+</tr>
+<tr>
+<td><code>dashboard.py</code></td>
+<td>legacy Streamlit dashboard</td>
+</tr>
+<tr>
+<td><code>scripts/</code></td>
+<td>discovery/growth/migration utilities</td>
+</tr>
+<tr>
+<td><code>DEPLOY.md</code></td>
+<td>deployment instructions</td>
+</tr>
+<tr>
+<td><code>Procfile</code></td>
+<td>backend process command</td>
+</tr>
+</tbody>
+</table>
+<h2>2.2 Runtime dependencies</h2>
+<p>From <code>requirements.txt</code> and <code>dashboard/package.json</code>:</p>
+<ul>
+<li>Python stack: <code>aiohttp</code>, <code>fastapi</code>, <code>uvicorn</code>, <code>playwright</code>, <code>pypdf</code>, <code>python-docx</code>, <code>streamlit</code>, <code>pandas</code>, <code>altair</code>.</li>
+<li>Frontend stack: <code>next@16</code>, <code>react@19</code>, <code>recharts</code>, <code>lucide-react</code>, <code>tailwindcss</code>.</li>
+</ul>
+<hr>
+<h2>Section 3: Database and schema internals</h2>
+<h2>3.1 <code>db/models.py</code> intent</h2>
+<p>Primary responsibilities:</p>
+<ol>
+<li>Resolve DB path (<code>TRACKER_DB_PATH</code> override).</li>
+<li>Open sqlite connection with WAL + FK enabled.</li>
+<li>Create base schema and additive index/column migrations.</li>
+</ol>
+<h2>3.2 Annotated code lens: <code>get_connection</code> and <code>init_db</code></h2>
+<pre><code class="language-python"># db/models.py (conceptual annotated lens)
+
+def get_connection() -&gt; sqlite3.Connection:
+    # Open SQLite file from resolved path.
+    conn = sqlite3.connect(DB_PATH)
+
+    # Return rows as dict-like objects.
+    conn.row_factory = sqlite3.Row
+
+    # WAL allows readers and writer to coexist better.
+    conn.execute(&quot;PRAGMA journal_mode=WAL&quot;)
+
+    # FK constraint enforcement protects relational integrity.
+    conn.execute(&quot;PRAGMA foreign_keys=ON&quot;)
+
+    return conn
+
+
+def init_db():
+    # Ensure DB folder exists.
+    DB_PATH.parent.mkdir(exist_ok=True)
+
+    conn = get_connection()
+    with conn:
+        # Create core tables and indexes if missing.
+        conn.executescript(&quot;... long schema ...&quot;)
+
+        # Add newly introduced columns in older DBs (migration-safe).
+        for table, columns in alterations.items():
+            for column, definition in columns:
+                if not _column_exists(conn, table, column):
+                    conn.execute(f&quot;ALTER TABLE {table} ADD COLUMN {column} {definition}&quot;)
+
+        # Ensure secondary indexes for match/query speed.
+        conn.execute(&quot;CREATE INDEX IF NOT EXISTS ...&quot;)
+
+    conn.close()
+</code></pre>
+<h2>3.3 Why this schema design</h2>
+<ul>
+<li><code>job_postings</code> as current-state table for fast active views.</li>
+<li><code>job_events</code> as immutable change history for timelines.</li>
+<li><code>scrape_runs</code> as operational telemetry.</li>
+<li><code>run_jobs</code> to relate run snapshots to job rows.</li>
+<li><code>job_skills</code> normalized many-to-many tags.</li>
+<li>resume tables for fit cache and consistency.</li>
+</ul>
+<hr>
+<h2>Section 4: Ingestion core (<code>tracker.py</code>)</h2>
+<h2>4.1 Functional role</h2>
+<p><code>tracker.py</code> is the conductor:</p>
+<ol>
+<li>Initialize DB.</li>
+<li>Load <code>companies.json</code>.</li>
+<li>Upsert company metadata.</li>
+<li>Run ATS parser per company.</li>
+<li>Sync jobs + run stats.</li>
+<li>Run enrichment pass.</li>
+<li>Run skill extraction pass.</li>
+</ol>
+<h2>4.2 Annotated code lens: scraper dispatch</h2>
+<pre><code class="language-python"># tracker.py dispatch logic (annotated)
+
+async def scrape_company(company: dict, company_id: int):
+    name = company[&quot;name&quot;]
+    ats = company[&quot;ats_type&quot;]
+
+    # Route to ATS-specific parser based on ats_type.
+    if ats == &quot;ashby&quot;:
+        jobs = await ashby_scraper.parse(name, company[&quot;ats_identifier&quot;])
+    elif ats == &quot;greenhouse&quot;:
+        jobs = await greenhouse_scraper.parse(name, company[&quot;ats_identifier&quot;])
+    elif ats == &quot;lever&quot;:
+        jobs = await lever_scraper.parse(name, company[&quot;ats_identifier&quot;])
+    elif ats == &quot;smartrecruiters&quot;:
+        jobs = await smartrecruiters_scraper.parse(name, company[&quot;ats_identifier&quot;])
+    elif ats == &quot;teamtailor&quot;:
+        jobs = await teamtailor_scraper.parse(name, company[&quot;ats_identifier&quot;])
+    elif ats == &quot;playwright&quot;:
+        jobs = await playwright_scraper.parse(name, company[&quot;ats_identifier&quot;], selectors=company.get(&quot;selectors&quot;))
+    elif ats == &quot;static&quot;:
+        jobs = await static_html_scraper.parse(name, company[&quot;ats_identifier&quot;])
+    else:
+        raise ValueError(f&quot;Unknown ATS type: {ats!r}&quot;)
+
+    # Convert standardized objects into dict rows.
+    job_dicts = [j.to_dict() for j in jobs]
+
+    # Log run first to create run_id anchor.
+    run_id = queries.log_run(company_id, len(jobs), 0, 0, status=&quot;success&quot;, batch_id=BATCH_ID)
+
+    # Sync row-level state and event deltas.
+    added, removed = queries.sync_jobs(company_id, run_id, job_dicts)
+
+    # Patch run with final add/remove counts.
+    ...
+</code></pre>
+<h2>4.3 Why <code>batch_id</code> exists</h2>
+<p>One tracker execution touches many companies. <code>batch_id</code> groups those run rows so the UI can compute net movement from a single batch.</p>
+<hr>
+<h2>Section 5: ATS scraper modules</h2>
+<h2>5.1 Scraper strategy</h2>
+<p>Mix of:</p>
+<ul>
+<li>API-native adapters (fast, structured): Greenhouse, Lever, Ashby, SmartRecruiters.</li>
+<li>feed parser: Teamtailor RSS.</li>
+<li>browser/DOM fallback: Playwright, static HTML patterns.</li>
+</ul>
+<h2>5.2 Scraper capability matrix</h2>
+<table>
+<thead>
+<tr>
+<th>Scraper</th>
+<th>Source type</th>
+<th>Strength</th>
+<th>Limitation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ashby.py</code></td>
+<td>GraphQL API</td>
+<td>structured teams + ids</td>
+<td>API behavior can change</td>
+</tr>
+<tr>
+<td><code>greenhouse.py</code></td>
+<td>REST API</td>
+<td>rich content + stable IDs</td>
+<td>board slug required</td>
+</tr>
+<tr>
+<td><code>lever.py</code></td>
+<td>REST API</td>
+<td>good metadata categories</td>
+<td>some fields optional</td>
+</tr>
+<tr>
+<td><code>smartrecruiters.py</code></td>
+<td>REST + pagination</td>
+<td>broad coverage</td>
+<td>custom field variability</td>
+</tr>
+<tr>
+<td><code>teamtailor.py</code></td>
+<td>RSS</td>
+<td>simple and stable</td>
+<td>sparse metadata</td>
+</tr>
+<tr>
+<td><code>playwright_scraper.py</code></td>
+<td>browser DOM</td>
+<td>works on custom pages</td>
+<td>selector brittleness</td>
+</tr>
+<tr>
+<td><code>static_html.py</code></td>
+<td>regex HTML</td>
+<td>lightweight fallback</td>
+<td>highly pattern-specific</td>
+</tr>
+</tbody>
+</table>
+<h2>5.3 Annotated code lens: Greenhouse parser</h2>
+<pre><code class="language-python"># scraper/greenhouse.py (annotated)
+
+BASE_URL = &quot;https://boards-api.greenhouse.io/v1/boards/{slug}/jobs?content=true&quot;
+
+async def parse(company_name: str, ats_identifier: str):
+    url = BASE_URL.format(slug=ats_identifier)
+
+    # Network call with bounded timeout.
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url, timeout=aiohttp.ClientTimeout(total=15)) as resp:
+            # Explicit board-not-found branch improves debugging.
+            if resp.status == 404:
+                raise RuntimeError(...)
+            if resp.status != 200:
+                raise RuntimeError(...)
+            data = await resp.json()
+
+    jobs = data.get(&quot;jobs&quot;) or []
+
+    # Normalize each provider row into JobPosting model.
+    return [
+      JobPosting(
+        title=j[&quot;title&quot;],
+        company=company_name,
+        external_id=str(j[&quot;id&quot;]),
+        description=j.get(&quot;content&quot;),
+        location=(j.get(&quot;location&quot;) or {}).get(&quot;name&quot;),
+        department=_clean_dept(((j.get(&quot;departments&quot;) or [{}])[0]).get(&quot;name&quot;, &quot;&quot;)) or None,
+        url=j.get(&quot;absolute_url&quot;),
+      )
+      for j in jobs
+    ]
+</code></pre>
+<hr>
+<h2>Section 6: Canonical sync algorithm (<code>db/queries.py</code>)</h2>
+<h2>6.1 Why this file matters most</h2>
+<p><code>db/queries.py</code> is both:</p>
+<ul>
+<li>write engine (state transitions), and</li>
+<li>analytics engine (all dashboard aggregates).</li>
+</ul>
+<h2>6.2 Identity and dedupe logic</h2>
+<p>Matching order inside <code>sync_jobs</code>:</p>
+<ol>
+<li><code>external_id</code></li>
+<li><code>canonical_url</code></li>
+<li><code>job_fingerprint</code></li>
+<li>normalized <code>(title, location)</code></li>
+</ol>
+<p>This order minimizes false duplicates while tolerating missing IDs.</p>
+<h2>6.3 Lifecycle logic</h2>
+<p>Current active row missing from scrape:</p>
+<ul>
+<li>first miss -&gt; <code>suspected_closed</code></li>
+<li>repeated miss -&gt; <code>closed</code> and <code>is_active=0</code></li>
+<li>close event logged in <code>job_events</code></li>
+</ul>
+<h2>6.4 Annotated code lens: closure safety</h2>
+<pre><code class="language-python"># sync_jobs closure branch (annotated concept)
+
+removed_ids = all_existing_ids - matched_ids
+for job_id in removed_ids:
+    row = existing_by_id[job_id]
+    misses = (row[&quot;consecutive_misses&quot;] or 0) + 1
+
+    # Require repeat evidence before hard-close.
+    should_close = row[&quot;posting_status&quot;] == &quot;suspected_closed&quot; or misses &gt;= 2
+
+    if should_close:
+        # Final closure state.
+        UPDATE job_postings SET is_active=0, posting_status='closed', ...
+        INSERT job_events(..., 'removed')
+    else:
+        # Transitional state; do not close yet.
+        UPDATE job_postings SET posting_status='suspected_closed', ...
+</code></pre>
+<h2>6.5 Analytics query families</h2>
+<ul>
+<li>Overview and KPI totals.</li>
+<li>Company stats and velocity.</li>
+<li>Breakdowns: sector, department, seniority, work model, role family, skills.</li>
+<li>Timeline and change views: trends, recent events, movers, sector delta.</li>
+<li>Cross tabs for dashboard heat/stack views.</li>
+<li>Health monitor query.</li>
+<li>Fit candidate and cache queries.</li>
+</ul>
+<hr>
+<h2>Section 7: Enrichment and NLP layers</h2>
+<h2>7.1 <code>scraper/enrichment.py</code></h2>
+<p>Rule-based backfill for missing fields:</p>
+<ul>
+<li>seniority inference from title keywords,</li>
+<li>work model + remote scope heuristics,</li>
+<li>normalized department buckets,</li>
+<li>role family classification,</li>
+<li>location split fields.</li>
+</ul>
+<p>Design purpose:</p>
+<ul>
+<li>make provider-specific raw fields analytically comparable.</li>
+</ul>
+<h2>7.2 Annotated code lens: department normalization</h2>
+<pre><code class="language-python"># simplified conceptual version
+
+_DEPT_RULES = [
+  ([&quot;engineer&quot;, &quot;developer&quot;, &quot;platform&quot;], &quot;Engineering&quot;),
+  ([&quot;sales&quot;, &quot;account exec&quot;], &quot;Sales&quot;),
+  ...
+]
+
+def _normalize_department(raw_dept):
+    if not raw_dept:
+        return 'Other'
+    lower = raw_dept.lower()
+    for keywords, label in _DEPT_RULES:
+        for kw in keywords:
+            if kw in lower:
+                # Guardrail example: &quot;product eng&quot; should be Engineering.
+                if label == 'Product' and 'eng' in lower:
+                    return 'Engineering'
+                return label
+    return 'Other'
+</code></pre>
+<h2>7.3 <code>analysis/nlp.py</code></h2>
+<p>Regex dictionary approach:</p>
+<ul>
+<li>canonical skill name -&gt; pattern,</li>
+<li>compile patterns once,</li>
+<li>extract per description,</li>
+<li>write to <code>job_skills</code> table.</li>
+</ul>
+<p>Why regex first:</p>
+<ul>
+<li>deterministic,</li>
+<li>inexpensive,</li>
+<li>easy to tune.</li>
+</ul>
+<hr>
+<h2>Section 8: Resume fit engine (<code>analysis/resume_fit.py</code>)</h2>
+<h2>8.1 End-to-end fit flow</h2>
+<div class="mermaid">flowchart TD
+  A["Upload resume"] --> B["Extract text (txt/pdf/docx)"]
+  B --> C["LLM parse profile JSON"]
+  C --> D["Sanitize/de-identify profile"]
+  D --> E["Candidate SQL pool"]
+  E --> F["Deterministic shortlist score"]
+  F --> G["LLM fit rationale in batches"]
+  G --> H["Cache in resume_job_fits"]
+  H --> I["Return ranked matches"]
+</div>
+<h2>8.2 Score composition</h2>
+<p>Deterministic score uses weighted factors:</p>
+<ul>
+<li>matched skills,</li>
+<li>role-family alignment,</li>
+<li>seniority compatibility,</li>
+<li>target role title overlap,</li>
+<li>sector/domain overlap,</li>
+<li>freshness bonus.</li>
+</ul>
+<p>LLM then enriches explanation fields (<code>why</code>, <code>gaps</code>, <code>resume_pointers</code>) and can adjust fit score.</p>
+<h2>8.3 Annotated code lens: safety and caching</h2>
+<pre><code class="language-python"># core idea (annotated)
+
+resume_hash = sha256(resume_text)
+profile = parse_resume_profile(resume_text)
+resume_id = upsert_resume_profile(...)
+
+pool = get_jobs_for_fit_pool(**candidate_filters(profile))
+shortlisted = shortlist_jobs(profile, pool)
+
+for job in shortlisted:
+    cached = get_cached_resume_fit(resume_id, job[&quot;id&quot;], PROMPT_VERSION)
+    if cached:
+        use cached
+    else:
+        request LLM fit batch
+        save_resume_fit(..., prompt_version=PROMPT_VERSION)
+</code></pre>
+<p>Key design decision: prompt version is part of cache key so prompt/model shifts do not silently mix old semantics.</p>
+<hr>
+<h2>Section 9: FastAPI service (<code>api/app.py</code>)</h2>
+<h2>9.1 Service shape</h2>
+<p><code>api/app.py</code> is intentionally thin:</p>
+<ul>
+<li>initialize DB,</li>
+<li>configure CORS,</li>
+<li>map routes -&gt; query functions,</li>
+<li>normalize fit errors.</li>
+</ul>
+<h2>9.2 Endpoint groups</h2>
+<ul>
+<li>Overview: <code>/api/overview</code></li>
+<li>Company: <code>/api/companies</code>, <code>/api/companies/{id}</code>, <code>/api/companies/velocity</code></li>
+<li>Jobs: <code>/api/jobs</code>, <code>/api/jobs/{id}</code>, <code>/api/jobs/filters</code>, <code>/api/jobs/trends</code>, <code>/api/jobs/freshness</code></li>
+<li>Taxonomy: <code>/api/sectors</code>, <code>/api/departments</code>, <code>/api/seniority</code>, <code>/api/work-models</code>, <code>/api/role-families</code>, <code>/api/skills</code></li>
+<li>Changes/cross tabs: <code>/api/changes/*</code>, <code>/api/cross/*</code></li>
+<li>Health: <code>/api/health</code></li>
+<li>Fit: <code>/api/fit/matches</code>, <code>/api/fit/jobs/{job_id}</code></li>
+</ul>
+<h2>9.3 Annotated code lens: fit error normalization</h2>
+<pre><code class="language-python"># intent: convert backend/runtime/model errors into user-friendly HTTP responses
+
+def _fit_error(exc: Exception) -&gt; HTTPException:
+    message = str(exc)
+
+    # Missing key -&gt; 503 not configured
+    if &quot;GROQ_API_KEY&quot; in message:
+        return HTTPException(status_code=503, detail=&quot;Resume matching is not configured yet...&quot;)
+
+    # Rate limited -&gt; 429
+    if &quot;rate_limit_exceeded&quot; in message or &quot;429&quot; in message:
+        return HTTPException(status_code=429, detail=&quot;Resume matching is temporarily rate-limited...&quot;)
+
+    # Provider outage -&gt; 503
+    if &quot;Groq API&quot; in message:
+        return HTTPException(status_code=503, detail=&quot;Resume matching is temporarily unavailable...&quot;)
+
+    # Validation/user input errors
+    return HTTPException(status_code=400, detail=message)
+</code></pre>
+<hr>
+<h2>Section 10: Frontend deep tour (<code>dashboard/</code>)</h2>
+<h2>10.1 UI shell</h2>
+<ul>
+<li><code>src/app/layout.tsx</code>: page frame + sidebar.</li>
+<li><code>src/components/Sidebar.tsx</code>: navigation and tracked count.</li>
+<li><code>src/app/globals.css</code>: theme variables and chart tooltip styling.</li>
+</ul>
+<h2>10.2 API client layer</h2>
+<p><code>src/lib/api.ts</code>:</p>
+<ul>
+<li>central fetch wrappers (<code>fetchApi</code>, <code>postFormApi</code>),</li>
+<li>TypeScript interfaces,</li>
+<li>one exported <code>api</code> object of endpoint calls.</li>
+</ul>
+<h2>10.3 Page cluster map</h2>
+<div class="mermaid">flowchart LR
+  P0["/ (Pulse)"] --> O1["overview + sector + department + role + freshness"]
+  P1["/companies"] --> O2["companies + velocity"]
+  P2["/companies/[id]"] --> O3["company detail + jobs + events"]
+  P3["/jobs"] --> O4["jobs + filters + skills + departments"]
+  P4["/changes"] --> O5["events + movers + sector delta"]
+  P5["/trends"] --> O6["job trends + cross tabs"]
+  P6["/roles"] --> O7["seniority/work model + cross"]
+  P7["/skills"] --> O8["skill ranking"]
+  P8["/coverage"] --> O9["coverage catalog"]
+  P9["/health"] --> O10["scrape health"]
+  P10["/fit"] --> O11["resume fit flow"]
+</div>
+<h2>10.4 Annotated code lens: <code>fetchApi</code></h2>
+<pre><code class="language-ts">// src/lib/api.ts
+async function fetchApi&lt;T&gt;(
+  path: string,
+  params?: Record&lt;string, string | number | string[] | number[] | undefined&gt;
+): Promise&lt;T&gt; {
+  // Build URL from base env variable and endpoint path.
+  const url = new URL(`${API_BASE}${path}`);
+
+  // Serialize query parameters.
+  if (params) {
+    Object.entries(params).forEach(([k, v]) =&gt; {
+      // Skip empty values.
+      if (v === undefined || v === null || v === &quot;&quot;) return;
+
+      // Arrays are joined as comma-separated values.
+      if (Array.isArray(v)) {
+        const values = v.map((entry) =&gt; String(entry).trim()).filter(Boolean);
+        if (values.length &gt; 0) {
+          url.searchParams.set(k, values.join(&quot;,&quot;));
+        }
+        return;
+      }
+
+      // Scalar value path.
+      url.searchParams.set(k, String(v));
+    });
+  }
+
+  // Execute request.
+  const res = await fetch(url.toString());
+
+  // Throw for non-2xx responses.
+  if (!res.ok) throw new Error(`API error: ${res.status}`);
+
+  // Parse typed JSON body.
+  return res.json();
+}
+</code></pre>
+<h2>10.5 Frontend visual behavior design</h2>
+<ul>
+<li>Most pages are client-rendered with <code>useEffect</code> fetch calls.</li>
+<li>Recharts drives chart visuals.</li>
+<li>Multi-select filter UX via <code>MultiValuePicker</code>.</li>
+<li>CSV export helper in <code>src/lib/export.ts</code>.</li>
+</ul>
+<hr>
+<h2>Section 11: Scripts atlas (<code>scripts/</code>)</h2>
+<h2>11.1 Operational categories</h2>
+<div class="mermaid">flowchart TD
+  A["Discovery"] --> A1["batch_discover.py"]
+  A --> A2["bulk_expand.py"]
+  A --> A3["sector_grind.py"]
+  A --> A4["hybrid_discover.py"]
+
+  B["Import / Orchestrate"] --> B1["import_bulk_hits.py"]
+  B --> B2["growth_run.py"]
+  B --> B3["growth_maintenance.py"]
+
+  C["Migration / Packaging"] --> C1["migrate_v2.py"]
+  C --> C2["migrate_sqlite_to_postgres.py"]
+  C --> C3["make_demo_db.py"]
+</div>
+<h2>11.2 Script-by-script quick cards</h2>
+<table>
+<thead>
+<tr>
+<th>Script</th>
+<th>Current purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>batch_discover.py</code></td>
+<td>async ATS slug probing from candidate names</td>
+</tr>
+<tr>
+<td><code>bulk_expand.py</code></td>
+<td>broad discovery and YAML config generation</td>
+</tr>
+<tr>
+<td><code>import_bulk_hits.py</code></td>
+<td>inserts hits into canonical companies</td>
+</tr>
+<tr>
+<td><code>growth_run.py</code></td>
+<td>one command for discovery + import + scrape + maintenance</td>
+</tr>
+<tr>
+<td><code>growth_maintenance.py</code></td>
+<td>quality gates and tagging</td>
+</tr>
+<tr>
+<td><code>sector_grind.py</code></td>
+<td>sector batch discovery and direct add</td>
+</tr>
+<tr>
+<td><code>hybrid_discover.py</code></td>
+<td>intended staged discovery flow</td>
+</tr>
+<tr>
+<td><code>migrate_v2.py</code></td>
+<td>schema migration helper</td>
+</tr>
+<tr>
+<td><code>migrate_sqlite_to_postgres.py</code></td>
+<td>intended DB transfer utility</td>
+</tr>
+<tr>
+<td><code>make_demo_db.py</code></td>
+<td>create lightweight demo DB</td>
+</tr>
+</tbody>
+</table>
+<h2>11.3 Annotated code lens: <code>growth_run.py</code> orchestrator pattern</h2>
+<pre><code class="language-python"># idea: run multiple lanes with optional skips and summarize results
+
+def _discover_and_import(...):
+    # 1) Run batch_discover.py -&gt; raw hits JSON
+    # 2) Add source metadata/confidence
+    # 3) Run import_bulk_hits.py
+    # 4) Return lane summary
+    ...
+
+
+def main():
+    # Parse flags (skip lanes, skip scrape, skip maintenance).
+    ...
+
+    # Run midmarket lane unless skipped.
+    ...
+
+    # Run general lane unless skipped.
+    ...
+
+    # Run tracker scrape unless skipped.
+    ...
+
+    # Run maintenance unless skipped.
+    ...
+
+    # Print final JSON summary.
+    ...
+</code></pre>
+<hr>
+<h2>Section 12: Legacy Streamlit app (<code>dashboard.py</code>)</h2>
+<h2>12.1 Why it still exists</h2>
+<p>Legacy Streamlit interface still provides:</p>
+<ul>
+<li>quick local exploration,</li>
+<li>alternate lens for overview/jobs/trends,</li>
+<li>shared query-layer verification.</li>
+</ul>
+<p>It is not the primary frontend now, but useful for fallback validation.</p>
+<hr>
+<h2>Section 13: Environment variables and runtime contracts</h2>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Used by</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>TRACKER_DB_PATH</code></td>
+<td><code>db/models.py</code></td>
+<td>override DB file path</td>
+</tr>
+<tr>
+<td><code>FRONTEND_URL</code></td>
+<td><code>api/app.py</code></td>
+<td>add CORS allowed origin</td>
+</tr>
+<tr>
+<td><code>NEXT_PUBLIC_API_URL</code></td>
+<td><code>dashboard/src/lib/api.ts</code></td>
+<td>frontend API base URL</td>
+</tr>
+<tr>
+<td><code>GROQ_API_KEY</code></td>
+<td><code>analysis/resume_fit.py</code></td>
+<td>enable LLM fit path</td>
+</tr>
+<tr>
+<td><code>LLM_MODEL</code> / <code>GROQ_MODEL</code></td>
+<td><code>analysis/resume_fit.py</code></td>
+<td>model override</td>
+</tr>
+<tr>
+<td><code>DATABASE_URL</code> / <code>TRACKER_DATABASE_URL</code></td>
+<td>migration script</td>
+<td>postgres target</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>Section 14: Current-state drift and risk register</h2>
+<p>This is based on local inspection and build checks.</p>
+<h2>14.1 Frontend contract drift</h2>
+<ul>
+<li><code>dashboard/src/app/analyst/page.tsx</code> and <code>dashboard/src/app/radar/page.tsx</code> reference API types/functions not present in <code>dashboard/src/lib/api.ts</code>.</li>
+<li>Confirmed by <code>npm run build</code> type error for missing <code>AnalystCohortResponse</code> export.</li>
+</ul>
+<h2>14.2 Backend feature gap for new pages</h2>
+<ul>
+<li>No corresponding watchlist/radar/analyst API routes in tracked <code>api/app.py</code>.</li>
+<li>No matching query functions in current <code>db/queries.py</code>.</li>
+</ul>
+<h2>14.3 Script drift</h2>
+<ul>
+<li><code>scripts/hybrid_discover.py</code> references discovery-stage query functions not present in current query module.</li>
+<li><code>scripts/migrate_sqlite_to_postgres.py</code> expects connection abstraction not present in current SQLite-only <code>db/models.py</code>.</li>
+<li><code>scripts/growth_run.py</code> sets <code>TRACKER_COMPANY_SOURCE</code>, but <code>tracker.py</code> currently does not consume that variable.</li>
+</ul>
+<h2>14.4 Query safety note</h2>
+<ul>
+<li><code>get_overview_stats</code> currently interpolates <code>company_type</code> using string formatting.</li>
+<li>Caller values are constrained in current UI paths, but parameterized SQL is safer and recommended.</li>
+</ul>
+<hr>
+<h2>Section 15: End-to-end operational cookbook</h2>
+<h2>15.1 Daily run commands</h2>
+<pre><code class="language-bash">cd /Users/imanbaghai/Desktop/startup-tracker
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+python tracker.py
+uvicorn api.app:app --reload --port 8000
+</code></pre>
+<p>New terminal:</p>
+<pre><code class="language-bash">cd /Users/imanbaghai/Desktop/startup-tracker/dashboard
+npm install
+npm run dev
+</code></pre>
+<p>Health checks:</p>
+<ul>
+<li><a href="http://localhost:8000/api/overview">http://localhost:8000/api/overview</a></li>
+<li><a href="http://localhost:3000">http://localhost:3000</a></li>
+</ul>
+<h2>15.2 Change analysis routine</h2>
+<ol>
+<li>Open Changes page.</li>
+<li>Validate opened vs closed totals.</li>
+<li>Inspect movers by 7d/30d windows.</li>
+<li>Cross-check with Health page for scrape failures.</li>
+</ol>
+<hr>
+<h2>Section 16: File-by-file walkthrough index</h2>
+<p>Use this index to read source quickly.</p>
+<h3>16.1 Backend core</h3>
+<ul>
+<li><code>tracker.py</code></li>
+<li><code>db/models.py</code></li>
+<li><code>db/queries.py</code></li>
+<li><code>api/app.py</code></li>
+</ul>
+<h3>16.2 Analysis</h3>
+<ul>
+<li><code>analysis/nlp.py</code></li>
+<li><code>analysis/resume_fit.py</code></li>
+</ul>
+<h3>16.3 Scrapers</h3>
+<ul>
+<li><code>scraper/base.py</code></li>
+<li><code>scraper/ashby.py</code></li>
+<li><code>scraper/greenhouse.py</code></li>
+<li><code>scraper/lever.py</code></li>
+<li><code>scraper/smartrecruiters.py</code></li>
+<li><code>scraper/teamtailor.py</code></li>
+<li><code>scraper/playwright_scraper.py</code></li>
+<li><code>scraper/static_html.py</code></li>
+<li><code>scraper/workable.py</code> (present, not wired in main dispatch)</li>
+<li><code>scraper/workday.py</code> (present, not wired in main dispatch)</li>
+<li><code>scraper/enrichment.py</code></li>
+</ul>
+<h3>16.4 Frontend route pages</h3>
+<ul>
+<li><code>dashboard/src/app/page.tsx</code> (Pulse)</li>
+<li><code>dashboard/src/app/companies/page.tsx</code></li>
+<li><code>dashboard/src/app/companies/[id]/page.tsx</code></li>
+<li><code>dashboard/src/app/jobs/page.tsx</code></li>
+<li><code>dashboard/src/app/changes/page.tsx</code></li>
+<li><code>dashboard/src/app/trends/page.tsx</code></li>
+<li><code>dashboard/src/app/roles/page.tsx</code></li>
+<li><code>dashboard/src/app/skills/page.tsx</code></li>
+<li><code>dashboard/src/app/coverage/page.tsx</code></li>
+<li><code>dashboard/src/app/compare/page.tsx</code></li>
+<li><code>dashboard/src/app/health/page.tsx</code></li>
+<li><code>dashboard/src/app/fit/page.tsx</code></li>
+<li><code>dashboard/src/app/radar/page.tsx</code> (contract drift)</li>
+<li><code>dashboard/src/app/analyst/page.tsx</code> (contract drift)</li>
+</ul>
+<h3>16.5 Frontend infra</h3>
+<ul>
+<li><code>dashboard/src/app/layout.tsx</code></li>
+<li><code>dashboard/src/app/globals.css</code></li>
+<li><code>dashboard/src/components/Sidebar.tsx</code></li>
+<li><code>dashboard/src/components/MultiValuePicker.tsx</code></li>
+<li><code>dashboard/src/lib/api.ts</code></li>
+<li><code>dashboard/src/lib/format.ts</code></li>
+<li><code>dashboard/src/lib/export.ts</code></li>
+</ul>
+<h3>16.6 Scripts</h3>
+<ul>
+<li>all files under <code>scripts/</code> (discovery, maintenance, migration utilities)</li>
+</ul>
+<hr>
+<h2>Section 17: Suggested hardening roadmap</h2>
+<p>Priority 1 (contract alignment):</p>
+<ol>
+<li>Add missing API types/functions in <code>dashboard/src/lib/api.ts</code> for analyst/radar, or remove routes from nav until backend exists.</li>
+<li>Implement missing backend/query support for watchlists/radar/analyst, or park pages.</li>
+</ol>
+<p>Priority 2 (script hygiene):</p>
+<ol>
+<li>Either restore discovery-stage query functions used by <code>hybrid_discover.py</code> or archive script.</li>
+<li>Align <code>migrate_sqlite_to_postgres.py</code> with actual connection layer.</li>
+<li>Wire <code>TRACKER_COMPANY_SOURCE</code> in tracker or remove option from <code>growth_run.py</code>.</li>
+</ol>
+<p>Priority 3 (safety and quality):</p>
+<ol>
+<li>Parameterize <code>get_overview_stats</code> SQL.</li>
+<li>Add tests around <code>sync_jobs</code> lifecycle transitions.</li>
+<li>Add API integration tests for top endpoints.</li>
+</ol>
+<hr>
+<h2>Section 18: Visual quick-reference cards</h2>
+<h2>18.1 Architecture card</h2>
+<div class="mermaid">flowchart LR
+  Scrape --> Normalize --> Store --> Serve --> Visualize
+</div>
+<h2>18.2 Core state card</h2>
+<div class="mermaid">stateDiagram-v2
+  [*] --> active
+  active --> suspected_closed: missing once
+  suspected_closed --> active: seen again
+  suspected_closed --> closed: missing again
+  closed --> [*]
+</div>
+<h2>18.3 Data confidence card</h2>
+<div class="mermaid">flowchart TD
+  A["External ATS data"] --> B["Raw job row"]
+  B --> C["Identity matching"]
+  C --> D["Lifecycle status"]
+  D --> E["Enrichment taxonomy"]
+  E --> F["Analytics outputs"]
+</div>
+<hr>
+<h2>Appendix A: fully commented mini replicas of key core patterns</h2>
+<p>These are learning replicas (not full production code) used to teach intent.</p>
+<h3>A.1 Query filter helper pattern</h3>
+<pre><code class="language-python"># Helper: split comma-separated strings or arrays into clean list.
+def _split_filter_values(value) -&gt; list[str]:
+    # None -&gt; no filters.
+    if value is None:
+        return []
+
+    # If value already list-like, stringify each element.
+    if isinstance(value, (list, tuple, set)):
+        raw_values = [str(item) for item in value]
+    else:
+        # Otherwise split CSV string.
+        raw_values = str(value).split(&quot;,&quot;)
+
+    # Trim whitespace and remove empties.
+    return [item.strip() for item in raw_values if str(item).strip()]
+</code></pre>
+<h3>A.2 API route wrapper pattern</h3>
+<pre><code class="language-python"># Thin endpoint wrapper:
+# - parse query params
+# - call query function
+# - return JSON-ready result
+
+@app.get(&quot;/api/seniority&quot;)
+def seniority(company_type: Optional[str] = None):
+    return queries.get_seniority_breakdown(company_type=company_type)
+</code></pre>
+<h3>A.3 Frontend fetch pattern</h3>
+<pre><code class="language-ts">// Frontend endpoint call pattern:
+// 1) build URL
+// 2) attach params
+// 3) fetch
+// 4) throw on non-OK
+// 5) parse JSON
+
+const data = await fetchApi&lt;OverviewStats&gt;(&quot;/api/overview&quot;, { company_type: &quot;startup&quot; });
+</code></pre>
+<hr>
+<h2>Appendix B: build verification snapshot</h2>
+<p>Observed locally during atlas creation:</p>
+<ul>
+<li>Core backend and most dashboard pages are wired.</li>
+<li>Full dashboard production build currently fails at missing analyst/radar API type exports.</li>
+</ul>
+<p>Use this as a known baseline while planning next fixes.</p>
+
+</body>
+</html>

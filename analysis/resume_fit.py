@@ -3,17 +3,14 @@ import io
 import json
 import os
 import re
-import urllib.error
-import urllib.request
 from datetime import datetime
 from typing import Optional
 
 from db import queries
+from analysis.llm import chat_json as _llm_chat_json, model_name as _model, provider_name
 
 
-PROVIDER = "groq"
 PROMPT_VERSION = "resume-fit-v1"
-DEFAULT_MODEL = "llama-3.3-70b-versatile"
 PROFILE_ALLOWED_KEYS = {
     "headline",
     "target_roles",
@@ -73,7 +70,17 @@ def analyze_resume_matches(
     company_type: Optional[str] = None,
     limit: int = 20,
     shortlist_limit: int = 120,
+    restrict_to_job_ids: Optional[list[int]] = None,
 ) -> dict:
+    """Score a resume against jobs.
+
+    Default behaviour: pulls a candidate pool from `get_jobs_for_fit_pool`
+    (filtered by the resume's role family / seniority / domains) and ranks.
+
+    `restrict_to_job_ids`: when provided, the candidate pool is exactly these
+    job ids — no profile-based pre-filter. Used by the "score my resume against
+    this filtered job set" flow on /jobs. Inactive ids are dropped silently.
+    """
     if company_type not in {None, "startup", "bigco"}:
         raise ValueError("Choose startups, big companies, or both.")
     resume_hash = hashlib.sha256(resume_text.encode("utf-8")).hexdigest()
@@ -82,22 +89,25 @@ def analyze_resume_matches(
     resume_id = queries.upsert_resume_profile(
         resume_hash,
         profile,
-        PROVIDER,
+        provider_name(),
         model,
         PROMPT_VERSION,
     )
 
-    pool = queries.get_jobs_for_fit_pool(
-        **_candidate_filters(profile),
-        company_type=company_type,
-    )
+    if restrict_to_job_ids:
+        pool = queries.get_jobs_for_fit_by_ids(restrict_to_job_ids)
+    else:
+        pool = queries.get_jobs_for_fit_pool(
+            **_candidate_filters(profile),
+            company_type=company_type,
+        )
     shortlisted = shortlist_jobs(profile, pool, limit=max(shortlist_limit, limit))
     matches = _evaluate_jobs(resume_id, profile, _hydrate_job_details(shortlisted[:limit]))
     matches.sort(key=lambda row: (row["fit_score"], row["deterministic_score"]), reverse=True)
     return {
         "resume_id": resume_id,
         "resume_hash": resume_hash,
-        "provider": PROVIDER,
+        "provider": provider_name(),
         "model": model,
         "prompt_version": PROMPT_VERSION,
         "profile": profile,
@@ -113,7 +123,7 @@ def analyze_single_job(resume_text: str, job_id: int) -> dict:
     resume_id = queries.upsert_resume_profile(
         resume_hash,
         profile,
-        PROVIDER,
+        provider_name(),
         model,
         PROMPT_VERSION,
     )
@@ -125,7 +135,7 @@ def analyze_single_job(resume_text: str, job_id: int) -> dict:
     return {
         "resume_id": resume_id,
         "resume_hash": resume_hash,
-        "provider": PROVIDER,
+        "provider": provider_name(),
         "model": model,
         "prompt_version": PROMPT_VERSION,
         "profile": profile,
@@ -242,7 +252,7 @@ def _evaluate_jobs(resume_id: int, profile: dict, jobs: list[dict]) -> list[dict
                 resume_pointers=fit["resume_pointers"],
                 location_note=fit.get("location_note"),
                 location_blocker=fit.get("location_blocker", False),
-                provider=PROVIDER,
+                provider=provider_name(),
                 model=_model(),
                 prompt_version=PROMPT_VERSION,
             )
@@ -332,49 +342,7 @@ def _score_job(profile: dict, job: dict) -> dict:
 
 
 def _chat_json(messages: list[dict]) -> dict:
-    api_key = os.getenv("GROQ_API_KEY")
-    if not api_key:
-        raise RuntimeError("Set GROQ_API_KEY to enable LLM resume matching.")
-    body = {
-        "model": _model(),
-        "messages": messages,
-        "temperature": 0.1,
-        "response_format": {"type": "json_object"},
-    }
-    request = urllib.request.Request(
-        "https://api.groq.com/openai/v1/chat/completions",
-        data=json.dumps(body).encode("utf-8"),
-        headers={
-            "Authorization": f"Bearer {api_key}",
-            "Content-Type": "application/json",
-            "User-Agent": "Mozilla/5.0 MosaicTracker/1.0",
-        },
-        method="POST",
-    )
-    try:
-        with urllib.request.urlopen(request, timeout=90) as response:
-            payload = json.loads(response.read().decode("utf-8"))
-    except urllib.error.HTTPError as exc:
-        detail = exc.read().decode("utf-8", errors="replace")
-        raise RuntimeError(f"Groq API error {exc.code}: {detail[:500]}") from exc
-    except urllib.error.URLError as exc:
-        raise RuntimeError(f"Groq API request failed: {exc}") from exc
-    content = payload["choices"][0]["message"]["content"]
-    return _loads_json(content)
-
-
-def _loads_json(content: str) -> dict:
-    try:
-        return json.loads(content)
-    except json.JSONDecodeError:
-        match = re.search(r"\{.*\}", content, flags=re.S)
-        if not match:
-            raise
-        return json.loads(match.group(0))
-
-
-def _model() -> str:
-    return os.getenv("LLM_MODEL") or os.getenv("GROQ_MODEL") or DEFAULT_MODEL
+    return _llm_chat_json(messages, temperature=0.1, timeout=90)
 
 
 def sanitize_resume_profile(profile: dict) -> dict:

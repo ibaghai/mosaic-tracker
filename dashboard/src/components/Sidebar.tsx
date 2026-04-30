@@ -14,10 +14,15 @@ import {
   Wrench,
   Globe2,
   Sparkles,
+  FileSearch,
+  Send,
+  ListChecks,
+  Bookmark,
   Menu,
   X,
 } from "lucide-react";
 import { api } from "@/lib/api";
+import { useAuth } from "@/components/AuthProvider";
 
 const NAV = [
   { href: "/", label: "Pulse", icon: Activity },
@@ -26,13 +31,18 @@ const NAV = [
   { href: "/companies", label: "Companies", icon: Building2 },
   { href: "/coverage", label: "Coverage", icon: Globe2 },
   { href: "/fit", label: "Resume Fit", icon: Sparkles },
+  { href: "/jd-match", label: "JD Match", icon: FileSearch },
+  { href: "/outreach", label: "My Outreach", icon: Send },
+  { href: "/pipeline", label: "My Pipeline", icon: ListChecks },
   { href: "/skills", label: "Skills", icon: Code2 },
   { href: "/roles", label: "Roles", icon: Users },
   { href: "/jobs", label: "Job Feed", icon: Briefcase },
+  { href: "/saved", label: "Saved Searches", icon: Bookmark },
 ];
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const { user, logout } = useAuth();
   const [companyCount, setCompanyCount] = useState<number | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -76,8 +86,29 @@ export default function Sidebar() {
           Health
         </Link>
       </div>
-      <div className="px-5 py-4 text-xs text-muted border-t border-card-border">
+      <div className="px-5 py-3 text-xs text-muted border-t border-card-border">
         {companyCount !== null ? `${companyCount} startups tracked` : "Loading..."}
+      </div>
+      <div className="px-5 py-3 text-xs border-t border-card-border flex items-center justify-between gap-2">
+        {user ? (
+          <>
+            <span className="truncate text-muted" title={user.email}>{user.email}</span>
+            <button
+              type="button"
+              onClick={() => void logout()}
+              className="text-muted hover:text-foreground"
+            >
+              Log out
+            </button>
+          </>
+        ) : (
+          <>
+            <span className="text-muted">Browsing as guest</span>
+            <Link href="/login" className="text-accent-light hover:underline">
+              Sign in
+            </Link>
+          </>
+        )}
       </div>
     </>
   );

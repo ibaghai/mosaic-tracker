@@ -1,0 +1,1019 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Startup Tracker Tutorial Workbook</title>
+  <style>
+    @page { size: Letter; margin: 0.55in; }
+    :root {
+      --fg: #111827;
+      --muted: #4b5563;
+      --line: #e5e7eb;
+      --bg-soft: #f8fafc;
+      --accent: #0f766e;
+      --accent2: #1d4ed8;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+      color: var(--fg);
+      line-height: 1.5;
+      font-size: 11px;
+    }
+    h1 {
+      font-size: 30px;
+      line-height: 1.2;
+      margin: 0 0 10px;
+      color: #0f172a;
+      border-bottom: 2px solid #cbd5e1;
+      padding-bottom: 8px;
+    }
+    h2 {
+      font-size: 18px;
+      margin: 22px 0 8px;
+      color: var(--accent2);
+      border-left: 4px solid var(--accent);
+      padding-left: 8px;
+    }
+    h3 {
+      font-size: 14px;
+      margin: 14px 0 6px;
+      color: #0f172a;
+    }
+    p { margin: 8px 0; }
+    ul, ol { margin: 8px 0 8px 20px; }
+    li { margin: 3px 0; }
+    hr { border: 0; border-top: 1px solid var(--line); margin: 20px 0; }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 10px 0;
+      font-size: 10.5px;
+    }
+    th, td {
+      border: 1px solid var(--line);
+      padding: 6px 8px;
+      vertical-align: top;
+    }
+    th {
+      background: linear-gradient(180deg, #f8fafc, #eef2ff);
+      text-align: left;
+    }
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 10px;
+      background: #f3f4f6;
+      padding: 1px 4px;
+      border-radius: 4px;
+    }
+    pre {
+      background: #0b1220;
+      color: #e5e7eb;
+      border-radius: 8px;
+      padding: 10px;
+      overflow: auto;
+      font-size: 9.5px;
+      line-height: 1.35;
+      border: 1px solid #1f2937;
+    }
+    pre code { background: transparent; padding: 0; color: inherit; }
+    a { color: var(--accent2); text-decoration: none; }
+    .mermaid {
+      margin: 14px 0;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: linear-gradient(180deg, #ffffff, #f8fafc);
+    }
+    blockquote {
+      margin: 10px 0;
+      padding: 8px 10px;
+      border-left: 3px solid #94a3b8;
+      color: var(--muted);
+      background: #f8fafc;
+    }
+  </style>
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({ startOnLoad: true, theme: 'default', securityLevel: 'loose' });
+    window.__MERMAID_READY__ = true;
+  </script>
+</head>
+<body>
+<h1>Startup Tracker Tutorial Workbook</h1>
+<p>Audience: beginner to low-technical background<br>
+Goal: rebuild a working version by hand, while learning why each part exists</p>
+<hr>
+<h2>How to use this workbook</h2>
+<p>This workbook is designed as a mission path.</p>
+<ul>
+<li>Read one mission at a time.</li>
+<li>Copy code exactly.</li>
+<li>Run the checkpoint command before moving on.</li>
+<li>If a checkpoint fails, use the “If stuck” box in that mission.</li>
+</ul>
+<p>Learning rhythm:</p>
+<ol>
+<li>Build a small piece.</li>
+<li>See it working.</li>
+<li>Understand it visually.</li>
+<li>Continue.</li>
+</ol>
+<hr>
+<h2>Mission Map</h2>
+<div class="mermaid">flowchart TD
+  M0["Mission 0\nPrepare your machine"] --> M1["Mission 1\nCreate project folders"]
+  M1 --> M2["Mission 2\nBuild database layer"]
+  M2 --> M3["Mission 3\nBuild first scraper"]
+  M3 --> M4["Mission 4\nSync jobs into database"]
+  M4 --> M5["Mission 5\nExpose API"]
+  M5 --> M6["Mission 6\nCreate dashboard"]
+  M6 --> M7["Mission 7\nRun full pipeline"]
+  M7 --> M8["Mission 8\nAdd enrichment + skills"]
+  M8 --> M9["Mission 9\nOperate like a pro"]
+</div>
+<p>Progress board:</p>
+<ul>
+<li>[ ] Mission 0 complete</li>
+<li>[ ] Mission 1 complete</li>
+<li>[ ] Mission 2 complete</li>
+<li>[ ] Mission 3 complete</li>
+<li>[ ] Mission 4 complete</li>
+<li>[ ] Mission 5 complete</li>
+<li>[ ] Mission 6 complete</li>
+<li>[ ] Mission 7 complete</li>
+<li>[ ] Mission 8 complete</li>
+<li>[ ] Mission 9 complete</li>
+</ul>
+<hr>
+<h2>Mission 0: Prepare your machine</h2>
+<h3>Goal</h3>
+<p>Install and verify required tools.</p>
+<h3>Run</h3>
+<pre><code class="language-bash">python3 --version
+node --version
+npm --version
+</code></pre>
+<h3>Expected</h3>
+<p>You should see version numbers, not “command not found”.</p>
+<h3>If stuck</h3>
+<ul>
+<li>Install Python from <a href="https://www.python.org/downloads/">python.org</a></li>
+<li>Install Node LTS from <a href="https://nodejs.org/">nodejs.org</a></li>
+<li>Restart terminal and run checks again</li>
+</ul>
+<hr>
+<h2>Mission 1: Create your project workspace</h2>
+<h3>Goal</h3>
+<p>Create the same layer structure used by the real app.</p>
+<h3>Run</h3>
+<pre><code class="language-bash">cd ~/Desktop
+mkdir startup-tracker-learning
+cd startup-tracker-learning
+mkdir -p api db scraper analysis dashboard/src/app dashboard/src/lib scripts data
+</code></pre>
+<h3>Visual</h3>
+<div class="mermaid">flowchart LR
+  A["scraper/"] --> B["db/"] --> C["api/"] --> D["dashboard/"]
+  E["analysis/"] --> B
+  F["scripts/"] --> A
+</div>
+<h3>Check</h3>
+<pre><code class="language-bash">find . -maxdepth 2 -type d | sort
+</code></pre>
+<hr>
+<h2>Mission 2: Build the database foundation</h2>
+<h3>Goal</h3>
+<p>Create a SQLite database with core tables.</p>
+<p>Create file: <code>db/models.py</code></p>
+<pre><code class="language-python"># Import sqlite so we can talk to a local database file.
+import sqlite3
+
+# Import Path so file paths work consistently on any OS.
+from pathlib import Path
+
+# Define where the DB file will live.
+DB_PATH = Path(&quot;data/tracker.db&quot;)
+
+
+def get_connection():
+    # Ensure the parent folder exists before opening DB.
+    DB_PATH.parent.mkdir(parents=True, exist_ok=True)
+
+    # Open a SQLite connection to our DB file.
+    conn = sqlite3.connect(DB_PATH)
+
+    # Make rows behave like dictionaries (row[&quot;column_name&quot;]).
+    conn.row_factory = sqlite3.Row
+
+    # Enable WAL mode for better read/write concurrency.
+    conn.execute(&quot;PRAGMA journal_mode=WAL&quot;)
+
+    # Enforce foreign key constraints.
+    conn.execute(&quot;PRAGMA foreign_keys=ON&quot;)
+
+    # Return the ready-to-use DB connection.
+    return conn
+
+
+def init_db():
+    # Open connection.
+    conn = get_connection()
+
+    # Use transaction block for schema creation.
+    with conn:
+        # Create core tables if they do not exist.
+        conn.executescript(
+            &quot;&quot;&quot;
+            CREATE TABLE IF NOT EXISTS companies (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL UNIQUE,
+                ats_type TEXT NOT NULL,
+                ats_identifier TEXT,
+                sector TEXT,
+                company_type TEXT DEFAULT 'startup'
+            );
+
+            CREATE TABLE IF NOT EXISTS job_postings (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                company_id INTEGER NOT NULL REFERENCES companies(id),
+                title TEXT NOT NULL,
+                location TEXT,
+                department TEXT,
+                url TEXT,
+                external_id TEXT,
+                first_seen_at DATETIME DEFAULT (datetime('now')),
+                last_seen_at DATETIME DEFAULT (datetime('now')),
+                posting_status TEXT DEFAULT 'active',
+                is_active BOOLEAN DEFAULT 1
+            );
+
+            CREATE TABLE IF NOT EXISTS scrape_runs (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                company_id INTEGER NOT NULL REFERENCES companies(id),
+                run_at DATETIME DEFAULT (datetime('now')),
+                jobs_found INTEGER DEFAULT 0,
+                jobs_added INTEGER DEFAULT 0,
+                jobs_removed INTEGER DEFAULT 0,
+                status TEXT DEFAULT 'success'
+            );
+
+            CREATE TABLE IF NOT EXISTS job_events (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                job_id INTEGER NOT NULL REFERENCES job_postings(id),
+                run_id INTEGER NOT NULL REFERENCES scrape_runs(id),
+                event_type TEXT NOT NULL,
+                created_at DATETIME DEFAULT (datetime('now'))
+            );
+            &quot;&quot;&quot;
+        )
+
+    # Close connection.
+    conn.close()
+</code></pre>
+<h3>Check</h3>
+<pre><code class="language-bash">python3 - &lt;&lt;'PY'
+from db.models import init_db
+init_db()
+print('DB created')
+PY
+</code></pre>
+<h3>Visual: table relationships</h3>
+<div class="mermaid">erDiagram
+  companies ||--o{ job_postings : has
+  companies ||--o{ scrape_runs : executes
+  scrape_runs ||--o{ job_events : creates
+  job_postings ||--o{ job_events : changes
+</div>
+<hr>
+<h2>Mission 3: Build your first scraper</h2>
+<h3>Goal</h3>
+<p>Collect jobs from Greenhouse and normalize fields.</p>
+<p>Create file: <code>scraper/base.py</code></p>
+<pre><code class="language-python"># Import dataclass to define clean structured data objects.
+from dataclasses import dataclass
+
+# Import Optional for fields that may be empty.
+from typing import Optional
+
+
+@dataclass
+class JobPosting:
+    # Required fields.
+    title: str
+    company: str
+
+    # Optional fields from ATS providers.
+    external_id: Optional[str] = None
+    location: Optional[str] = None
+    department: Optional[str] = None
+    url: Optional[str] = None
+
+    def to_dict(self):
+        # Convert dataclass to plain dict for DB writing.
+        return {
+            &quot;title&quot;: self.title,
+            &quot;company&quot;: self.company,
+            &quot;external_id&quot;: self.external_id,
+            &quot;location&quot;: self.location,
+            &quot;department&quot;: self.department,
+            &quot;url&quot;: self.url,
+        }
+</code></pre>
+<p>Create file: <code>scraper/greenhouse.py</code></p>
+<pre><code class="language-python"># aiohttp lets us call APIs asynchronously.
+import aiohttp
+
+# Import the shared normalized job model.
+from scraper.base import JobPosting
+
+
+async def parse(company_name: str, slug: str):
+    # Build Greenhouse API URL for this company slug.
+    url = f&quot;https://boards-api.greenhouse.io/v1/boards/{slug}/jobs?content=true&quot;
+
+    # Open network session.
+    async with aiohttp.ClientSession() as session:
+        # Call API with timeout.
+        async with session.get(url, timeout=aiohttp.ClientTimeout(total=15)) as resp:
+            # If not successful, return empty list.
+            if resp.status != 200:
+                return []
+
+            # Parse JSON body.
+            data = await resp.json()
+
+    # Build normalized job list.
+    jobs = []
+
+    # Iterate each job in API response.
+    for row in data.get(&quot;jobs&quot;) or []:
+        jobs.append(
+            JobPosting(
+                # Job title.
+                title=row.get(&quot;title&quot;, &quot;&quot;),
+                # Company display name.
+                company=company_name,
+                # Stable ATS job ID.
+                external_id=str(row.get(&quot;id&quot;)) if row.get(&quot;id&quot;) else None,
+                # Human readable location.
+                location=(row.get(&quot;location&quot;) or {}).get(&quot;name&quot;),
+                # First department if present.
+                department=((row.get(&quot;departments&quot;) or [{}])[0]).get(&quot;name&quot;),
+                # Public application URL.
+                url=row.get(&quot;absolute_url&quot;),
+            )
+        )
+
+    # Return only jobs that have a title.
+    return [j for j in jobs if j.title]
+</code></pre>
+<h3>Check</h3>
+<pre><code class="language-bash">python3 - &lt;&lt;'PY'
+import asyncio
+from scraper.greenhouse import parse
+
+async def main():
+    rows = await parse('Stripe', 'stripe')
+    print('jobs fetched:', len(rows))
+    if rows:
+        print('example title:', rows[0].title)
+
+asyncio.run(main())
+PY
+</code></pre>
+<hr>
+<h2>Mission 4: Sync jobs into database</h2>
+<h3>Goal</h3>
+<p>Insert new jobs, keep existing jobs updated, close missing jobs.</p>
+<p>Create file: <code>db/queries.py</code></p>
+<pre><code class="language-python"># Import DB connection factory.
+from db.models import get_connection
+
+
+def upsert_company(company: dict) -&gt; int:
+    # Open DB connection.
+    conn = get_connection()
+
+    # Run write transaction.
+    with conn:
+        # Insert company, or update key metadata on name conflict.
+        conn.execute(
+            &quot;&quot;&quot;
+            INSERT INTO companies(name, ats_type, ats_identifier, sector, company_type)
+            VALUES (?, ?, ?, ?, ?)
+            ON CONFLICT(name) DO UPDATE SET
+                ats_type=excluded.ats_type,
+                ats_identifier=excluded.ats_identifier,
+                sector=excluded.sector,
+                company_type=excluded.company_type
+            &quot;&quot;&quot;,
+            (
+                company[&quot;name&quot;],
+                company[&quot;ats_type&quot;],
+                company.get(&quot;ats_identifier&quot;),
+                company.get(&quot;sector&quot;),
+                company.get(&quot;company_type&quot;, &quot;startup&quot;),
+            ),
+        )
+
+        # Read final company id.
+        row = conn.execute(
+            &quot;SELECT id FROM companies WHERE name = ?&quot;,
+            (company[&quot;name&quot;],),
+        ).fetchone()
+
+    # Close connection.
+    conn.close()
+
+    # Return id as integer.
+    return row[&quot;id&quot;]
+
+
+def log_run(company_id: int, jobs_found: int, jobs_added: int, jobs_removed: int, status: str = &quot;success&quot;) -&gt; int:
+    # Open DB connection.
+    conn = get_connection()
+
+    # Insert scrape run row.
+    with conn:
+        cur = conn.execute(
+            &quot;&quot;&quot;
+            INSERT INTO scrape_runs(company_id, jobs_found, jobs_added, jobs_removed, status)
+            VALUES (?, ?, ?, ?, ?)
+            &quot;&quot;&quot;,
+            (company_id, jobs_found, jobs_added, jobs_removed, status),
+        )
+
+        # Capture run id for linking events.
+        run_id = cur.lastrowid
+
+    # Close connection.
+    conn.close()
+
+    # Return run id.
+    return run_id
+
+
+def sync_jobs(company_id: int, run_id: int, scraped_jobs: list[dict]):
+    # Open DB connection.
+    conn = get_connection()
+
+    # Pull currently active jobs for this company.
+    existing = conn.execute(
+        &quot;&quot;&quot;
+        SELECT id, external_id, title
+        FROM job_postings
+        WHERE company_id = ? AND is_active = 1
+        &quot;&quot;&quot;,
+        (company_id,),
+    ).fetchall()
+
+    # Build quick lookup maps.
+    by_external_id = {r[&quot;external_id&quot;]: r[&quot;id&quot;] for r in existing if r[&quot;external_id&quot;]}
+    by_title = {r[&quot;title&quot;].strip().lower(): r[&quot;id&quot;] for r in existing if r[&quot;title&quot;]}
+
+    # Keep track of records we matched this run.
+    matched_ids = set()
+
+    # Count newly added jobs.
+    added = 0
+
+    with conn:
+        # Process every scraped job.
+        for job in scraped_jobs:
+            existing_id = None
+
+            # Try best match by external id.
+            ext_id = job.get(&quot;external_id&quot;)
+            if ext_id and ext_id in by_external_id:
+                existing_id = by_external_id[ext_id]
+
+            # Fallback match by normalized title.
+            if not existing_id:
+                title_key = job.get(&quot;title&quot;, &quot;&quot;).strip().lower()
+                if title_key in by_title:
+                    existing_id = by_title[title_key]
+
+            if existing_id:
+                # Mark as seen and keep active.
+                matched_ids.add(existing_id)
+                conn.execute(
+                    &quot;&quot;&quot;
+                    UPDATE job_postings
+                    SET last_seen_at = datetime('now'), posting_status='active', is_active=1
+                    WHERE id = ?
+                    &quot;&quot;&quot;,
+                    (existing_id,),
+                )
+            else:
+                # Insert brand new job.
+                cur = conn.execute(
+                    &quot;&quot;&quot;
+                    INSERT INTO job_postings(
+                        company_id, title, location, department, url, external_id,
+                        posting_status, is_active
+                    )
+                    VALUES (?, ?, ?, ?, ?, ?, 'active', 1)
+                    &quot;&quot;&quot;,
+                    (
+                        company_id,
+                        job.get(&quot;title&quot;),
+                        job.get(&quot;location&quot;),
+                        job.get(&quot;department&quot;),
+                        job.get(&quot;url&quot;),
+                        job.get(&quot;external_id&quot;),
+                    ),
+                )
+
+                # New inserted id.
+                new_job_id = cur.lastrowid
+
+                # Log add event.
+                conn.execute(
+                    &quot;INSERT INTO job_events(job_id, run_id, event_type) VALUES (?, ?, 'added')&quot;,
+                    (new_job_id, run_id),
+                )
+
+                # Increase add counter.
+                added += 1
+
+        # Detect jobs that disappeared this run.
+        removed = 0
+        for row in existing:
+            if row[&quot;id&quot;] not in matched_ids:
+                # Mark missing jobs as closed.
+                conn.execute(
+                    &quot;&quot;&quot;
+                    UPDATE job_postings
+                    SET is_active = 0, posting_status='closed'
+                    WHERE id = ?
+                    &quot;&quot;&quot;,
+                    (row[&quot;id&quot;],),
+                )
+
+                # Log remove event.
+                conn.execute(
+                    &quot;INSERT INTO job_events(job_id, run_id, event_type) VALUES (?, ?, 'removed')&quot;,
+                    (row[&quot;id&quot;], run_id),
+                )
+
+                # Increase remove counter.
+                removed += 1
+
+        # Update run metrics with final counts.
+        conn.execute(
+            &quot;UPDATE scrape_runs SET jobs_added=?, jobs_removed=? WHERE id=?&quot;,
+            (added, removed, run_id),
+        )
+
+    # Close connection.
+    conn.close()
+
+    # Return summary tuple.
+    return added, removed
+
+
+def get_overview_stats(company_type=None):
+    # Open connection.
+    conn = get_connection()
+
+    # Count companies (optionally scoped by type).
+    if company_type:
+        total_companies = conn.execute(
+            &quot;SELECT COUNT(*) FROM companies WHERE company_type = ?&quot;,
+            (company_type,),
+        ).fetchone()[0]
+    else:
+        total_companies = conn.execute(&quot;SELECT COUNT(*) FROM companies&quot;).fetchone()[0]
+
+    # Count active jobs (optionally scoped by company type).
+    if company_type:
+        total_active_jobs = conn.execute(
+            &quot;&quot;&quot;
+            SELECT COUNT(*)
+            FROM job_postings jp
+            JOIN companies c ON c.id = jp.company_id
+            WHERE jp.is_active = 1 AND c.company_type = ?
+            &quot;&quot;&quot;,
+            (company_type,),
+        ).fetchone()[0]
+    else:
+        total_active_jobs = conn.execute(
+            &quot;SELECT COUNT(*) FROM job_postings WHERE is_active = 1&quot;
+        ).fetchone()[0]
+
+    # Last successful run timestamp.
+    last_run = conn.execute(&quot;SELECT MAX(run_at) FROM scrape_runs&quot;).fetchone()[0]
+
+    # Close connection.
+    conn.close()
+
+    # Return dashboard-friendly shape.
+    return {
+        &quot;total_companies&quot;: total_companies,
+        &quot;total_active_jobs&quot;: total_active_jobs,
+        &quot;last_run&quot;: last_run,
+        &quot;net_added&quot;: 0,
+        &quot;net_removed&quot;: 0,
+    }
+</code></pre>
+<h3>Visual: sync logic</h3>
+<div class="mermaid">flowchart TD
+  A["Scraped job"] --> B{"Matches active record?"}
+  B -->|Yes| C["Update last_seen + keep active"]
+  B -->|No| D["Insert new job + added event"]
+  E["Active job not matched"] --> F["Mark closed + removed event"]
+</div>
+<hr>
+<h2>Mission 5: Build the orchestrator</h2>
+<h3>Goal</h3>
+<p>Run one command to scrape and sync all tracked companies.</p>
+<p>Create file: <code>companies.json</code></p>
+<pre><code class="language-json">[
+  {
+    &quot;name&quot;: &quot;Stripe&quot;,
+    &quot;ats_type&quot;: &quot;greenhouse&quot;,
+    &quot;ats_identifier&quot;: &quot;stripe&quot;,
+    &quot;sector&quot;: &quot;Fintech &amp; Payments&quot;,
+    &quot;company_type&quot;: &quot;bigco&quot;
+  },
+  {
+    &quot;name&quot;: &quot;Notion&quot;,
+    &quot;ats_type&quot;: &quot;greenhouse&quot;,
+    &quot;ats_identifier&quot;: &quot;notion&quot;,
+    &quot;sector&quot;: &quot;Enterprise Software&quot;,
+    &quot;company_type&quot;: &quot;startup&quot;
+  }
+]
+</code></pre>
+<p>Create file: <code>tracker.py</code></p>
+<pre><code class="language-python"># asyncio is used to run async scraper functions.
+import asyncio
+
+# json loads the companies config file.
+import json
+
+# Path gives stable file handling.
+from pathlib import Path
+
+# Initialize database schema.
+from db.models import init_db
+
+# Query helpers for company upsert + job sync.
+from db import queries
+
+# Greenhouse scraper module.
+import scraper.greenhouse as greenhouse_scraper
+
+# Companies source file path.
+COMPANIES_FILE = Path(&quot;companies.json&quot;)
+
+
+def load_companies() -&gt; list:
+    # Open and parse JSON config.
+    with open(COMPANIES_FILE) as f:
+        return json.load(f)
+
+
+async def scrape_company(company: dict, company_id: int):
+    # Read key company fields.
+    name = company[&quot;name&quot;]
+    ats_type = company[&quot;ats_type&quot;]
+
+    # Support Greenhouse in this tutorial build.
+    if ats_type == &quot;greenhouse&quot;:
+        jobs = await greenhouse_scraper.parse(name, company[&quot;ats_identifier&quot;])
+    else:
+        # Unknown ATS in this tutorial path.
+        jobs = []
+
+    # Convert JobPosting objects to dictionaries.
+    job_dicts = [j.to_dict() for j in jobs]
+
+    # Create run row with placeholder add/remove counts.
+    run_id = queries.log_run(company_id, len(jobs), 0, 0, status=&quot;success&quot;)
+
+    # Sync canonical job state.
+    added, removed = queries.sync_jobs(company_id, run_id, job_dicts)
+
+    # Return summary.
+    return len(jobs), added, removed
+
+
+async def run():
+    # Ensure DB schema exists.
+    init_db()
+
+    # Load company list.
+    companies = load_companies()
+
+    # Map company names to DB ids.
+    company_ids = {}
+    for c in companies:
+        company_ids[c[&quot;name&quot;]] = queries.upsert_company(c)
+
+    # Process all companies one-by-one for beginner clarity.
+    for c in companies:
+        found, added, removed = await scrape_company(c, company_ids[c[&quot;name&quot;]])
+        print(f&quot;{c['name']}: found={found} added={added} removed={removed}&quot;)
+
+
+if __name__ == &quot;__main__&quot;:
+    # Entry point.
+    asyncio.run(run())
+</code></pre>
+<h3>Check</h3>
+<pre><code class="language-bash">python3 tracker.py
+</code></pre>
+<hr>
+<h2>Mission 6: Build API layer</h2>
+<h3>Goal</h3>
+<p>Expose data to frontend.</p>
+<p>Create file: <code>api/app.py</code></p>
+<pre><code class="language-python"># FastAPI framework.
+from fastapi import FastAPI
+
+# Optional type for query params.
+from typing import Optional
+
+# Ensure database exists at API startup.
+from db.models import init_db
+
+# Query layer for reading stats.
+from db import queries
+
+# Create web app instance.
+app = FastAPI(title=&quot;Startup Tracker API&quot;)
+
+# Initialize DB schema now.
+init_db()
+
+
+@app.get(&quot;/api/overview&quot;)
+def overview(company_type: Optional[str] = None):
+    # Return high-level totals for dashboard cards.
+    return queries.get_overview_stats(company_type=company_type)
+</code></pre>
+<h3>Check</h3>
+<pre><code class="language-bash">uvicorn api.app:app --reload --port 8000
+</code></pre>
+<p>Open <a href="http://localhost:8000/api/overview">http://localhost:8000/api/overview</a></p>
+<hr>
+<h2>Mission 7: Build dashboard layer</h2>
+<h3>Goal</h3>
+<p>Show API data in a browser page.</p>
+<p>Inside <code>dashboard/</code> run:</p>
+<pre><code class="language-bash">npm init -y
+npm install next react react-dom
+npm install -D typescript @types/react @types/react-dom @types/node
+</code></pre>
+<p>Create file: <code>dashboard/package.json</code> (replace scripts section):</p>
+<pre><code class="language-json">{
+  &quot;name&quot;: &quot;dashboard&quot;,
+  &quot;private&quot;: true,
+  &quot;scripts&quot;: {
+    &quot;dev&quot;: &quot;next dev&quot;,
+    &quot;build&quot;: &quot;next build&quot;,
+    &quot;start&quot;: &quot;next start&quot;
+  }
+}
+</code></pre>
+<p>Create file: <code>dashboard/src/app/page.tsx</code></p>
+<pre><code class="language-tsx">&quot;use client&quot;;
+
+// React hooks for state and lifecycle.
+import { useEffect, useState } from &quot;react&quot;;
+
+export default function Page() {
+  // Hold API response.
+  const [data, setData] = useState&lt;any&gt;(null);
+
+  // Fetch once after component mounts.
+  useEffect(() =&gt; {
+    fetch(&quot;http://localhost:8000/api/overview&quot;)
+      .then((r) =&gt; r.json())
+      .then(setData)
+      .catch(() =&gt; setData({ error: true }));
+  }, []);
+
+  return (
+    &lt;main style={{ padding: 24, fontFamily: &quot;sans-serif&quot;, maxWidth: 900, margin: &quot;0 auto&quot; }}&gt;
+      &lt;h1&gt;Startup Tracker&lt;/h1&gt;
+      &lt;p style={{ color: &quot;#555&quot; }}&gt;Tutorial dashboard&lt;/p&gt;
+
+      {!data ? (
+        &lt;p&gt;Loading...&lt;/p&gt;
+      ) : data.error ? (
+        &lt;p&gt;Could not load API data.&lt;/p&gt;
+      ) : (
+        &lt;section style={{ border: &quot;1px solid #ddd&quot;, borderRadius: 8, padding: 16 }}&gt;
+          &lt;p&gt;Total companies: {data.total_companies}&lt;/p&gt;
+          &lt;p&gt;Total active jobs: {data.total_active_jobs}&lt;/p&gt;
+          &lt;p&gt;Last run: {data.last_run || &quot;Never&quot;}&lt;/p&gt;
+        &lt;/section&gt;
+      )}
+    &lt;/main&gt;
+  );
+}
+</code></pre>
+<h3>Check</h3>
+<pre><code class="language-bash">cd dashboard
+npm run dev
+</code></pre>
+<p>Open <a href="http://localhost:3000">http://localhost:3000</a></p>
+<hr>
+<h2>Mission 8: Add simple enrichment + skill extraction</h2>
+<h3>Goal</h3>
+<p>Turn raw text into useful analytics dimensions.</p>
+<p>Create file: <code>scraper/enrichment.py</code></p>
+<pre><code class="language-python"># Import DB connection.
+from db.models import get_connection
+
+
+def enrich_all():
+    # Open connection.
+    conn = get_connection()
+
+    # Get jobs missing basic normalized fields.
+    rows = conn.execute(
+        &quot;&quot;&quot;
+        SELECT id, title, location, department
+        FROM job_postings
+        WHERE posting_status IS NULL OR department IS NULL
+        &quot;&quot;&quot;
+    ).fetchall()
+
+    if not rows:
+        conn.close()
+        return 0
+
+    with conn:
+        for r in rows:
+            # Fallback department if missing.
+            department = r[&quot;department&quot;] or &quot;Other&quot;
+
+            # Ensure status default.
+            status = &quot;active&quot;
+
+            # Update row.
+            conn.execute(
+                &quot;&quot;&quot;
+                UPDATE job_postings
+                SET department = ?, posting_status = ?
+                WHERE id = ?
+                &quot;&quot;&quot;,
+                (department, status, r[&quot;id&quot;]),
+            )
+
+    count = len(rows)
+    conn.close()
+    return count
+</code></pre>
+<p>Create file: <code>analysis/nlp.py</code></p>
+<pre><code class="language-python"># Regex engine.
+import re
+
+# DB connection.
+from db.models import get_connection
+
+# Tiny starter dictionary.
+SKILLS = {
+    &quot;Python&quot;: re.compile(r&quot;\\bPython\\b&quot;, re.I),
+    &quot;SQL&quot;: re.compile(r&quot;\\bSQL\\b&quot;, re.I),
+    &quot;React&quot;: re.compile(r&quot;\\bReact\\b&quot;, re.I),
+}
+
+
+def extract_skills(text: str):
+    # Return matched canonical skill names.
+    if not text:
+        return []
+    found = []
+    for name, pattern in SKILLS.items():
+        if pattern.search(text):
+            found.append(name)
+    return found
+
+
+def extract_all_skills():
+    # Open connection.
+    conn = get_connection()
+
+    # Ensure table exists.
+    with conn:
+        conn.execute(
+            &quot;&quot;&quot;
+            CREATE TABLE IF NOT EXISTS job_skills (
+                job_id INTEGER NOT NULL REFERENCES job_postings(id),
+                skill TEXT NOT NULL,
+                PRIMARY KEY(job_id, skill)
+            )
+            &quot;&quot;&quot;
+        )
+
+    # Read jobs.
+    rows = conn.execute(&quot;SELECT id, title FROM job_postings&quot;).fetchall()
+
+    total = 0
+    with conn:
+        for r in rows:
+            # Use title as text source in this mini tutorial.
+            skills = extract_skills(r[&quot;title&quot;])
+            for s in skills:
+                conn.execute(
+                    &quot;INSERT OR IGNORE INTO job_skills(job_id, skill) VALUES (?, ?)&quot;,
+                    (r[&quot;id&quot;], s),
+                )
+                total += 1
+
+    conn.close()
+    return total
+</code></pre>
+<hr>
+<h2>Mission 9: Run and operate</h2>
+<h3>Goal</h3>
+<p>Run the complete mini pipeline in the correct order.</p>
+<h3>Run order</h3>
+<div class="mermaid">flowchart LR
+  A["python tracker.py"] --> B["python enrichment/skills"] --> C["start api"] --> D["start dashboard"]
+</div>
+<h3>Commands</h3>
+<p>Terminal 1:</p>
+<pre><code class="language-bash">cd ~/Desktop/startup-tracker-learning
+source .venv/bin/activate
+python3 tracker.py
+python3 - &lt;&lt;'PY'
+from scraper.enrichment import enrich_all
+from analysis.nlp import extract_all_skills
+print('enriched:', enrich_all())
+print('skills:', extract_all_skills())
+PY
+uvicorn api.app:app --reload --port 8000
+</code></pre>
+<p>Terminal 2:</p>
+<pre><code class="language-bash">cd ~/Desktop/startup-tracker-learning/dashboard
+npm run dev
+</code></pre>
+<hr>
+<h2>Quick visual recap</h2>
+<div class="mermaid">flowchart TD
+  Input["companies.json"] --> Scrape["Scrapers"]
+  Scrape --> Sync["sync_jobs"]
+  Sync --> DB["SQLite"]
+  DB --> API["FastAPI"]
+  API --> UI["Next.js"]
+  DB --> Enrich["Enrichment + NLP"]
+  Enrich --> DB
+</div>
+<hr>
+<h2>Beginner troubleshooting tree</h2>
+<div class="mermaid">flowchart TD
+  A["Page is blank"] --> B{"Can /api/overview open?"}
+  B -->|No| C["Backend not running\nStart uvicorn"]
+  B -->|Yes| D{"Can localhost:3000 open?"}
+  D -->|No| E["Frontend not running\nRun npm run dev"]
+  D -->|Yes| F["Check browser console\nCheck CORS/API URL"]
+</div>
+<hr>
+<h2>What to learn next</h2>
+<ol>
+<li>Add more scrapers (<code>ashby</code>, <code>lever</code>, <code>smartrecruiters</code>).</li>
+<li>Add richer lifecycle logic (<code>suspected_closed</code> before hard close).</li>
+<li>Add job events analytics endpoint and changes chart.</li>
+<li>Add resume-fit endpoint and upload UI.</li>
+</ol>
+<hr>
+<h2>Appendix A: How this tutorial maps to the real repo</h2>
+<table>
+<thead>
+<tr>
+<th>Tutorial Component</th>
+<th>Real Project Component</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>minimal <code>db/models.py</code></td>
+<td>full schema + migration-safe alters</td>
+</tr>
+<tr>
+<td>one scraper</td>
+<td>many ATS modules in <code>scraper/</code></td>
+</tr>
+<tr>
+<td>simple <code>sync_jobs</code></td>
+<td>robust identity + lifecycle + event logic</td>
+</tr>
+<tr>
+<td>one overview endpoint</td>
+<td>full API surface in <code>api/app.py</code></td>
+</tr>
+<tr>
+<td>one dashboard page</td>
+<td>many pages in <code>dashboard/src/app/*</code></td>
+</tr>
+</tbody>
+</table>
+
+</body>
+</html>

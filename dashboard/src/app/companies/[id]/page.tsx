@@ -9,6 +9,7 @@ import {
 } from "recharts";
 import { api, CompanyDetail, JobRow, JobEvent } from "@/lib/api";
 import { formatSeniority, formatWorkModel, formatDate, formatMoney, SENIORITY_LABELS } from "@/lib/format";
+import { JobStatusPill } from "@/components/JobStatusPill";
 
 const DEPT_COLORS = [
   "#6366f1", "#8b5cf6", "#ec4899", "#f59e0b", "#10b981",
@@ -300,13 +301,14 @@ export default function CompanyDetailPage() {
                 <th className="px-4 py-3 font-medium">Work Model</th>
                 <th className="px-4 py-3 font-medium">Location</th>
                 <th className="px-4 py-3 font-medium">Posted</th>
+                <th className="px-4 py-3 font-medium">Fit</th>
                 <th className="px-4 py-3 font-medium">Apply</th>
               </tr>
             </thead>
             <tbody>
               {filteredJobs.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-4 py-8 text-center text-muted text-xs">No jobs found</td>
+                  <td colSpan={8} className="px-4 py-8 text-center text-muted text-xs">No jobs found</td>
                 </tr>
               ) : filteredJobs.map((j) => (
                 <tr key={j.id} className="border-b border-card-border/50 hover:bg-white/5">
@@ -316,6 +318,14 @@ export default function CompanyDetailPage() {
                   <td className="px-4 py-2.5 text-muted text-xs">{formatWorkModel(j.work_model)}</td>
                   <td className="px-4 py-2.5 text-muted text-xs max-w-[140px] truncate">{j.location || "—"}</td>
                   <td className="px-4 py-2.5 text-muted text-xs">{new Date(j.first_seen_at).toLocaleDateString()}</td>
+                  <td className="px-4 py-2.5">
+                    <div className="flex flex-col gap-1">
+                      <Link href={`/fit?jobId=${j.id}`} className="text-accent-light hover:underline text-xs">
+                        Score
+                      </Link>
+                      <JobStatusPill jobId={j.id} />
+                    </div>
+                  </td>
                   <td className="px-4 py-2.5">
                     {j.url ? (
                       <a href={j.url} target="_blank" rel="noopener noreferrer" className="text-accent-light hover:underline text-xs">

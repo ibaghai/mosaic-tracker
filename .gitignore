@@ -1,8 +1,10 @@
 __pycache__/
 *.pyc
+*.swp
 .DS_Store
 .env
 .env.*
+!.env.local.example
 .venv/
 venv/
 .claude/
@@ -14,3 +16,5 @@ dashboard/.next/
 data/*.db-shm
 data/*.db-wal
 data/tracker.db
+data/tracker_v1.db
+data/tracker-demo*.db
