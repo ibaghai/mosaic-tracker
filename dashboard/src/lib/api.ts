@@ -477,6 +477,8 @@ export interface OutreachResponse {
     reports_to_target?: { title?: string; team_or_org?: string | null; level?: string | null; function?: string | null } | null;
     team_or_org?: string | null;
     must_have_skills?: string[];
+    /** True when the job had no description in the DB; outreach falls back to title-only context. */
+    jd_missing?: boolean;
   };
   people_by_archetype: Record<string, OutreachPerson[]>;
   drafts: OutreachDraft[];
